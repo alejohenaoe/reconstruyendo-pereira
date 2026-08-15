@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest'
 import { mapPublishError } from '@/features/needs/services/needPublishService'
 
 describe('mapPublishError', () => {
-  it('detecta el límite de una necesidad activa', () => {
-    expect(mapPublishError({ code: '23505' })).toContain('Ya tienes una necesidad activa')
-    expect(mapPublishError({ message: 'duplicate key ... one_active_need_per_user' })).toContain('Ya tienes una necesidad activa')
+  it('detecta el límite de un pedido de ayuda activo', () => {
+    expect(mapPublishError({ code: '23505' })).toContain('Ya tienes un pedido de ayuda activo')
+    expect(mapPublishError({ message: 'duplicate key ... one_active_need_per_user' })).toContain(
+      'Ya tienes un pedido de ayuda activo',
+    )
   })
 
   it('detecta violación de check de longitud', () => {
@@ -13,7 +15,9 @@ describe('mapPublishError', () => {
   })
 
   it('detecta errores de RLS', () => {
-    expect(mapPublishError({ message: 'new row violates row-level security policy' })).toContain('No estás autorizado')
+    expect(mapPublishError({ message: 'new row violates row-level security policy' })).toContain(
+      'No estás autorizado',
+    )
   })
 
   it('usa un mensaje genérico como fallback', () => {

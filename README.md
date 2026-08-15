@@ -1,7 +1,7 @@
 # Ayudémonos — Reconstruyendo
 
 Plataforma comunitaria para coordinar ayuda tras emergencias: los vecinos
-publican necesidades y la comunidad ofrece ayuda concreta (mano de obra,
+publican pedidos de ayuda y la comunidad ofrece ayuda concreta (mano de obra,
 materiales, transporte). Construida con React + TypeScript + Vite y Supabase
 (Auth + Postgres/RLS + Storage). La seguridad real vive en RLS (backend); la UI
 solo guía la experiencia (ARCH §36, §49).

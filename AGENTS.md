@@ -6,7 +6,7 @@ Guía operativa para agentes que trabajan en este repositorio. Complementa y nun
 ## Visión
 
 Aplicación móvil-first (en español) para la reconstrucción del eje cafetero: los damnificados
-publican **necesidades** de reconstrucción (con fotos y oficios requeridos), otros usuarios
+publican **pedidos de ayuda** de reconstrucción (con fotos y oficios requeridos), otros usuarios
 ofrecen **ayuda** y gestionan ofertas, y hay un panel de **moderación** + **notificaciones**
 in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI solo guía la experiencia.
 

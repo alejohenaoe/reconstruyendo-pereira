@@ -10,10 +10,16 @@ export function AdminNeedsPage() {
   return (
     <>
       <div>
-        <h1 className="text-closed-800 text-xl font-semibold">Necesidades</h1>
-        <p className="text-closed-500 mt-1 text-sm">Oculta o cierra necesidades cuando la moderación lo indique.</p>
+        <h1 className="text-closed-800 text-xl font-semibold">Pedidos de ayuda</h1>
+        <p className="text-closed-500 mt-1 text-sm">
+          Oculta o cierra pedidos de ayuda cuando la moderación lo indique.
+        </p>
       </div>
-      {error ? <p className="text-danger-600 text-sm">{error}</p> : <NeedsTable needs={needs} onChanged={() => void reload()} />}
+      {error ? (
+        <p className="text-danger-600 text-sm">{error}</p>
+      ) : (
+        <NeedsTable needs={needs} onChanged={() => void reload()} />
+      )}
     </>
   )
 }

@@ -24,20 +24,23 @@ export function mapPublishError(error: { code?: string | null; message?: string 
   const code = error.code ?? ''
   const message = error.message ?? ''
   if (code === '23505' || message.includes('one_active_need_per_user')) {
-    return 'Ya tienes una necesidad activa. Espera a que se resuelva o se cierre antes de publicar otra.'
+    return 'Ya tienes un pedido de ayuda activo. Espera a que se resuelva o se cierre antes de publicar otro.'
   }
   if (code === '23514') {
     return 'Alguno de los campos no cumple con el largo permitido. Revisa el formulario.'
   }
   if (message.includes('row-level security')) {
-    return 'No estás autorizado para publicar la necesidad.'
+    return 'No estás autorizado para publicar el pedido de ayuda.'
   }
-  return 'No pudimos publicar la necesidad. Inténtalo de nuevo.'
+  return 'No pudimos publicar el pedido de ayuda. Inténtalo de nuevo.'
 }
 
 /** Crea la necesidad (status OPEN). El user_id explícito lo exige la RLS
  *  (`user_id = auth.uid()`) porque la columna no tiene valor por defecto. */
-export async function createNeed(input: CreateNeedInput, userId: string): Promise<NeedsResult<Need>> {
+export async function createNeed(
+  input: CreateNeedInput,
+  userId: string,
+): Promise<NeedsResult<Need>> {
   const { data, error } = await supabase
     .from('needs')
     .insert({
@@ -96,7 +99,12 @@ export async function uploadNeedImage(
     .from('need-images')
     .upload(storagePath, blob, { contentType: blob.type, upsert: false })
   if (uploadError) {
-    return { ok: false, data: null, error: 'No pudimos subir una de las fotos. Inténtalo de nuevo.', code: 'unknown' }
+    return {
+      ok: false,
+      data: null,
+      error: 'No pudimos subir una de las fotos. Inténtalo de nuevo.',
+      code: 'unknown',
+    }
   }
 
   const { error: insertError } = await supabase.from('need_images').insert({
@@ -107,7 +115,12 @@ export async function uploadNeedImage(
   })
   if (insertError) {
     await supabase.storage.from('need-images').remove([storagePath])
-    return { ok: false, data: null, error: 'No pudimos guardar una de las fotos. Inténtalo de nuevo.', code: 'unknown' }
+    return {
+      ok: false,
+      data: null,
+      error: 'No pudimos guardar una de las fotos. Inténtalo de nuevo.',
+      code: 'unknown',
+    }
   }
 
   return { ok: true, data: { storagePath, isPrimary }, error: null, code: null }

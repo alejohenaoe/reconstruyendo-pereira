@@ -18,9 +18,9 @@ export function NeedGallery({ images }: NeedGalleryProps) {
 
   if (ordered.length === 0) {
     return (
-      <div className="text-closed-500 flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-closed-100 bg-closed-100/40">
+      <div className="text-closed-500 border-closed-100 bg-closed-100/40 flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed">
         <ImageOff className="size-6" aria-hidden="true" />
-        <p className="text-sm">Esta necesidad no tiene fotografías.</p>
+        <p className="text-sm">Este pedido de ayuda no tiene fotografías.</p>
       </div>
     )
   }
@@ -33,7 +33,7 @@ export function NeedGallery({ images }: NeedGalleryProps) {
         <NeedImage
           src={needImageUrl(active.storage_path, 800, 600)}
           fallbackSrc={needImageOriginalUrl(active.storage_path)}
-          alt="Foto principal de la necesidad"
+          alt="Foto principal del pedido de ayuda"
           className="aspect-[4/3] w-full rounded-lg"
         />
         <a
@@ -56,7 +56,9 @@ export function NeedGallery({ images }: NeedGalleryProps) {
               aria-selected={index === activeIndex}
               onClick={() => setActiveIndex(index)}
               className={`h-16 w-20 shrink-0 overflow-hidden rounded-md border-2 transition-opacity ${
-                index === activeIndex ? 'border-brand-600' : 'border-transparent opacity-70 hover:opacity-100'
+                index === activeIndex
+                  ? 'border-brand-600'
+                  : 'border-transparent opacity-70 hover:opacity-100'
               }`}
             >
               <img

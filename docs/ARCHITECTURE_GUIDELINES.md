@@ -26,7 +26,7 @@ La aplicación utilizará:
 - Supabase Row Level Security (RLS).
 - Netlify para el frontend.
 
-No introducir un backend independiente durante el MVP salvo una necesidad técnica concreta que no pueda resolverse de forma razonable con Supabase.
+No introducir un backend independiente durante el MVP salvo un pedido de ayuda técnica concreta que no pueda resolverse de forma razonable con Supabase.
 
 No introducir microservicios, Kubernetes, colas, event buses, CQRS, repositorios distribuidos o infraestructura adicional como solución por defecto.
 
@@ -55,7 +55,7 @@ Separar claramente:
 - Autenticación.
 - Perfil de usuario.
 - Capacidades del usuario.
-- Dominio de necesidades y ayudas.
+- Dominio de pedidos de ayuda y ayudas.
 - Acceso a datos.
 - UI y presentación.
 
@@ -196,14 +196,14 @@ Un usuario puede existir y autenticarse, pero no debe poder realizar acciones co
 
 Acciones que requieren correo verificado:
 
-- Crear una necesidad.
+- Crear un pedido de ayuda.
 - Comentar.
 - Ofrecer ayuda.
 - Ofrecer materiales.
 - Acceder a datos de contacto privados.
 - Otras acciones comunitarias que impliquen interacción entre usuarios.
 
-Las necesidades públicas pueden consultarse sin iniciar sesión.
+Los pedidos de ayuda públicas pueden consultarse sin iniciar sesión.
 
 ## 7.3. No duplicar el estado de verificación
 
@@ -226,7 +226,7 @@ El provider debe encargarse de:
 - Reenvío de verificación cuando sea necesario.
 - Sincronización con cambios de sesión de Supabase.
 
-El provider no debe contener lógica de dominio de necesidades, ofertas, comentarios o moderación.
+El provider no debe contener lógica de dominio de pedidos de ayuda, ofertas, comentarios o moderación.
 
 ## 7.5. useAuth
 
@@ -297,7 +297,7 @@ Si un usuario intenta realizar una acción y necesita autenticarse/verificar el 
 Ejemplo:
 
 ```text
-Necesidad #123
+Pedido de ayuda #123
       |
       +--> Quiero ayudar
               |
@@ -305,7 +305,7 @@ Necesidad #123
                       |
                       +--> Verificar correo
                               |
-                              +--> regresar a Necesidad #123
+                              +--> regresar a Pedido de ayuda #123
                                    y continuar la acción
 ```
 
@@ -442,15 +442,15 @@ Para ofrecer ayuda:
 ```text
 usuario autenticado
 AND email verificado
-AND necesidad abierta
-AND usuario no es dueño de la necesidad
+AND pedido de ayuda abierto
+AND usuario no es dueño del pedido de ayuda
 ```
 
-Para editar una necesidad:
+Para editar un pedido de ayuda:
 
 ```text
 usuario autenticado
-AND necesidad.user_id = auth.uid()
+AND pedido de ayuda.user_id = auth.uid()
 ```
 
 Para ver un teléfono:
@@ -458,7 +458,7 @@ Para ver un teléfono:
 ```text
 usuario autenticado
 AND email verificado
-AND usuario está relacionado con la necesidad
+AND usuario está relacionado con el pedido de ayuda
 ```
 
 Estas reglas deben reflejarse en RLS o en mecanismos backend seguros.
@@ -487,10 +487,10 @@ El ownership debe ser uno de los mecanismos principales de autorización.
 
 Ejemplos:
 
-- Un usuario puede editar sus propias necesidades.
-- Un usuario puede cerrar su propia necesidad.
-- Un usuario puede confirmar ayudas relacionadas con sus propias necesidades.
-- Un usuario no puede modificar las necesidades de otra persona.
+- Un usuario puede editar sus propias pedidos de ayuda.
+- Un usuario puede cerrar su propia pedido de ayuda.
+- Un usuario puede confirmar ayudas relacionadas con sus propias pedidos de ayuda.
+- Un usuario no puede modificar los pedidos de ayuda de otra persona.
 
 Evitar permisos del tipo:
 
@@ -510,7 +510,7 @@ resource.owner_id === auth.uid()
 
 Las entidades del dominio deben tener estados explícitos y transiciones controladas.
 
-Necesidad:
+Pedido de ayuda:
 
 ```text
 OPEN
@@ -543,15 +543,15 @@ cuando un estado explícito sea más apropiado.
 
 ---
 
-# 19. Una necesidad activa por usuario
+# 19. Un pedido de ayuda activo por usuario
 
 La regla de negocio es:
 
-> Un usuario puede tener como máximo una necesidad activa.
+> Un usuario puede tener como máximo un pedido de ayuda activo.
 
 No confiar únicamente en el frontend para esta regla.
 
-Debe existir una garantía a nivel de base de datos o una estrategia transaccional robusta que evite que dos solicitudes concurrentes creen dos necesidades activas para el mismo usuario.
+Debe existir una garantía a nivel de base de datos o una estrategia transaccional robusta que evite que dos solicitudes concurrentes creen dos pedidos de ayuda activas para el mismo usuario.
 
 Preferir índices/constraints PostgreSQL apropiados cuando puedan expresar correctamente la regla.
 
@@ -564,9 +564,9 @@ El sistema debe asumir que dos usuarios pueden actuar al mismo tiempo.
 Ejemplos:
 
 - Dos personas se ofrecen a ayudar simultáneamente.
-- Un usuario intenta cerrar una necesidad mientras otro intenta ofrecer ayuda.
+- Un usuario intenta cerrar un pedido de ayuda mientras otro intenta ofrecer ayuda.
 - Dos usuarios intentan editar el mismo recurso.
-- Dos procesos intentan crear registros relacionados con una misma necesidad.
+- Dos procesos intentan crear registros relacionados con una misma pedido de ayuda.
 
 No confiar en secuencias frontend como mecanismo de consistencia.
 
@@ -585,7 +585,7 @@ Utilizar RPC solamente cuando aporte una garantía transaccional real o encapsul
 
 ## 21.1. Paginación
 
-No cargar listados completos de necesidades, comentarios, ofertas o usuarios.
+No cargar listados completos de pedidos de ayuda, comentarios, ofertas o usuarios.
 
 Todos los listados que puedan crecer deben utilizar paginación o carga incremental.
 
@@ -645,7 +645,7 @@ El estado de cada feature debe permanecer en su feature correspondiente.
 
 Usar estado local para formularios y UI transitoria.
 
-Introducir estado global adicional únicamente cuando exista una necesidad clara y documentada.
+Introducir estado global adicional únicamente cuando exista un pedido de ayuda clara y documentada.
 
 ---
 
@@ -723,7 +723,7 @@ Introducir una abstracción adicional solo cuando resuelva un problema real:
 - reutilización significativa;
 - aislamiento de una dependencia;
 - complejidad de dominio;
-- necesidad de testear una frontera concreta.
+- pedido de ayuda de testear una frontera concreta.
 
 ---
 
@@ -785,19 +785,19 @@ Los errores técnicos deben registrarse apropiadamente para debugging cuando exi
 
 Los números de teléfono, correos personales u otros datos sensibles nunca deben ser públicos por defecto.
 
-El acceso debe depender de una relación válida con la necesidad.
+El acceso debe depender de una relación válida con el pedido de ayuda.
 
 Ejemplo:
 
 ```text
 Usuario verificado
 +
-Oferta de ayuda relacionada con la necesidad
+Oferta de ayuda relacionada con el pedido de ayuda
 +
 Permiso para contactar
 ```
 
-No devolver datos de contacto privados en consultas públicas de necesidades.
+No devolver datos de contacto privados en consultas públicas de pedidos de ayuda.
 
 Preferir que las vistas públicas reciban únicamente los campos públicos necesarios.
 
@@ -818,17 +818,17 @@ Separar:
 
 La dirección exacta nunca debe incluirse en consultas públicas.
 
-Solo usuarios autorizados y relacionados con la necesidad pueden acceder a ella.
+Solo usuarios autorizados y relacionados con el pedido de ayuda pueden acceder a ella.
 
 ---
 
 # 32. Storage e imágenes
 
-Las imágenes de necesidades deben almacenarse en Supabase Storage.
+Las imágenes de pedidos de ayuda deben almacenarse en Supabase Storage.
 
 No guardar binarios en PostgreSQL.
 
-Utilizar rutas de Storage que faciliten aislamiento por usuario/necesidad.
+Utilizar rutas de Storage que faciliten aislamiento por usuario/pedido de ayuda.
 
 Ejemplo conceptual:
 
@@ -854,7 +854,7 @@ Considerar Realtime únicamente donde mejore sustancialmente la experiencia, por
 
 - hilo de colaboración abierto;
 - notificaciones de ayuda;
-- actualizaciones inmediatas de una necesidad.
+- actualizaciones inmediatas de un pedido de ayuda.
 
 Si Realtime aumenta significativamente la complejidad, priorizar primero la corrección y simplicidad.
 
@@ -876,7 +876,7 @@ No permitir HTML arbitrario en comentarios.
 
 Reportes, bloqueos y moderación deben considerarse entidades de dominio independientes de Auth.
 
-Un usuario puede reportar una necesidad o comentario.
+Un usuario puede reportar un pedido de ayuda o comentario.
 
 Un administrador puede revisar y cambiar el estado del reporte.
 
@@ -904,7 +904,7 @@ El MVP puede utilizar teléfono, WhatsApp o correo como mecanismos de contacto.
 
 La aplicación no necesita implementar un sistema de chat propio para resolver el flujo inicial.
 
-Aun así, la base de datos debe registrar la relación entre una oferta de ayuda y la necesidad correspondiente.
+Aun así, la base de datos debe registrar la relación entre una oferta de ayuda y el pedido de ayuda correspondiente.
 
 Así el sistema puede determinar quién está autorizado a contactar a quién.
 
@@ -954,7 +954,7 @@ Para flujos críticos con Supabase cuando sea razonable:
 
 - registro;
 - verificación;
-- creación de necesidad;
+- creación de pedido de ayuda;
 - oferta de ayuda;
 - confirmación;
 - cierre.
@@ -963,7 +963,7 @@ Para flujos críticos con Supabase cuando sea razonable:
 
 Verificar que un usuario no pueda:
 
-- editar necesidades ajenas;
+- editar pedidos de ayuda ajenas;
 - confirmar ayudas ajenas;
 - obtener teléfonos no autorizados;
 - modificar perfiles ajenos;
@@ -982,7 +982,7 @@ Ejemplo:
 No hacer simplemente:
 
 ```text
-1. Consultar si necesidad está abierta
+1. Consultar si pedido de ayuda está abierta
 2. En frontend decidir que sí
 3. Insertar oferta
 ```
@@ -995,7 +995,7 @@ La base de datos debe imponer las condiciones críticas.
 
 # 41. Paginación y ordenamiento
 
-Los listados públicos de necesidades deben estar paginados.
+Los listados públicos de pedidos de ayuda deben estar paginados.
 
 Orden recomendado inicial:
 
@@ -1123,7 +1123,7 @@ Evitar:
 - servicios gigantes;
 - hooks gigantes;
 - componentes con acceso indiscriminado a Supabase;
-- lógica de autorización duplicada sin necesidad;
+- lógica de autorización duplicada sin pedido de ayuda;
 - booleanos que sustituyan estados de dominio.
 
 ---
@@ -1162,7 +1162,7 @@ No convertir React en un almacén global de todos los datos de la aplicación.
 
 ### Sobreingeniería
 
-No introducir patrones enterprise sin necesidad.
+No introducir patrones enterprise sin pedido de ayuda.
 
 ---
 

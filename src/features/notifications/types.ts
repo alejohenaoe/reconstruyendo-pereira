@@ -32,13 +32,14 @@ export interface NotificationsPage {
 }
 
 export type NotificationsResult<T> =
-  | { ok: true; data: T; error: null }
-  | { ok: false; data: null; error: string }
+  { ok: true; data: T; error: null } | { ok: false; data: null; error: string }
 
 /** Mensaje humano de una notificación (UX §23: texto claro, sin códigos). */
 export function notificationMessage(notification: AppNotification): string {
   const actor = notification.payload.actor_name || 'Alguien'
-  const title = notification.payload.title ? `«${notification.payload.title}»` : 'tu necesidad'
+  const title = notification.payload.title
+    ? `«${notification.payload.title}»`
+    : 'tu pedido de ayuda'
   switch (notification.type) {
     case 'HELP_OFFER':
       return `${actor} se ofreció a ayudarte en ${title}.`

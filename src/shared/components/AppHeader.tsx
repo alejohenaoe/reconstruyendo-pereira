@@ -85,7 +85,7 @@ export function AppHeader() {
             to="/needs"
             className="text-closed-600 hover:text-brand-700 hidden text-sm font-medium md:inline"
           >
-            Necesidades
+            Pedidos de ayuda
           </Link>
         </div>
 
@@ -93,7 +93,7 @@ export function AppHeader() {
           {/* Desktop */}
           <nav className="hidden items-center gap-3 md:flex" aria-label="Acceso">
             {status === 'AUTH_LOADING' ? null : status === 'UNAUTHENTICATED' ? (
-              <Link to="/login" className={buttonStyles({ variant: 'subtle', size: 'md' })}>
+              <Link to="/login" className={buttonStyles({ variant: 'primary', size: 'md' })}>
                 Ingresar
               </Link>
             ) : (
@@ -190,7 +190,7 @@ export function AppHeader() {
                 </Link>
                 <Link to="/needs" className={menuItemClass} onClick={() => setMenuOpen(false)}>
                   <HandHeart className="size-5" aria-hidden="true" />
-                  Necesidades
+                  Pedidos de ayuda
                 </Link>
                 <div className="border-closed-100 mt-2 flex flex-col gap-2 border-t pt-3">
                   <Link
@@ -216,7 +216,7 @@ export function AppHeader() {
                 </Link>
                 <Link to="/needs" className={menuItemClass} onClick={() => setMenuOpen(false)}>
                   <HandHeart className="size-5" aria-hidden="true" />
-                  Necesidades
+                  Pedidos de ayuda
                 </Link>
                 {status === 'EMAIL_UNVERIFIED' ? (
                   <Link
@@ -235,7 +235,7 @@ export function AppHeader() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Plus className="size-5" aria-hidden="true" />
-                      Publicar necesidad
+                      Publicar pedido de ayuda
                     </Link>
                     <Link
                       to="/notifications"

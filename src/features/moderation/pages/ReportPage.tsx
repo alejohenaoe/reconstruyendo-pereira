@@ -54,7 +54,7 @@ export function ReportPage() {
           <div className="flex flex-col items-start gap-3">
             <Alert>No entendimos qué contenido quieres reportar.</Alert>
             <Link to="/needs" className={buttonStyles({ variant: 'secondary' })}>
-              Ir a necesidades
+              Ir a pedidos de ayuda
             </Link>
           </div>
         )}

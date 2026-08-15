@@ -11,7 +11,11 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
 
   const cards = [
     { label: 'Usuarios', value: String(stats.users), detail: `${stats.users_banned} suspendidos` },
-    { label: 'Necesidades', value: String(stats.needs), detail: `${stats.needs_hidden} ocultas` },
+    {
+      label: 'Pedidos de ayuda',
+      value: String(stats.needs),
+      detail: `${stats.needs_hidden} ocultos`,
+    },
     { label: 'Ofertas', value: String(stats.offers), detail: 'de ayuda' },
     { label: 'Comentarios', value: String(stats.comments), detail: 'en el hilo' },
     { label: 'Reportes pendientes', value: String(stats.reports_pending), detail: 'por revisar' },
@@ -29,10 +33,15 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
         ))}
       </div>
       <div>
-        <p className="text-closed-500 mb-2 text-xs font-medium uppercase">Necesidades por estado</p>
+        <p className="text-closed-500 mb-2 text-xs font-medium uppercase">
+          Pedidos de ayuda por estado
+        </p>
         <div className="flex flex-wrap gap-2">
           {Object.entries(stats.needs_by_status).map(([status, count]) => (
-            <span key={status} className="border-closed-100 rounded-full border bg-white px-3 py-1 text-sm text-closed-700">
+            <span
+              key={status}
+              className="border-closed-100 text-closed-700 rounded-full border bg-white px-3 py-1 text-sm"
+            >
               {NEED_STATUS_LABELS[status as keyof typeof NEED_STATUS_LABELS] ?? status}: {count}
             </span>
           ))}

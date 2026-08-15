@@ -61,12 +61,14 @@ export function NeedForm({
     setAddError(null)
     const slots = MAX_PHOTOS - images.length
     if (files.length > slots) {
-      setAddError(`Máximo ${MAX_PHOTOS} fotos por necesidad.`)
+      setAddError(`Máximo ${MAX_PHOTOS} fotos por pedido de ayuda.`)
       files = files.slice(0, slots)
     }
     const tooHeavy = files.find((file) => file.size > MAX_ORIGINAL_IMAGE_BYTES)
     if (tooHeavy) {
-      setAddError('Una de las fotos es muy pesada para procesarla aquí; prueba con una más liviana.')
+      setAddError(
+        'Una de las fotos es muy pesada para procesarla aquí; prueba con una más liviana.',
+      )
       return
     }
     const notImage = files.find((file) => !file.type.startsWith('image/'))
@@ -179,7 +181,9 @@ export function NeedForm({
             required
             value={categoryId ?? ''}
             className={selectClass}
-            onChange={(event) => setCategoryId(event.target.value ? Number(event.target.value) : null)}
+            onChange={(event) =>
+              setCategoryId(event.target.value ? Number(event.target.value) : null)
+            }
           >
             <option value="">Selecciona la categoría</option>
             {categories.map((category) => (
@@ -188,7 +192,9 @@ export function NeedForm({
               </option>
             ))}
           </select>
-          {fieldErrors.category ? <p className="text-danger-600 text-xs">{fieldErrors.category}</p> : null}
+          {fieldErrors.category ? (
+            <p className="text-danger-600 text-xs">{fieldErrors.category}</p>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -201,7 +207,9 @@ export function NeedForm({
             required
             value={municipalityId ?? ''}
             className={selectClass}
-            onChange={(event) => setMunicipalityId(event.target.value ? Number(event.target.value) : null)}
+            onChange={(event) =>
+              setMunicipalityId(event.target.value ? Number(event.target.value) : null)
+            }
           >
             <option value="">Selecciona el municipio</option>
             {municipalities.map((municipality) => (
@@ -232,7 +240,7 @@ export function NeedForm({
             type="checkbox"
             name="needs_assessment"
             checked={needsAssessment}
-            className="text-brand-600 mt-0.5 size-4 shrink-0 rounded border-closed-100 focus:ring-brand-500"
+            className="text-brand-600 border-closed-100 focus:ring-brand-500 mt-0.5 size-4 shrink-0 rounded"
             onChange={(event) => setNeedsAssessment(event.target.checked)}
           />
           <span>
@@ -263,8 +271,8 @@ export function NeedForm({
           Dirección exacta (opcional)
         </p>
         <p className="text-info-700 mt-1 text-xs leading-relaxed">
-          Es privada: solo la verás tú y, cuando haya ofertas, las personas que se ofrezcan a ayudarte.
-          Nunca aparece en el listado público.
+          Es privada: solo la verás tú y, cuando haya ofertas, las personas que se ofrezcan a
+          ayudarte. Nunca aparece en el listado público.
         </p>
         <div className="mt-3">
           <TextField
@@ -280,7 +288,7 @@ export function NeedForm({
       </div>
 
       <Button type="submit" fullWidth size="lg" loading={submitting}>
-        {submitting ? 'Publicando…' : 'Publicar necesidad'}
+        {submitting ? 'Publicando…' : 'Publicar pedido de ayuda'}
       </Button>
     </form>
   )

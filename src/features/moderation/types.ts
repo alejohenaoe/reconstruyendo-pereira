@@ -1,15 +1,9 @@
 /** Motivos de reporte (MVP §26, public.report_reason). */
 export type ReportReason =
-  | 'SUSPICIOUS'
-  | 'FALSE_INFO'
-  | 'SPAM'
-  | 'OFFENSIVE'
-  | 'FRAUD'
-  | 'MONEY_REQUEST'
-  | 'OTHER'
+  'SUSPICIOUS' | 'FALSE_INFO' | 'SPAM' | 'OFFENSIVE' | 'FRAUD' | 'MONEY_REQUEST' | 'OTHER'
 
 export const REPORT_REASON_LABELS: Record<ReportReason, string> = {
-  SUSPICIOUS: 'Necesidad sospechosa',
+  SUSPICIOUS: 'Pedido de ayuda sospechoso',
   FALSE_INFO: 'Información falsa',
   SPAM: 'Spam',
   OFFENSIVE: 'Contenido ofensivo',
@@ -106,5 +100,4 @@ export interface AdminStats {
 }
 
 export type ModResult<T> =
-  | { ok: true; data: T; error: null }
-  | { ok: false; data: null; error: string }
+  { ok: true; data: T; error: null } | { ok: false; data: null; error: string }

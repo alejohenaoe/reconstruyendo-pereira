@@ -18,7 +18,10 @@ export function NeedsTable({ needs, onChanged }: NeedsTableProps) {
   const [error, setError] = useState<string | null>(null)
 
   async function run(need: AdminNeed, action: 'hide' | 'unhide' | 'close') {
-    if (action === 'hide' && !window.confirm(`¿Ocultar "${need.title}"? Dejará de ser visible públicamente.`)) {
+    if (
+      action === 'hide' &&
+      !window.confirm(`¿Ocultar "${need.title}"? Dejará de ser visible públicamente.`)
+    ) {
       return
     }
     if (action === 'close' && !window.confirm(`¿Cerrar "${need.title}"?`)) return
@@ -31,7 +34,7 @@ export function NeedsTable({ needs, onChanged }: NeedsTableProps) {
   }
 
   if (needs.length === 0) {
-    return <p className="text-closed-500 text-sm">No hay necesidades.</p>
+    return <p className="text-closed-500 text-sm">No hay pedidos de ayuda.</p>
   }
 
   return (
@@ -39,7 +42,10 @@ export function NeedsTable({ needs, onChanged }: NeedsTableProps) {
       {error ? <p className="text-danger-600 text-sm">{error}</p> : null}
       <ul className="flex flex-col gap-2">
         {needs.map((need) => (
-          <li key={need.id} className="border-closed-100 flex flex-col gap-2 rounded-md border bg-white px-3 py-2">
+          <li
+            key={need.id}
+            className="border-closed-100 flex flex-col gap-2 rounded-md border bg-white px-3 py-2"
+          >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="min-w-0">
                 <Link
@@ -50,12 +56,17 @@ export function NeedsTable({ needs, onChanged }: NeedsTableProps) {
                 </Link>
                 <p className="text-closed-500 text-xs">
                   {need.owner_name} · {NEED_STATUS_LABELS[need.status]}
-                  {need.is_hidden ? ' · Ocultada' : ''} · {timeAgo(need.created_at)}
+                  {need.is_hidden ? ' · Ocultado' : ''} · {timeAgo(need.created_at)}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {need.status !== 'CLOSED' ? (
-                  <Button size="sm" variant="secondary" loading={busyId === need.id} onClick={() => void run(need, 'close')}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    loading={busyId === need.id}
+                    onClick={() => void run(need, 'close')}
+                  >
                     Cerrar
                   </Button>
                 ) : null}

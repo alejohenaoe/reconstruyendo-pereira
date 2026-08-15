@@ -19,7 +19,12 @@ export function NeedStatusActions({ needId, status, onChanged }: NeedStatusActio
   const [error, setError] = useState<string | null>(null)
 
   async function handleChange(next: NeedStatus) {
-    if (next === 'CLOSED' && !window.confirm('¿Seguro que quieres cerrar esta necesidad? Ya no aceptará nuevas ofertas.')) {
+    if (
+      next === 'CLOSED' &&
+      !window.confirm(
+        '¿Seguro que quieres cerrar este pedido de ayuda? Ya no aceptará nuevas ofertas.',
+      )
+    ) {
       return
     }
     setAction(next)
@@ -69,7 +74,7 @@ export function NeedStatusActions({ needId, status, onChanged }: NeedStatusActio
             onClick={() => void handleChange('CLOSED')}
           >
             <CircleOff className="size-4" aria-hidden="true" />
-            Cerrar necesidad
+            Cerrar pedido de ayuda
           </Button>
         ) : null}
       </div>

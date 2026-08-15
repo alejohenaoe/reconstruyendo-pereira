@@ -23,12 +23,12 @@ No sustituye a `MVP.md`, `ARCHITECTURE_GUIDELINES.md` ni `UX_UI_GUIDELINES.md`. 
 
 Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse durante toda la implementación:
 
-1. **Estado "Cancelada"**: el `MVP.md` §8 menciona "Cancelada", pero no existe un estado `CANCELLED` de necesidad. Se mapea a `CLOSED` (cerrada sin resolución). Estados de necesidad: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`.
+1. **Estado "Cancelada"**: el `MVP.md` §8 menciona "Cancelada", pero no existe un estado `CANCELLED` de pedido de ayuda. Se mapea a `CLOSED` (cerrada sin resolución). Estados de pedido de ayuda: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`.
 2. **"Tipo de participación"**: se implementa como capacidades multi-selección (`profile_capabilities`), nunca como roles excluyentes (ARCH §11/§12).
 3. **Verificación de email**: requisito para todas las acciones comunitarias, garantizado por RLS con `is_email_verified()` y reforzado en la UI (ARCH §7.2).
-4. **Regla "una necesidad activa por usuario"**: garantizada por índice único parcial en PostgreSQL (atómico ante concurrencia), no solo desde React (MVP §8, ARCH §19).
+4. **Regla "un pedido de ayuda activo por usuario"**: garantizada por índice único parcial en PostgreSQL (atómico ante concurrencia), no solo desde React (MVP §8, ARCH §19).
 5. **Datos privados aislados**: `profile_phone` y `need_address` son tablas separadas (RLS es por fila, no por columna). Nunca se devuelven en consultas públicas; el único camino es el RPC `get_need_contact()` (ARCH §30/§31).
-6. **Contacto**: `get_need_contact(need_id)` es un RPC `security definer` que valida autenticación + email verificado + relación con la necesidad y registra cada revelación en `contact_access_log`.
+6. **Contacto**: `get_need_contact(need_id)` es un RPC `security definer` que valida autenticación + email verificado + relación con el pedido de ayuda y registra cada revelación en `contact_access_log`.
 7. **`needs_assessment`**: booleano en `needs` para la opción "No sé exactamente qué necesito" (UX §12).
 8. **`reports` única, sin polimorfismo genérico**: columnas FK nullable `need_id`, `comment_id`, `reported_user_id` + CHECK que exige exactamente un objetivo. Objetivos reportables del MVP: `Need`, `Comment`, `User`. No se reportan `help_offers` ni materiales. `ON DELETE SET NULL` para conservar el reporte si el contenido desaparece.
 9. **Notificaciones in-app**: dentro del alcance del MVP (MVP §27), implementadas mediante triggers en la base de datos.
@@ -81,11 +81,11 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
   - `0003_rls_policies.sql`: políticas por tabla + **GRANTs explícitos** (las tablas nuevas NO se auto-exponen a `anon`/`authenticated`).
   - `0004_storage.sql`: bucket `need-images` (público, 5 MB, jpeg/png/webp) + políticas de Storage que extraen el `need_id` del path `needs/{needId}/…` vía `can_manage_need_images_path`.
 - Índices críticos: `one_active_need_per_user` (partial unique), `one_offer_per_user_per_need` (partial unique, excluye CANCELLED), `one_primary_image_per_need`, anti-reportes duplicados.
-- Script de pruebas repetible: `supabase/tests/rls_security.sh` (41 casos vía API local: accesos anónimos, auto-perfil, una-necesidad-activa, self-offer, ofertas duplicadas, transiciones de estado, privacidad de contacto vía RPC, usuario sin email verificado, reportes, log de contactos, cascada).
+- Script de pruebas repetible: `supabase/tests/rls_security.sh` (41 casos vía API local: accesos anónimos, auto-perfil, una-pedido de ayuda-activa, self-offer, ofertas duplicadas, transiciones de estado, privacidad de contacto vía RPC, usuario sin email verificado, reportes, log de contactos, cascada).
 
 **Decisiones técnicas surgidas durante la verificación**
 
-- **Triggers de integridad como `security definer`**: `SELECT … FOR SHARE` + RLS devuelve 0 filas (el policy de `needs` referencia `auth.uid()`); además, las reglas de negocio (no self-offer, solo necesidad activa) deben ver la fila independientemente del rol del llamador. La autorización la hace la política RLS del INSERT; el trigger solo valida integridad. Se eliminó `FOR SHARE`.
+- **Triggers de integridad como `security definer`**: `SELECT … FOR SHARE` + RLS devuelve 0 filas (el policy de `needs` referencia `auth.uid()`); además, las reglas de negocio (no self-offer, solo pedido de ayuda activo) deben ver la fila independientemente del rol del llamador. La autorización la hace la política RLS del INSERT; el trigger solo valida integridad. Se eliminó `FOR SHARE`.
 - **Parámetro de RPC llamado `need_id`**: PostgREST empareja las claves JSON con el nombre de los parámetros. Con `p_need_id` el cliente no podía llamar `get_need_contact({need_id})`. Se renombró el parámetro a `need_id` y se usa una variable local `v_need` para evitar ambigüedad con columnas.
 - **La vista del dueño en `get_need_contact` muestra a todos los oferentes no cancelados** (aunque no tengan teléfono), para que el dueño sepa quién se ofreció.
 - **Puertos locales desplazados a `544xx`** (db 54422, API 54421, Studio 54423…) para no colisionar con el stack local del proyecto `photo-project` (54321/54322/54323…).
@@ -94,7 +94,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 **Criterio de verificación (cumplido)**
 
 - Migraciones aplican limpias desde cero: `supabase db reset` local OK (4 migraciones, sin errores).
-- `supabase/tests/rls_security.sh` → **41 PASS / 0 FAIL** (anónimos, privacidad, una-necesidad-activa, ofertas, verificación de email, reportes, RPC de contacto, bucket).
+- `supabase/tests/rls_security.sh` → **41 PASS / 0 FAIL** (anónimos, privacidad, una-pedido de ayuda-activa, ofertas, verificación de email, reportes, RPC de contacto, bucket).
 
 ### Fase 2 — Autenticación
 
@@ -130,22 +130,22 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 - Regreso a la intención original tras login/verificación (parámetro `redirect` en el enlace y consumo en `/auth/callback`).
 - `npm run typecheck && npm run lint && npm run build` verdes; `supabase/tests/rls_security.sh` → **41 PASS / 0 FAIL**; contrato e2e `supabase/tests/auth_contract.sh` → **10 PASS / 0 FAIL**.
 
-### Fase 3 — Necesidades públicas
+### Fase 3 — Pedidos de ayuda públicas
 
 **Estado: COMPLETADA y verificada localmente (typecheck/lint/build verdes, RLS 41/41, contrato e2e 10/10, queries de API verificadas por anon).**
 
 **Contenido entregado**
 
-- Lista de necesidades pública en `/needs` (`NeedsListPage`), paginada por cursor `(created_at, id)`, sin `select('*')` (select explícito de columnas; `NEEDS_PAGE_SIZE = 8`, se piden 9 filas para detectar `hasMore`).
+- Lista de pedidos de ayuda pública en `/needs` (`NeedsListPage`), paginada por cursor `(created_at, id)`, sin `select('*')` (select explícito de columnas; `NEEDS_PAGE_SIZE = 8`, se piden 9 filas para detectar `hasMore`).
 - Filtros municipio / categoría / estado (UX §39) sincronizados con `searchParams` (`?municipality=&category=&status=`); inline en desktop y panel/modal compacto en móvil (`NeedFilters`).
 - Detalle público en `/needs/:id` (`NeedDetailPage`) con orden de UX §10/§37: estado → categoría → título → dónde → autor/fecha → descripción → fotografías → personas que se ofrecieron; aviso de `needs_assessment`; CTA condicional de registro/login con `?redirect=` de retorno al detalle.
 - Componentes: `NeedCard`, `NeedStatus`, `NeedHeader`, `NeedGallery` (imagen principal + miniaturas + placeholder/error + "Ampliar"), `NeedImage` (estados de carga con skeleton, error y fallback a la URL original), `NeedFilters`, `Skeleton` compartido, util `timeAgo` (fechas relativas en español).
 - Capa de datos en `features/needs/`: `types.ts`, `services/needService.ts`, hooks `usePublicNeeds` (paginación + assets agrupados), `usePublicNeed` (detalle), `useNeedCategories`.
 - Conteo de ofertas sin N+1: vista `need_offer_counts` (migración 0005) consultada con `.in(need_id, [...])` por página; imágenes también en una sola query agrupada por página.
 - Vistas nuevas: `need_offer_counts` (0005) y `need_offer_details` (0006) con `security_invoker = true` y `grant select` a `anon, authenticated`.
-- Estados de loading (skeletons)/empty/error comprensibles (UX §23/§24/§25): "No encontramos necesidades con estos filtros." con acción "Limpiar filtros", y "Reintentar" ante error.
-- `HomePage` con CTA primario "Ver necesidades" → `/needs`; `AppHeader` con enlace "Necesidades" visible para todos.
-- Fixtures deterministas en `supabase/tests/seed_phase3.sh` (7 usuarios verificados, 15 necesidades en variedad de estados, 8 ofertas, 1 imagen por storage API) para ejercitar paginación, filtros y conteos.
+- Estados de loading (skeletons)/empty/error comprensibles (UX §23/§24/§25): "No encontramos pedidos de ayuda con estos filtros." con acción "Limpiar filtros", y "Reintentar" ante error.
+- `HomePage` con CTA primario "Ver pedidos de ayuda" → `/needs`; `AppHeader` con enlace "Pedidos de ayuda" visible para todos.
+- Fixtures deterministas en `supabase/tests/seed_phase3.sh` (7 usuarios verificados, 15 pedidos de ayuda en variedad de estados, 8 ofertas, 1 imagen por storage API) para ejercitar paginación, filtros y conteos.
 
 **Decisiones técnicas surgidas durante la verificación**
 
@@ -153,17 +153,17 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 - **Orden estable**: `order=created_at.desc,id.desc` con tiebreaker por `id`; sin él, filas con el mismo `created_at` (inserciones masivas del seed) vuelven en orden arbitrario entre páginas (duplicados/huecos).
 - **`profiles` no es embebible desde `needs` ni `help_offers`**: las FKs apuntan a `auth.users`, no a `profiles`, así que PostgREST no infiere la relación. El listado NO muestra el autor (no lo pide UX §9); el detalle consulta `profiles` por id (una query fija). Para los oferentes se creó la vista `need_offer_details` (une `help_offers` + `profiles`, oculta needs) y para los conteos `need_offer_counts` (agrupa por `need_id`, excluye needs ocultas). Ambas con `security_invoker = true` para heredar las políticas RLS de las tablas base.
 - **supabase-js tipa los embeds como arrays** (`need_categories: { label_es: any }[]`) mientras el runtime devuelve objetos; los casts de las filas de `needs` pasan por `unknown` para evitar el error TS2352.
-- **Regla one-active-por-usuario** también complica los fixtures (máximo una necesidad OPEN/IN_PROGRESS por usuario), por eso el seed usa usuarios dedicados por necesidad activa y SQL directo para la variedad de estados.
+- **Regla one-active-por-usuario** también complica los fixtures (máximo un pedido de ayuda OPEN/IN_PROGRESS por usuario), por eso el seed usa usuarios dedicados por pedido de ayuda activo y SQL directo para la variedad de estados.
 - **`need_images` no se embebe en la lista** (evita el payload); se consulta agrupada con `.in` y se construyen URLs transformadas (`?width=160&height=120&resize=cover`) con fallback a la URL original si la transformación falla (verificado 200 local en ambos casos).
 
 **Criterio de verificación (cumplido)**
 
-- Visitante sin sesión ve, filtra (municipio+categoría+estado) y abre el detalle de cualquier necesidad visible (verificado por anon vía REST: lista con embeds, filtros combinados, keyset, conteos, imágenes, oferentes y autor).
+- Visitante sin sesión ve, filtra (municipio+categoría+estado) y abre el detalle de cualquier pedido de ayuda visible (verificado por anon vía REST: lista con embeds, filtros combinados, keyset, conteos, imágenes, oferentes y autor).
 - Paginación correcta: página 1 (8 de 14 visibles) + página 2 sin duplicados ni huecos; las 15 filas del seed y la oculta se comportan como esperado.
-- Empty state con filtros dice exactamente "No encontramos necesidades con estos filtros." y ofrece limpiar.
+- Empty state con filtros dice exactamente "No encontramos pedidos de ayuda con estos filtros." y ofrece limpiar.
 - `npm run typecheck && npm run lint && npm run build` verdes; `supabase/tests/rls_security.sh` → **41 PASS / 0 FAIL**; `supabase/tests/auth_contract.sh` → **10 PASS / 0 FAIL**.
 
-### Fase 4 — Publicar necesidad
+### Fase 4 — Publicar pedido de ayuda
 
 **Estado: COMPLETADA y verificada localmente (typecheck/lint/build verdes, RLS 41/41, auth 10/10, contrato de publicación 21/21).**
 
@@ -174,8 +174,8 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 - Dirección exacta claramente marcada como privada (UX §35): aviso en el formulario ("solo la verás tú y, cuando haya ofertas, las personas que se ofrezcan a ayudarte") y guardada en `need_address` (RLS: solo el dueño escribe; anon no lee).
 - `ImagePicker`: miniaturas con preview, eliminar selección, estados `uploading|done|error` por foto, validación de cantidad (máx. 5) y peso (máx. 30 MB por original) (UX §13).
 - Compresión en cliente (`src/shared/utils/imageCompress.ts`): sin límites de calidad sobre la foto original; se guarda SOLO el webp (~q0.82, lado mayor máx. 1600px, sin escalar fotos pequeñas). El original nunca se sube ni se almacena.
-- `needPublishService`: `createNeed` (envía `user_id` explícito exigido por la RLS; mapea `23505`/`one_active_need_per_user` → "Ya tienes una necesidad activa. Espera a que se resuelva o se cierre antes de publicar otra."), `attachAddress`, `uploadNeedImage` (compresión → storage `needs/{needId}/{uuid}.webp` → insert `need_images` con `is_primary` en la primera; si el insert falla se limpia el objeto del bucket).
-- Flujo robusto ante fallos parciales: la necesidad se crea una sola vez (ref en la página), fotos/dirección se reintentan; si algo queda sin guardar se navega al detalle con aviso (`state.notice` mostrado como Alert).
+- `needPublishService`: `createNeed` (envía `user_id` explícito exigido por la RLS; mapea `23505`/`one_active_need_per_user` → "Ya tienes un pedido de ayuda activo. Espera a que se resuelva o se cierre antes de publicar otro."), `attachAddress`, `uploadNeedImage` (compresión → storage `needs/{needId}/{uuid}.webp` → insert `need_images` con `is_primary` en la primera; si el insert falla se limpia el objeto del bucket).
+- Flujo robusto ante fallos parciales: el pedido de ayuda se crea una sola vez (ref en la página), fotos/dirección se reintentan; si algo queda sin guardar se navega al detalle con aviso (`state.notice` mostrado como Alert).
 - Migración `20260814000007_need_images_insert_grant.sql`: faltaba el `grant insert ... to authenticated` en `need_images` (la RLS ya exigía ser dueño).
 
 **Decisiones técnicas surgidas durante la verificación**
@@ -188,7 +188,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 **Criterio de verificación (cumplido)**
 
-- Un usuario con necesidad activa no puede publicar otra: segunda creación rechazada con 409 + `23505`/`one_active_need_per_user` (mensaje amigable en el servicio).
+- Un usuario con pedido de ayuda activo no puede publicar otra: segunda creación rechazada con 409 + `23505`/`one_active_need_per_user` (mensaje amigable en el servicio).
 - Subida segura de imágenes: el dueño sube (200) e inserta `need_images` (201); un tercero no (403); anon no (401/403); path fuera de `needs/{needId}/` rechazado (400/403).
 - La dirección exacta no aparece en consultas públicas (anon no lee `need_address` ni la embebe).
 - Contrato e2e `supabase/tests/publish_contract.sh` → **21 PASS / 0 FAIL**; regresión `rls_security.sh` → **41 PASS / 0 FAIL**; `auth_contract.sh` → **10 PASS / 0 FAIL**; `npm run typecheck && npm run lint && npm run build` verdes; smoke 200 en `/`, `/needs`, `/needs/new`, `/account`.
@@ -199,26 +199,26 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 **Contenido entregado**
 
-- Backend: migración `20260814000008_need_status_transitions.sql` (trigger `validate_need_status_change`: transiciones `OPEN → IN_PROGRESS → RESOLVED`, cierre a `CLOSED`, solo el dueño, admin bypass, mensajes "Solo el autor puede cambiar el estado de la necesidad"/"Transición de estado no permitida"; `prevent_need_reopen` rechaza reabrir) y `20260814000009_need_offer_details_capabilities.sql` (drop + recreate de `need_offer_details` con `capability_id`/`capability_label` y filtro de `CANCELLED`; `create or replace` no puede cambiar columnas de una vista).
-- Oferta de ayuda (`HelpOfferForm`): catálogo de `capabilities` + mensaje breve (5–1000); duplicados rechazados por índice único (`409`/`one_offer_per_user_per_need`); auto-oferta rechazada por trigger ("No puedes ofrecer ayuda en tu propia necesidad").
+- Backend: migración `20260814000008_need_status_transitions.sql` (trigger `validate_need_status_change`: transiciones `OPEN → IN_PROGRESS → RESOLVED`, cierre a `CLOSED`, solo el dueño, admin bypass, mensajes "Solo el autor puede cambiar el estado del pedido de ayuda"/"Transición de estado no permitida"; `prevent_need_reopen` rechaza reabrir) y `20260814000009_need_offer_details_capabilities.sql` (drop + recreate de `need_offer_details` con `capability_id`/`capability_label` y filtro de `CANCELLED`; `create or replace` no puede cambiar columnas de una vista).
+- Oferta de ayuda (`HelpOfferForm`): catálogo de `capabilities` + mensaje breve (5–1000); duplicados rechazados por índice único (`409`/`one_offer_per_user_per_need`); auto-oferta rechazada por trigger ("No puedes ofrecer ayuda en tu propia pedido de ayuda").
 - Lista de ofertas (`OfferersSection`) con estados y lenguaje preciso: "se ofreció a ayudar" ≠ "ayudó" (UX §16, `OfferStatusBadge`); las canceladas no aparecen en público.
 - Contacto privado: botón `Contactar` vía RPC `get_need_contact()` (SECURITY DEFINER) — el dueño ve teléfonos de los oferentes; cada oferente ve teléfono + dirección del autor; extraños/anon reciben `null`; cada revelación se registra en `contact_access_log` (ARCH §30).
 - Transiciones de oferta: el oferente solo puede cancelar (CANCELLED); el dueño avanza `OFFERED → CONTACTED → AGREED → COMPLETED → CONFIRMED`; nunca auto-confirmación.
 - Hilo de colaboración (`CommentsSection`): comentarios públicos con nombre del autor (join a `profiles`), insert de autenticados, lectura anon, `COMMENT_LIMIT=200`.
-- Frontend: `features/help/{types,services/helpService,hooks/useNeedCommunity,hooks/useCapabilities,components/*}`; `NeedDetailPage` integra ofertas, hilo, acciones de estado y formulario (bloqueado para anónimos/ajeno/necesidad inactiva, con alerta "Esta necesidad ya no acepta nuevas ofertas" — UX §40); `AccountPage` permite guardar el teléfono de contacto (`profile_phone`, upsert por `profile_id`), requisito del flujo de contacto.
+- Frontend: `features/help/{types,services/helpService,hooks/useNeedCommunity,hooks/useCapabilities,components/*}`; `NeedDetailPage` integra ofertas, hilo, acciones de estado y formulario (bloqueado para anónimos/ajeno/pedido de ayuda inactiva, con alerta "Este pedido de ayuda ya no acepta nuevas ofertas" — UX §40); `AccountPage` permite guardar el teléfono de contacto (`profile_phone`, upsert por `profile_id`), requisito del flujo de contacto.
 - Sin UI optimista en acciones críticas (UX §41): `NeedStatusActions` espera confirmación del backend y usa `window.confirm` antes de cerrar.
 
 **Decisiones técnicas surgidas durante la verificación**
 
 - **`create or replace view` no cambia columnas**: al añadir `capability_id`/`capability_label` a `need_offer_details` hubo que hacer `drop view` + recrear (migración 0009).
-- **PATCH sin filas coincidentes responde 204 (no 403/404)**: un tercero que intenta cambiar una necesidad ajena no "falla" a nivel HTTP; la seguridad se comprueba leyendo el estado tras el intento (el contrato lo verifica con GET).
+- **PATCH sin filas coincidentes responde 204 (no 403/404)**: un tercero que intenta cambiar un pedido de ayuda ajena no "falla" a nivel HTTP; la seguridad se comprueba leyendo el estado tras el intento (el contrato lo verifica con GET).
 - **`offer_status` de la vista es el enum crudo** (`CONFIRMED`, no la etiqueta); la etiqueta ("Ayuda confirmada") vive en `HELP_OFFER_STATUS_LABELS` en el frontend.
 - **El teléfono se edita en `AccountPage`** (`profile_phone`, upsert con `onConflict: 'profile_id'`, validación 6–30) porque el contacto por RPC depende de que los involucrados lo registren; la RLS ya garantizaba que solo su dueño lo lee/escribe.
 
 **Criterio de verificación (cumplido, `supabase/tests/help_contract.sh` → 53 PASS / 0 FAIL)**
 
 - Flujo MVP §33 pasos 7–13 de punta a punta: oferta → contacto → confirmación por el autor → transiciones → cierre.
-- Un usuario no puede ofrecerse a sí mismo, ni ofrecer en necesidad no activa ("no acepta nuevas ofertas"), ni confirmarse ayuda, ni avanzar el estado de una oferta ajena, ni reabrir una necesidad cerrada.
+- Un usuario no puede ofrecerse a sí mismo, ni ofrecer en pedido de ayuda no activo ("no acepta nuevas ofertas"), ni confirmarse ayuda, ni avanzar el estado de una oferta ajena, ni reabrir un pedido de ayuda cerrado.
 - El contacto privado solo se revela a involucrados (dueño/oferente) y queda registrado en `contact_access_log` (2 revelaciones).
 
 **Contenido**
@@ -228,14 +228,14 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 - Hilo de colaboración: comentarios + ofertas visualmente diferenciados (MVP §14).
 - Transiciones de estado de oferta: `OFFERED → CONTACTED → AGREED → COMPLETED → CONFIRMED`, con `CANCELLED`.
 - Contacto: botón `Contactar` habilitado solo con relación válida; RPC `get_need_contact()` + log de revelación (UX §18, ARCH §30).
-- Confirmación de ayuda por el creador de la necesidad (nunca auto-asignada).
-- Transiciones de necesidad: `OPEN → IN_PROGRESS → RESOLVED` y cierre a `CLOSED`, solo por el dueño; no reabrir.
-- Mensajes claros ante conflictos de concurrencia (UX §40): "Esta necesidad ya no acepta nuevas ofertas".
+- Confirmación de ayuda por el creador del pedido de ayuda (nunca auto-asignada).
+- Transiciones de pedido de ayuda: `OPEN → IN_PROGRESS → RESOLVED` y cierre a `CLOSED`, solo por el dueño; no reabrir.
+- Mensajes claros ante conflictos de concurrencia (UX §40): "Este pedido de ayuda ya no acepta nuevas ofertas".
 
 **Criterio de verificación**
 
 - El flujo MVP §33 pasos 1–13 funciona de punta a punta.
-- Un usuario no puede ofrecerse a sí mismo, ni ofrecer en necesidad no activa, ni confirmarse ayuda.
+- Un usuario no puede ofrecerse a sí mismo, ni ofrecer en pedido de ayuda no activo, ni confirmarse ayuda.
 - El contacto privado solo se revela a involucrados y queda registrado.
 
 ### Fase 6 — Moderación y panel administrativo
@@ -244,10 +244,10 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 **Contenido entregado**
 
-- **Backend** (migración `20260814000010_moderation_admin_grants.sql`): grants que faltaban para que un admin pudiera moderar por API — `grant update, delete on reports to authenticated` (solo existía `select, insert`, igual que el hallazgo de Fase 4 con `need_images`) y `grant update on profiles to authenticated` (para suspender con `banned_at`). RPC `admin_stats()` (SECURITY DEFINER, lanza `Se requieren permisos de administrador` si `not is_admin()`): usuarios/total+ban, necesidades/total+por estado+ocultas, ofertas, comentarios, reportes pendientes.
-- **Reportes** (frontend): página `/report?type=need|comment|user&id=…&label=…&needId=…` con `ReportForm` (motivos de MVP §26, detalles ≤1000). Botones "Reportar" en `NeedDetailPage`: la necesidad, el autor, cada comentario y cada oferente — distingue "reportar al usuario" vs "reportar su contenido" (criterio de verificación de la fase). Solo verificado y no suspendido puede reportar (RLS); sin auto-reporte (`403`) y sin duplicados (`409`/`one_report_per_user_target`).
+- **Backend** (migración `20260814000010_moderation_admin_grants.sql`): grants que faltaban para que un admin pudiera moderar por API — `grant update, delete on reports to authenticated` (solo existía `select, insert`, igual que el hallazgo de Fase 4 con `need_images`) y `grant update on profiles to authenticated` (para suspender con `banned_at`). RPC `admin_stats()` (SECURITY DEFINER, lanza `Se requieren permisos de administrador` si `not is_admin()`): usuarios/total+ban, pedidos de ayuda/total+por estado+ocultas, ofertas, comentarios, reportes pendientes.
+- **Reportes** (frontend): página `/report?type=need|comment|user&id=…&label=…&needId=…` con `ReportForm` (motivos de MVP §26, detalles ≤1000). Botones "Reportar" en `NeedDetailPage`: el pedido de ayuda, el autor, cada comentario y cada oferente — distingue "reportar al usuario" vs "reportar su contenido" (criterio de verificación de la fase). Solo verificado y no suspendido puede reportar (RLS); sin auto-reporte (`403`) y sin duplicados (`409`/`one_report_per_user_target`).
 - **Panel admin** (`AdminLayout` con sidebar, rutas `/admin`, `/admin/reports`, `/admin/users`, `/admin/needs` bajo `AdminRoute`): dashboard con `AdminStatsCards`; `ReportsTable` (ver todos, cambiar `PENDING/REVIEWED/ACTIONED/DISMISSED`, eliminar); `UsersTable` (búsqueda por nombre + filtro de municipio, suspender/restaurar); `NeedsTable` (ocultar/restaurar/cerrar).
-- **Moderación** verificada de punta a punta: ocultar necesidad/comentario (`is_hidden` deja de verse por anon), cerrar necesidad (el trigger 0008 permite a admin), suspender usuario (`is_banned()` bloquea crear necesidad/comentario/reporte con `403`).
+- **Moderación** verificada de punta a punta: ocultar pedido de ayuda/comentario (`is_hidden` deja de verse por anon), cerrar pedido de ayuda (el trigger 0008 permite a admin), suspender usuario (`is_banned()` bloquea crear pedido de ayuda/comentario/reporte con `403`).
 - **`supabase/tests/seed_admin.sh`**: promueve un email existente a ADMIN (la UI oculta las rutas admin, pero la protección real es RLS, ARCH §36/§49). `useIsAdmin` extraído a `src/features/auth/hooks/useIsAdmin.ts` (reutilizado por `AdminRoute` y `AppHeader`, que muestra el enlace "Admin").
 
 **Decisiones técnicas surgidas durante la verificación**
@@ -259,15 +259,15 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 **Criterio de verificación (cumplido, `supabase/tests/moderation_contract.sh` → 40 PASS / 0 FAIL)**
 
-- Reportar necesidad, comentario y usuario funciona; "reportar al usuario" ≠ "reportar su contenido".
-- Un usuario normal no puede ejecutar acciones de admin aunque llame a la API directamente (reportes ajenos, ocultar/cerrar necesidad, suspender, ocultar comentarios — verificado por GET, ya que PATCH sin filas responde 204; `admin_stats` rechazado con 400).
+- Reportar pedido de ayuda, comentario y usuario funciona; "reportar al usuario" ≠ "reportar su contenido".
+- Un usuario normal no puede ejecutar acciones de admin aunque llame a la API directamente (reportes ajenos, ocultar/cerrar pedido de ayuda, suspender, ocultar comentarios — verificado por GET, ya que PATCH sin filas responde 204; `admin_stats` rechazado con 400).
 - El contenido oculto deja de verse públicamente; el admin lo restaura; el suspendido queda bloqueado para publicar/participar.
 
 **Contenido**
 
-- Reportes: necesidad, comentario, usuario (tipos acordados), con motivos de MVP §26.
-- Panel administrativo (`AdminRoute`): ver/buscar usuarios, suspender, ver necesidades, ocultar, cerrar, ver reportes, moderar comentarios, estadísticas básicas.
-- Acciones de moderación: `is_hidden`, cierre de necesidad, `banned_at` en perfiles, estado del reporte (`PENDING/REVIEWED/ACTIONED/DISMISSED`).
+- Reportes: pedido de ayuda, comentario, usuario (tipos acordados), con motivos de MVP §26.
+- Panel administrativo (`AdminRoute`): ver/buscar usuarios, suspender, ver pedidos de ayuda, ocultar, cerrar, ver reportes, moderar comentarios, estadísticas básicas.
+- Acciones de moderación: `is_hidden`, cierre de pedido de ayuda, `banned_at` en perfiles, estado del reporte (`PENDING/REVIEWED/ACTIONED/DISMISSED`).
 - Autorización administrativa real en DB (`is_admin()`), no controlada por el cliente (ARCH §36, §49).
 
 **Criterio de verificación**
@@ -284,7 +284,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 - **Triggers de dominio** (migración `20260814000011_notifications_triggers.sql`): la tabla `notifications` ya existía (0001) con RLS dueño + grants `select/update/delete` (sin insert, de diseño); la fase agrega 4 funciones SECURITY DEFINER (`set search_path = ''`) + triggers que las crean: `notify_help_offer` (oferta → dueño), `notify_comment` (comentario → dueño), `notify_help_confirmed` (confirmación → oferente), `notify_need_status_change` (cambio de estado → oferentes vigentes). El payload lo arma el trigger: `title` + `actor_name` (+ `status` para cambios de estado). Sin auto-notificación (el actor nunca es el destinatario).
 - **Índice parcial** `notifications_user_unread_idx (user_id) where read_at is null` para el conteo del badge (se mantiene `notifications_user_idx (user_id, created_at desc)` para paginación).
-- **Bandeja `/notifications`** (`ProtectedRoute` + `VerifiedRoute`): `src/features/notifications/{types, services/notificationsService, hooks/useNotifications, components/NotificationItem, pages/NotificationsPage}` con mensajes en español por tipo (UX §23), punto + resaltado de no leídas, "Marcar leída" por fila, "Marcar todo como leído", "Eliminar", enlace "Ver" a la necesidad, y paginación por cursor `(created_at desc, id desc)` con "Cargar más" — mismo patrón que `getPublicNeeds` (PAGE_SIZE+1 sin COUNT).
+- **Bandeja `/notifications`** (`ProtectedRoute` + `VerifiedRoute`): `src/features/notifications/{types, services/notificationsService, hooks/useNotifications, components/NotificationItem, pages/NotificationsPage}` con mensajes en español por tipo (UX §23), punto + resaltado de no leídas, "Marcar leída" por fila, "Marcar todo como leído", "Eliminar", enlace "Ver" a el pedido de ayuda, y paginación por cursor `(created_at desc, id desc)` con "Cargar más" — mismo patrón que `getPublicNeeds` (PAGE_SIZE+1 sin COUNT).
 - **Badge en cabecera**: `AppHeader` muestra "Notificaciones" con contador de no leídas (hook `useUnreadCount`, misma consulta del contrato: `select=id` + `read_at=is.null` con conteo exacto), solo para usuarios autenticados.
 
 **Decisiones técnicas surgidas durante la verificación**
@@ -302,7 +302,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 **Contenido**
 
-- Tabla `notifications` + triggers que crean notificaciones al: oferta de ayuda, comentario, ayuda confirmada, cambio de estado de necesidad.
+- Tabla `notifications` + triggers que crean notificaciones al: oferta de ayuda, comentario, ayuda confirmada, cambio de estado de pedido de ayuda.
 - Bandeja simple dentro de la aplicación con estado de leído/no leído.
 - Consultas paginadas y con índice `(user_id, read_at, created_at DESC)`.
 

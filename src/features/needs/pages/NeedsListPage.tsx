@@ -35,7 +35,8 @@ export function NeedsListPage() {
   const { needs, images, offerCounts, loading, loadingMore, error, hasMore, reload, loadMore } =
     usePublicNeeds(filters)
 
-  const hasActiveFilters = filters.municipalityId !== null || filters.categoryId !== null || filters.status !== null
+  const hasActiveFilters =
+    filters.municipalityId !== null || filters.categoryId !== null || filters.status !== null
 
   function updateFilters(next: NeedFiltersValue) {
     const params = new URLSearchParams()
@@ -51,7 +52,7 @@ export function NeedsListPage() {
       <main className="mx-auto w-full max-w-2xl px-4 py-6">
         <div className="mb-4 flex items-end justify-between gap-2">
           <div>
-            <h1 className="text-brand-900 text-2xl font-semibold">Necesidades</h1>
+            <h1 className="text-brand-900 text-2xl font-semibold">Pedidos de ayuda</h1>
             <p className="text-closed-500 text-sm">Personas de tu región pidiendo ayuda.</p>
           </div>
           {status === 'AUTHENTICATED' ? (
@@ -73,7 +74,11 @@ export function NeedsListPage() {
         />
 
         {loading ? (
-          <div className="mt-4 flex flex-col gap-3" role="status" aria-label="Cargando necesidades">
+          <div
+            className="mt-4 flex flex-col gap-3"
+            role="status"
+            aria-label="Cargando pedidos de ayuda"
+          >
             <Skeleton className="h-28" />
             <Skeleton className="h-28" />
             <Skeleton className="h-28" />
@@ -81,7 +86,11 @@ export function NeedsListPage() {
         ) : error ? (
           <div className="text-closed-600 mt-8 flex flex-col items-center gap-4 text-center">
             <p>{error}</p>
-            <button type="button" onClick={() => void reload()} className={buttonStyles({ variant: 'secondary' })}>
+            <button
+              type="button"
+              onClick={() => void reload()}
+              className={buttonStyles({ variant: 'secondary' })}
+            >
               Reintentar
             </button>
           </div>
@@ -90,13 +99,15 @@ export function NeedsListPage() {
             <HelpCircle className="text-closed-300 size-10" aria-hidden="true" />
             <h2 className="text-closed-700 text-lg font-semibold">
               {hasActiveFilters
-                ? 'No encontramos necesidades con estos filtros.'
-                : 'Todavía no hay necesidades publicadas.'}
+                ? 'No encontramos pedidos de ayuda con estos filtros.'
+                : 'Todavía no hay pedidos de ayuda publicados.'}
             </h2>
             {hasActiveFilters ? (
               <button
                 type="button"
-                onClick={() => updateFilters({ municipalityId: null, categoryId: null, status: null })}
+                onClick={() =>
+                  updateFilters({ municipalityId: null, categoryId: null, status: null })
+                }
                 className={buttonStyles({ variant: 'subtle' })}
               >
                 Limpiar filtros

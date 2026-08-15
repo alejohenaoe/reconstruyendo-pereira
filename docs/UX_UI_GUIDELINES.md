@@ -20,7 +20,7 @@ No introducir funcionalidades fuera del alcance de `MVP.md` solamente para mejor
 La plataforma debe permitir que una persona pueda entender en pocos segundos:
 
 1. Qué es la plataforma.
-2. Qué necesidades existen.
+2. Qué pedidos de ayuda existen.
 3. Cómo puede pedir ayuda.
 4. Cómo puede ayudar.
 5. Qué debe hacer a continuación.
@@ -54,10 +54,10 @@ No presentar múltiples botones primarios compitiendo entre sí.
 
 Ejemplos:
 
-- En una necesidad abierta: `Quiero ayudar`.
-- En creación de necesidad: `Publicar necesidad`.
+- En un pedido de ayuda abierto: `Quiero ayudar`.
+- En creación de pedido de ayuda: `Publicar pedido de ayuda`.
 - En una oferta de ayuda: `Enviar oferta`.
-- En una necesidad propia: `Marcar como solucionada`.
+- En un pedido de ayuda propio: `Marcar como solucionada`.
 
 ---
 
@@ -131,13 +131,13 @@ salvo que una clasificación de prioridad realmente lo justifique.
 
 Una persona debe poder distinguir visualmente entre:
 
-- Una necesidad publicada.
+- Un pedido de ayuda publicado.
 - Una oferta de ayuda.
 - Una ayuda confirmada.
 - Una sugerencia.
 - Un comentario.
 - Un material ofrecido.
-- Una necesidad solucionada.
+- Un pedido de ayuda solucionado.
 
 No presentar una oferta como si fuera una ayuda ya realizada.
 
@@ -173,19 +173,19 @@ No depender de ornamentos para comunicar jerarquía.
 
 # 5. Arquitectura de información
 
-La aplicación debe organizarse alrededor de las necesidades de la comunidad.
+La aplicación debe organizarse alrededor de los pedidos de ayuda de la comunidad.
 
 Estructura conceptual principal:
 
 ```text
 Inicio
-├── Necesidades
-│   ├── Lista de necesidades
-│   └── Detalle de necesidad
+├── Pedidos de ayuda
+│   ├── Lista de pedidos de ayuda
+│   └── Detalle de pedido de ayuda
 │
-├── Publicar necesidad
+├── Publicar pedido de ayuda
 │
-├── Mis necesidades
+├── Mis pedidos de ayuda
 │
 ├── Mis ayudas
 │
@@ -199,7 +199,7 @@ Inicio
 
 No convertir el perfil profesional en el centro de navegación del MVP.
 
-La necesidad debe ser el objeto principal de la experiencia.
+El pedido de ayuda debe ser el objeto principal de la experiencia.
 
 ---
 
@@ -212,12 +212,12 @@ En móvil utilizar una navegación sencilla.
 Debe facilitar el acceso a las funciones principales:
 
 - Inicio.
-- Necesidades.
+- Pedidos de ayuda.
 - Mis ayudas.
-- Mis necesidades.
+- Mis pedidos de ayuda.
 - Perfil.
 
-La acción `Publicar necesidad` puede ocupar una posición destacada cuando corresponda.
+La acción `Publicar pedido de ayuda` puede ocupar una posición destacada cuando corresponda.
 
 No saturar la navegación inferior con más de las opciones necesarias.
 
@@ -252,15 +252,15 @@ Acciones principales:
 
 Debajo debe aparecer un acceso visible a:
 
-> `Necesidades recientes`
+> `Pedidos de ayuda recientes`
 
 La página no debe comenzar con un directorio de profesionales.
 
 ---
 
-# 8. Necesidades públicas
+# 8. Pedidos de ayuda públicas
 
-La lista de necesidades debe poder consultarse sin iniciar sesión.
+La lista de pedidos de ayuda debe poder consultarse sin iniciar sesión.
 
 Cada elemento debe permitir comprender rápidamente:
 
@@ -286,7 +286,7 @@ La lista debe utilizar paginación o carga incremental. No cargar cientos de reg
 
 ---
 
-# 9. Tarjeta de necesidad
+# 9. Tarjeta de pedido de ayuda
 
 La `NeedCard` debe ser una pieza visual reutilizable.
 
@@ -304,13 +304,13 @@ Debe evitar mostrar demasiado texto.
 
 El objetivo de la tarjeta es responder:
 
-> "¿Quiero abrir esta necesidad?"
+> "¿Quiero abrir este pedido de ayuda?"
 
 No contar toda la historia dentro de la tarjeta.
 
 ---
 
-# 10. Detalle de necesidad
+# 10. Detalle de pedido de ayuda
 
 El detalle es una de las pantallas más importantes del producto.
 
@@ -334,21 +334,21 @@ Acciones
 
 La acción principal debe depender del estado.
 
-En una necesidad abierta:
+En un pedido de ayuda abierto:
 
 > `Quiero ayudar`
 
-En una necesidad propia:
+En un pedido de ayuda propio:
 
-> `Gestionar necesidad`
+> `Gestionar pedido de ayuda`
 
-En una necesidad solucionada:
+En un pedido de ayuda solucionado:
 
-> `Necesidad solucionada`
+> `Pedido de ayuda solucionado`
 
 ---
 
-# 11. Estados de una necesidad
+# 11. Estados de un pedido de ayuda
 
 Los estados deben ser visualmente claros y nunca depender solamente del color.
 
@@ -356,7 +356,7 @@ Estados del MVP:
 
 ### 🔴 Necesita ayuda
 
-La necesidad está abierta y requiere colaboración.
+El pedido de ayuda está abierto y requiere colaboración.
 
 ### 🟡 En proceso
 
@@ -364,11 +364,11 @@ Ya hay personas colaborando, pero aún no se ha solucionado.
 
 ### 🟢 Solucionada
 
-El creador confirmó que la necesidad fue solucionada.
+El creador confirmó que el pedido de ayuda fue solucionada.
 
 ### ⚪ Cerrada
 
-La necesidad fue cerrada sin que necesariamente haya sido solucionada.
+El pedido de ayuda fue cerrado sin que necesariamente haya sido solucionado.
 
 Cada estado debe utilizar:
 
@@ -378,7 +378,7 @@ Cada estado debe utilizar:
 
 ---
 
-# 12. Publicar una necesidad
+# 12. Publicar un pedido de ayuda
 
 El formulario debe priorizar la facilidad sobre la cantidad de información.
 
@@ -505,7 +505,7 @@ Esto es una regla de UX y confianza fundamental.
 
 No utilizar inicialmente un checkout, carrito o sistema de donación.
 
-Una oferta de material debe expresarse naturalmente dentro de la necesidad.
+Una oferta de material debe expresarse naturalmente dentro del pedido de ayuda.
 
 Ejemplo:
 
@@ -530,7 +530,7 @@ La interfaz debe permitir:
 
 > `Contactar`
 
-únicamente cuando exista una relación válida entre los usuarios y la necesidad.
+únicamente cuando exista una relación válida entre los usuarios y el pedido de ayuda.
 
 El teléfono puede mostrarse solamente a las personas involucradas.
 
@@ -572,7 +572,7 @@ Debe existir una pantalla específica:
 >
 > Te enviamos un enlace de verificación a `correo@example.com`.
 >
-> Revisa tu bandeja de entrada y confirma tu cuenta para poder publicar necesidades y ofrecer ayuda.
+> Revisa tu bandeja de entrada y confirma tu cuenta para poder publicar pedidos de ayuda y ofrecer ayuda.
 >
 > `Reenviar correo`
 >
@@ -591,7 +591,7 @@ Cuando un usuario llegue a una acción que requiera autenticación, la aplicaci�
 Ejemplo:
 
 ```text
-Necesidad #123
+Pedido de ayuda #123
    ↓
 Quiero ayudar
    ↓
@@ -599,7 +599,7 @@ Login / registro
    ↓
 Verificación de correo
    ↓
-Regreso a Necesidad #123
+Regreso a Pedido de ayuda #123
    ↓
 Continúo con la oferta de ayuda
 ```
@@ -636,13 +636,13 @@ Toda operación asíncrona debe proporcionar feedback visual.
 
 Ejemplos:
 
-- Cargando necesidades.
+- Cargando pedidos de ayuda.
 - Subiendo imágenes.
-- Publicando necesidad.
+- Publicando pedido de ayuda.
 - Enviando oferta.
 - Guardando cambios.
 
-Preferir estados contextuales a bloquear toda la pantalla sin necesidad.
+Preferir estados contextuales a bloquear toda la pantalla sin pedido de ayuda.
 
 Botones que ejecuten acciones deben deshabilitarse mientras la operación está en progreso para evitar dobles envíos.
 
@@ -658,15 +658,15 @@ No mostrar simplemente:
 
 Ejemplo:
 
-> **Todavía no tienes necesidades**
+> **Todavía no tienes pedidos de ayuda**
 >
-> Cuando necesites ayuda con una reparación, puedes publicar una necesidad.
+> Cuando necesites ayuda con una reparación, puedes publicar un pedido de ayuda.
 >
-> `Publicar necesidad`
+> `Publicar pedido de ayuda`
 
-Para necesidades públicas:
+Para pedidos de ayuda públicas:
 
-> **No encontramos necesidades con estos filtros.**
+> **No encontramos pedidos de ayuda con estos filtros.**
 
 ---
 
@@ -678,11 +678,11 @@ Nunca mostrar directamente mensajes crudos de base de datos o errores internos a
 
 Ejemplos correctos:
 
-> `No pudimos publicar la necesidad. Comprueba tu conexión e inténtalo de nuevo.`
+> `No pudimos publicar el pedido de ayuda. Comprueba tu conexión e inténtalo de nuevo.`
 
 > `No tienes permiso para realizar esta acción.`
 
-> `Esta necesidad ya no está disponible para recibir ofertas.`
+> `Este pedido de ayuda ya no está disponible para recibir ofertas.`
 
 Evitar mostrar:
 
@@ -696,8 +696,8 @@ Los errores técnicos sí deben quedar disponibles para logs/developer tooling c
 
 Acciones sensibles como:
 
-- Cerrar una necesidad.
-- Eliminar una necesidad.
+- Cerrar un pedido de ayuda.
+- Eliminar un pedido de ayuda.
 - Eliminar una fotografía.
 - Abandonar una participación.
 
@@ -707,9 +707,9 @@ El texto debe explicar la consecuencia.
 
 Ejemplo:
 
-> **¿Cerrar esta necesidad?**
+> **¿Cerrar este pedido de ayuda?**
 >
-> Ya no aparecerá como una necesidad activa y las personas no podrán ofrecer nuevas ayudas.
+> Ya no aparecerá como un pedido de ayuda activo y las personas no podrán ofrecer nuevas ayudas.
 
 ---
 
@@ -774,7 +774,7 @@ La UI debe:
 - Usar placeholders mientras cargan.
 - Proporcionar estados de error si no pueden cargarse.
 
-Las imágenes no deben dominar la pantalla cuando la descripción y el estado de la necesidad son más importantes.
+Las imágenes no deben dominar la pantalla cuando la descripción y el estado del pedido de ayuda son más importantes.
 
 ---
 
@@ -830,7 +830,7 @@ Centralizar al menos:
 
 Los tokens deben ser compatibles con Tailwind y mantener una única fuente de verdad.
 
-No introducir una segunda librería de componentes visuales si no existe una necesidad clara.
+No introducir una segunda librería de componentes visuales si no existe un pedido de ayuda clara.
 
 ---
 
@@ -842,7 +842,7 @@ Debe existir una jerarquía clara entre:
 
 - Estado positivo.
 - Estado de advertencia.
-- Estado de necesidad/atención.
+- Estado de pedido de ayuda/atención.
 - Error.
 - Información.
 
@@ -874,7 +874,7 @@ Los textos de interfaz deben ser breves y orientados a la acción.
 
 Preferir:
 
-> `Publicar necesidad`
+> `Publicar pedido de ayuda`
 
 sobre:
 
@@ -917,7 +917,7 @@ Diferenciar:
 - `Se ofreció a ayudar`.
 - `Contacto establecido`.
 - `Ayuda confirmada`.
-- `Necesidad solucionada`.
+- `Pedido de ayuda solucionado`.
 
 No utilizar badges como `Confiable`, `Seguro` o `Verificado` salvo que exista una definición funcional real detrás de ellos.
 
@@ -931,7 +931,7 @@ No como:
 
 ---
 
-# 37. Prioridad de información en una necesidad
+# 37. Prioridad de información en un pedido de ayuda
 
 Cuando exista mucha información, respetar esta prioridad:
 
@@ -950,7 +950,7 @@ El usuario no debería tener que leer todos los comentarios para comprender el p
 
 # 38. Protección contra ruido visual
 
-La plataforma puede llegar a tener cientos de usuarios y múltiples necesidades simultáneas.
+La plataforma puede llegar a tener cientos de usuarios y múltiples pedidos de ayuda simultáneas.
 
 El diseño debe evitar que el feed se convierta en una pared de contenido.
 
@@ -963,7 +963,7 @@ Utilizar:
 - Extractos.
 - Agrupación por estado o categoría cuando aporte valor.
 
-No cargar toda la conversación dentro de la tarjeta de una necesidad.
+No cargar toda la conversación dentro de la tarjeta de un pedido de ayuda.
 
 ---
 
@@ -977,7 +977,7 @@ Como mínimo pueden existir:
 - Categoría.
 - Estado.
 
-No introducir filtros avanzados hasta que exista una necesidad real de ellos.
+No introducir filtros avanzados hasta que exista un pedido de ayuda real de ellos.
 
 En móvil los filtros pueden abrirse mediante un panel/modal compacto.
 
@@ -985,15 +985,15 @@ En móvil los filtros pueden abrirse mediante un panel/modal compacto.
 
 # 40. Manejo de concurrencia desde UX
 
-La interfaz debe contemplar que dos personas pueden actuar sobre la misma necesidad simultáneamente.
+La interfaz debe contemplar que dos personas pueden actuar sobre la misma pedido de ayuda simultáneamente.
 
 Ejemplo:
 
-Dos usuarios intentan ofrecer ayuda mientras la necesidad pasa a `RESOLVED`.
+Dos usuarios intentan ofrecer ayuda mientras el pedido de ayuda pasa a `RESOLVED`.
 
 La UI debe responder correctamente a un conflicto del backend:
 
-> `Esta necesidad ya fue solucionada y ya no acepta nuevas ofertas.`
+> `Este pedido de ayuda ya fue solucionada y ya no acepta nuevas ofertas.`
 
 No asumir que el estado mostrado localmente sigue siendo válido indefinidamente.
 
@@ -1004,8 +1004,8 @@ No asumir que el estado mostrado localmente sigue siendo válido indefinidamente
 Para acciones críticas como:
 
 - Confirmar una ayuda.
-- Marcar necesidad como solucionada.
-- Cerrar una necesidad.
+- Marcar pedido de ayuda como solucionada.
+- Cerrar un pedido de ayuda.
 - Compartir contacto.
 
 preferir confirmación real del backend antes de presentar el estado definitivo.
@@ -1053,9 +1053,9 @@ Si la respuesta es no a todas, probablemente no pertenece al MVP.
 La interfaz será considerada correcta cuando:
 
 - Una persona pueda entender el propósito de la plataforma al entrar.
-- Un afectado pueda publicar una necesidad sin conocimientos técnicos.
-- Un ayudante pueda encontrar una necesidad y ofrecerse rápidamente.
-- Una persona pueda entender el estado real de una necesidad.
+- Un afectado pueda publicar un pedido de ayuda sin conocimientos técnicos.
+- Un ayudante pueda encontrar un pedido de ayuda y ofrecerse rápidamente.
+- Una persona pueda entender el estado real de un pedido de ayuda.
 - Los contactos privados no sean expuestos públicamente.
 - Los estados de oferta y ayuda confirmada no se confundan.
 - La interfaz funcione cómodamente en un teléfono.
@@ -1084,7 +1084,7 @@ El objetivo es construir una interfaz que haga evidente y sencillo el siguiente 
 ```text
 Necesito ayuda
       ↓
-Publico mi necesidad
+Publico mi pedido de ayuda
       ↓
 Alguien puede ayudar
       ↓
@@ -1094,7 +1094,7 @@ La ayuda se realiza
       ↓
 La persona confirma
       ↓
-La necesidad queda solucionada
+El pedido de ayuda queda solucionado
 ```
 
 La UI debe hacer que ese ciclo sea fácil de entender y completar.

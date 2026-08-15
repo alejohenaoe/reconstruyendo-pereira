@@ -61,7 +61,9 @@ export function VerifyEmailPage() {
       }
       setMessage({
         variant: 'info',
-        text: email ? `Enviamos un nuevo enlace de verificación a ${email}.` : 'Enviamos un nuevo enlace de verificación.',
+        text: email
+          ? `Enviamos un nuevo enlace de verificación a ${email}.`
+          : 'Enviamos un nuevo enlace de verificación.',
       })
     } finally {
       setResending(false)
@@ -84,16 +86,33 @@ export function VerifyEmailPage() {
       <div className="flex flex-col gap-4">
         {message ? <Alert variant={message.variant}>{message.text}</Alert> : null}
         <p className="text-closed-600 text-sm leading-relaxed">
-          {email ? `Te enviamos un enlace de verificación a ${email}.` : 'Te enviamos un enlace de verificación a tu correo.'}
+          {email
+            ? `Te enviamos un enlace de verificación a ${email}.`
+            : 'Te enviamos un enlace de verificación a tu correo.'}
         </p>
         <p className="text-closed-500 text-sm leading-relaxed">
-          Revisa tu bandeja de entrada y confirma tu cuenta para poder publicar necesidades y ofrecer ayuda.
+          Revisa tu bandeja de entrada y confirma tu cuenta para poder publicar pedidos de ayuda y
+          ofrecer ayuda.
         </p>
         <div className="mt-2 flex flex-col gap-3">
-          <Button type="button" variant="secondary" size="lg" fullWidth loading={resending} onClick={handleResend}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            fullWidth
+            loading={resending}
+            onClick={handleResend}
+          >
             Reenviar correo
           </Button>
-          <Button type="button" variant="primary" size="lg" fullWidth loading={checking} onClick={handleCheck}>
+          <Button
+            type="button"
+            variant="primary"
+            size="lg"
+            fullWidth
+            loading={checking}
+            onClick={handleCheck}
+          >
             Ya verifiqué mi correo
           </Button>
         </div>

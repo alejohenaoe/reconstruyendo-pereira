@@ -8,7 +8,7 @@ La plataforma **no maneja dinero**, no procesa donaciones económicas, no realiz
 
 Su función es ser un **intermediario digital de coordinación de ayuda**:
 
-> Una persona publica una necesidad → otras personas pueden ofrecer ayuda → pueden aportar conocimientos, trabajo o materiales → se establece contacto → la persona afectada confirma si recibió la ayuda → la necesidad puede marcarse como solucionada.
+> Una persona publica un pedido de ayuda → otras personas pueden ofrecer ayuda → pueden aportar conocimientos, trabajo o materiales → se establece contacto → la persona afectada confirma si recibió la ayuda → el pedido de ayuda puede marcarse como solucionada.
 
 El sistema debe ser sencillo, confiable, seguro, completamente en español y orientado inicialmente a **Pereira y Dosquebradas, Risaralda, Colombia**.
 
@@ -102,12 +102,12 @@ El sistema tendrá principalmente dos tipos de usuarios:
 
 ## 5.1 Persona que necesita ayuda
 
-Es una persona afectada que desea publicar una necesidad.
+Es una persona afectada que desea publicar un pedido de ayuda.
 
 Puede:
 
 - Crear una cuenta.
-- Crear una necesidad.
+- Crear un pedido de ayuda.
 - Describir su problema.
 - Subir fotografías.
 - Indicar su ubicación.
@@ -115,9 +115,9 @@ Puede:
 - Ver quién se ofreció.
 - Contactar a las personas que ofrecen ayuda.
 - Confirmar que recibió ayuda.
-- Marcar su necesidad como solucionada.
+- Marcar su pedido de ayuda como solucionada.
 - Subir fotografías posteriores opcionalmente.
-- Ver su historial de necesidades.
+- Ver su historial de pedidos de ayuda.
 
 ## 5.2 Persona que quiere ayudar
 
@@ -153,7 +153,7 @@ Un usuario puede tener más de una capacidad.
 
 # 6. Principio fundamental del sistema
 
-El objeto principal del sistema es una **Necesidad**.
+El objeto principal del sistema es una **Pedido de ayuda**.
 
 La aplicación no debe girar inicialmente alrededor de un directorio de albañiles o profesionales.
 
@@ -161,7 +161,7 @@ Debe girar alrededor de:
 
 > **¿Qué necesita una persona y quién puede ayudarla?**
 
-Una necesidad puede recibir múltiples ofertas de ayuda.
+Un pedido de ayuda puede recibir múltiples ofertas de ayuda.
 
 Ejemplo:
 
@@ -177,13 +177,13 @@ Puede recibir:
 - Una ferretería que ofrece materiales.
 - Una persona que ofrece transportar materiales.
 
-Todas esas participaciones deben poder relacionarse con la misma necesidad.
+Todas esas participaciones deben poder relacionarse con la misma pedido de ayuda.
 
 ---
 
-# 7. Necesidades
+# 7. Pedidos de ayuda
 
-Una necesidad debe incluir como mínimo:
+Un pedido de ayuda debe incluir como mínimo:
 
 - Título.
 - Descripción.
@@ -212,13 +212,13 @@ No crear decenas de categorías innecesarias en el MVP.
 
 ---
 
-# 8. Una persona puede tener solamente una necesidad activa
+# 8. Una persona puede tener solamente un pedido de ayuda activo
 
 Implementar la regla de negocio:
 
-> **Un usuario puede tener como máximo una necesidad activa al mismo tiempo.**
+> **Un usuario puede tener como máximo un pedido de ayuda activo al mismo tiempo.**
 
-Cuando la necesidad sea:
+Cuando el pedido de ayuda sea:
 
 - Solucionada.
 - Cerrada.
@@ -232,30 +232,30 @@ Esta regla debe estar protegida también a nivel de base de datos cuando sea pos
 
 ---
 
-# 9. Estados de una necesidad
+# 9. Estados de un pedido de ayuda
 
 Implementar como mínimo:
 
 - `OPEN` — Necesita ayuda.
-- `IN_PROGRESS` — Ya existen personas ayudando, pero la necesidad aún no está solucionada.
-- `RESOLVED` — La persona afectada confirmó que la necesidad fue solucionada.
-- `CLOSED` — La necesidad fue cerrada sin resolución o dejó de requerir ayuda.
+- `IN_PROGRESS` — Ya existen personas ayudando, pero el pedido de ayuda aún no está solucionada.
+- `RESOLVED` — La persona afectada confirmó que el pedido de ayuda fue solucionada.
+- `CLOSED` — El pedido de ayuda fue cerrado sin resolución o dejó de requerir ayuda.
 
 La transición principal debe ser:
 
 `OPEN → IN_PROGRESS → RESOLVED`
 
-También debe ser posible cerrar una necesidad cuando corresponda.
+También debe ser posible cerrar un pedido de ayuda cuando corresponda.
 
-No permitir que cualquier usuario modifique arbitrariamente el estado de una necesidad.
+No permitir que cualquier usuario modifique arbitrariamente el estado de un pedido de ayuda.
 
-El creador de la necesidad es quien puede marcarla como solucionada o cerrarla.
+El creador del pedido de ayuda es quien puede marcarla como solucionada o cerrarla.
 
 ---
 
 # 10. Ofertas de ayuda
 
-Una persona registrada puede entrar a una necesidad y seleccionar:
+Una persona registrada puede entrar a un pedido de ayuda y seleccionar:
 
 > **Quiero ayudar**
 
@@ -293,7 +293,7 @@ No asumir automáticamente que una oferta significa ayuda realizada.
 
 # 11. Confirmación de ayuda
 
-La persona que creó la necesidad debe poder confirmar que recibió una ayuda.
+La persona que creó el pedido de ayuda debe poder confirmar que recibió una ayuda.
 
 Ejemplo:
 
@@ -309,7 +309,7 @@ Finalmente:
 
 La persona que ofrece ayuda no debe poder otorgarse a sí misma una confirmación definitiva.
 
-La confirmación debe depender del creador de la necesidad.
+La confirmación debe depender del creador del pedido de ayuda.
 
 Si una ayuda no es confirmada, debe permanecer como pendiente o no confirmada.
 
@@ -327,7 +327,7 @@ Debe priorizar:
 - Tipo de ayuda que ofrece.
 - Historial de participaciones.
 - Ayudas confirmadas.
-- Necesidades en las que participó.
+- Pedidos de ayuda en las que participó.
 
 Posteriormente podrá construirse un sistema de reputación.
 
@@ -365,13 +365,13 @@ La plataforma debe registrar esa interacción.
 
 No implementar inicialmente un sistema rígido de checklist de materiales.
 
-El sistema debe utilizar principalmente un **hilo de colaboración/comentarios asociado a la necesidad**.
+El sistema debe utilizar principalmente un **hilo de colaboración/comentarios asociado a el pedido de ayuda**.
 
 ---
 
 # 14. Hilo de colaboración
 
-Cada necesidad debe tener un espacio donde usuarios registrados puedan participar.
+Cada pedido de ayuda debe tener un espacio donde usuarios registrados puedan participar.
 
 Debe permitir:
 
@@ -403,7 +403,7 @@ No es necesario implementar un sistema de chat complejo en la primera versión.
 
 Puede existir un mecanismo de contacto simple.
 
-El usuario que creó la necesidad debe poder contactar a las personas que se ofrecieron a ayudar.
+El usuario que creó el pedido de ayuda debe poder contactar a las personas que se ofrecieron a ayudar.
 
 Los datos de contacto personales no deben mostrarse públicamente.
 
@@ -415,13 +415,13 @@ El contacto puede implementarse inicialmente mediante:
 
 La información de contacto debe ser visible únicamente para las personas involucradas en la ayuda correspondiente.
 
-No mostrar números telefónicos públicamente en la página de necesidades.
+No mostrar números telefónicos públicamente en la página de pedidos de ayuda.
 
 ---
 
 # 16. Privacidad de ubicación
 
-Las necesidades deben mostrar públicamente solamente una ubicación aproximada:
+Los pedidos de ayuda deben mostrar públicamente solamente una ubicación aproximada:
 
 - Municipio.
 - Barrio o zona.
@@ -436,7 +436,7 @@ La arquitectura debe permitir almacenar la ubicación necesaria sin exponerla ac
 
 # 17. Fotografías
 
-Las personas que crean necesidades deben poder subir fotografías.
+Las personas que crean pedidos de ayuda deben poder subir fotografías.
 
 Las imágenes deben almacenarse en Supabase Storage.
 
@@ -447,21 +447,21 @@ Implementar:
 - Límite razonable de cantidad de imágenes.
 - Compresión o redimensionamiento cuando sea conveniente.
 - Nombres de archivos seguros.
-- Organización por necesidad/usuario.
+- Organización por pedido de ayuda/usuario.
 
 Las imágenes no deben almacenarse directamente en PostgreSQL.
 
-No permitir que un usuario pueda modificar o eliminar fotografías pertenecientes a otra necesidad.
+No permitir que un usuario pueda modificar o eliminar fotografías pertenecientes a otra pedido de ayuda.
 
 ---
 
-# 18. Necesidades públicas
+# 18. Pedidos de ayuda públicas
 
-Las necesidades deben poder consultarse sin iniciar sesión.
+Los pedidos de ayuda deben poder consultarse sin iniciar sesión.
 
 Un visitante debe poder:
 
-- Ver necesidades.
+- Ver pedidos de ayuda.
 - Ver fotografías.
 - Ver descripción.
 - Ver municipio/zona.
@@ -470,7 +470,7 @@ Un visitante debe poder:
 
 Sin embargo, para:
 
-- Crear una necesidad.
+- Crear un pedido de ayuda.
 - Comentar.
 - Ofrecer ayuda.
 - Ofrecer materiales.
@@ -541,7 +541,7 @@ El sistema debe asumir que algunas personas podrían intentar aprovecharse de la
 
 Implementar mecanismos básicos de seguridad:
 
-- Reportar necesidad.
+- Reportar pedido de ayuda.
 - Reportar comentario.
 - Reportar usuario.
 - Bloquear usuarios.
@@ -562,7 +562,7 @@ No exponer públicamente datos de contacto personales.
 
 La aplicación no debe presentarse como una herramienta para determinar si una vivienda es estructuralmente segura.
 
-Cuando una necesidad pueda involucrar:
+Cuando un pedido de ayuda pueda involucrar:
 
 - Columnas.
 - Vigas.
@@ -577,13 +577,13 @@ mostrar una advertencia recomendando evaluación de un profesional competente.
 
 La aplicación no debe afirmar que una estructura es segura.
 
-Una persona que declare ser ingeniero o arquitecto puede ofrecerse para evaluar una necesidad, pero el sistema no debe presentar dicha evaluación como una certificación oficial.
+Una persona que declare ser ingeniero o arquitecto puede ofrecerse para evaluar un pedido de ayuda, pero el sistema no debe presentar dicha evaluación como una certificación oficial.
 
 ---
 
-# 23. Finalización de una necesidad
+# 23. Finalización de un pedido de ayuda
 
-El creador de la necesidad debe poder:
+El creador del pedido de ayuda debe poder:
 
 > **Marcar como solucionada**
 
@@ -593,13 +593,13 @@ Opcionalmente puede:
 - Escribir una actualización.
 - Agradecer públicamente a quienes ayudaron.
 
-La necesidad pasa a:
+El pedido de ayuda pasa a:
 
 > `RESOLVED`
 
 La plataforma debe conservar el historial.
 
-Una necesidad solucionada no debe poder recibir nuevas ofertas de ayuda normales.
+Un pedido de ayuda solucionado no debe poder recibir nuevas ofertas de ayuda normales.
 
 ---
 
@@ -609,11 +609,11 @@ Cada usuario debe poder consultar sus participaciones.
 
 Por ejemplo:
 
-### Mis necesidades
+### Mis pedidos de ayuda
 
-- Necesidad actual.
-- Necesidades solucionadas.
-- Necesidades cerradas.
+- Pedido de ayuda actual.
+- Pedidos de ayuda solucionadas.
+- Pedidos de ayuda cerradas.
 
 ### Mis ayudas
 
@@ -634,9 +634,9 @@ Debe permitir:
 - Ver usuarios.
 - Buscar usuarios.
 - Suspender usuarios.
-- Ver necesidades.
-- Ocultar necesidades.
-- Cerrar necesidades cuando sea necesario.
+- Ver pedidos de ayuda.
+- Ocultar pedidos de ayuda.
+- Cerrar pedidos de ayuda cuando sea necesario.
 - Ver reportes.
 - Moderar comentarios.
 - Revisar contenido reportado.
@@ -650,7 +650,7 @@ No construir todavía un CMS complejo.
 
 Implementar reportes para:
 
-- Necesidad sospechosa.
+- Pedido de ayuda sospechosa.
 - Información falsa.
 - Spam.
 - Contenido ofensivo.
@@ -669,10 +669,10 @@ El MVP puede comenzar con notificaciones simples dentro de la aplicación.
 Por ejemplo:
 
 - Alguien se ofreció a ayudar.
-- Alguien comentó la necesidad.
+- Alguien comentó el pedido de ayuda.
 - Alguien ofreció materiales.
 - Una ayuda fue confirmada.
-- Una necesidad cambió de estado.
+- Un pedido de ayuda cambió de estado.
 
 No es necesario implementar inicialmente:
 
@@ -812,13 +812,13 @@ El flujo principal debe funcionar así:
 ```text
 Visitante
    ↓
-Explora necesidades públicas
+Explora pedidos de ayuda públicas
    ↓
 Decide ayudar
    ↓
 Se registra / inicia sesión
    ↓
-Abre una necesidad
+Abre un pedido de ayuda
    ↓
 Se ofrece a ayudar
    ↓
@@ -830,7 +830,7 @@ Se realiza la ayuda
    ↓
 El creador confirma la ayuda
    ↓
-La necesidad continúa abierta o pasa a solucionada
+El pedido de ayuda continúa abierto o pasa a solucionado
 ```
 
 Segundo flujo:
@@ -840,7 +840,7 @@ Persona afectada
    ↓
 Se registra
    ↓
-Publica necesidad
+Publica pedido de ayuda
    ↓
 Describe problema
    ↓
@@ -856,7 +856,7 @@ La ayuda se realiza
    ↓
 El afectado confirma
    ↓
-Necesidad solucionada
+Pedido de ayuda solucionada
 ```
 
 ---
@@ -866,7 +866,7 @@ Necesidad solucionada
 El MVP será considerado funcional cuando una persona pueda realizar de principio a fin este escenario:
 
 1. Registrarse.
-2. Crear una necesidad.
+2. Crear un pedido de ayuda.
 3. Escribir una descripción.
 4. Subir fotografías.
 5. Publicarla.
@@ -874,10 +874,10 @@ El MVP será considerado funcional cuando una persona pueda realizar de principi
 7. Otro usuario registrado puede ofrecerse a ayudar.
 8. El creador puede ver quién se ofreció.
 9. El creador puede acceder al mecanismo de contacto.
-10. Los usuarios pueden interactuar mediante el hilo de la necesidad.
+10. Los usuarios pueden interactuar mediante el hilo del pedido de ayuda.
 11. El creador puede confirmar una ayuda.
-12. El creador puede marcar la necesidad como solucionada.
-13. La necesidad queda registrada en el historial.
+12. El creador puede marcar el pedido de ayuda como solucionada.
+13. El pedido de ayuda queda registrado en el historial.
 14. Los usuarios pueden reportar contenido.
 15. Un administrador puede moderar contenido.
 
@@ -917,7 +917,7 @@ El objetivo es producir un **MVP funcional, sencillo, seguro, mantenible y despl
 
 Al finalizar la implementación debe existir una aplicación web funcional en español que permita:
 
-> **Publicar necesidades → descubrir necesidades → ofrecer ayuda → ofrecer materiales → contactar → confirmar ayuda → solucionar necesidades.**
+> **Publicar pedidos de ayuda → descubrir pedidos de ayuda → ofrecer ayuda → ofrecer materiales → contactar → confirmar ayuda → solucionar pedidos de ayuda.**
 
 La aplicación debe estar preparada para desplegar:
 

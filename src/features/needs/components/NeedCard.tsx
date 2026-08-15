@@ -20,12 +20,12 @@ export function NeedCard({ need, offerCount, image }: NeedCardProps) {
   return (
     <Link
       to={`/needs/${need.id}`}
-      className="group flex gap-4 rounded-lg border border-closed-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+      className="group border-closed-100 focus-visible:ring-brand-600 flex gap-4 rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
     >
       <NeedImage
         src={image?.thumb ?? null}
         fallbackSrc={image?.original}
-        alt={`Fotos de la necesidad: ${need.title}`}
+        alt={`Fotos del pedido de ayuda: ${need.title}`}
         className="h-24 w-24 shrink-0"
       />
       <div className="min-w-0 flex-1">
@@ -39,7 +39,7 @@ export function NeedCard({ need, offerCount, image }: NeedCardProps) {
           <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
           {location || 'Ubicación no especificada'}
         </p>
-        <p className="text-closed-600 line-clamp-2 mt-1 text-sm">{need.description}</p>
+        <p className="text-closed-600 mt-1 line-clamp-2 text-sm">{need.description}</p>
         <div className="text-closed-500 mt-2 flex items-center justify-between gap-2 text-xs">
           <span>{timeAgo(need.created_at)}</span>
           {offerCount > 0 ? (

@@ -4,14 +4,16 @@ import { AppHeader } from '@/shared/components/AppHeader'
 
 const navItemClass = ({ isActive }: { isActive: boolean }): string =>
   `rounded-md px-3 py-2 text-sm font-medium ${
-    isActive ? 'bg-brand-50 text-brand-700' : 'text-closed-600 hover:bg-closed-100 hover:text-closed-800'
+    isActive
+      ? 'bg-brand-50 text-brand-700'
+      : 'text-closed-600 hover:bg-closed-100 hover:text-closed-800'
   }`
 
 const items = [
   { to: '/admin', label: 'Resumen', end: true },
   { to: '/admin/reports', label: 'Reportes', end: false },
   { to: '/admin/users', label: 'Usuarios', end: false },
-  { to: '/admin/needs', label: 'Necesidades', end: false },
+  { to: '/admin/needs', label: 'Pedidos de ayuda', end: false },
 ]
 
 /** Layout del panel admin: cabecera global + navegación lateral. */

@@ -18,8 +18,12 @@ const NEED_SELECT =
 const IMAGE_BUCKET = 'need-images'
 
 export async function getNeedCategories(): Promise<NeedsResult<NeedCategory[]>> {
-  const { data, error } = await supabase.from('need_categories').select('id, slug, label_es').order('id')
-  if (error) return { ok: false, data: null, error: 'No pudimos cargar las categorías.', code: 'unknown' }
+  const { data, error } = await supabase
+    .from('need_categories')
+    .select('id, slug, label_es')
+    .order('id')
+  if (error)
+    return { ok: false, data: null, error: 'No pudimos cargar las categorías.', code: 'unknown' }
   return { ok: true, data: data as NeedCategory[], error: null, code: null }
 }
 
@@ -51,7 +55,13 @@ export async function getPublicNeeds(
   }
 
   const { data, error } = await query
-  if (error) return { ok: false, data: null, error: 'No pudimos cargar las necesidades.', code: 'unknown' }
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: 'No pudimos cargar los pedidos de ayuda.',
+      code: 'unknown',
+    }
 
   const rows = (data ?? []) as unknown as Need[]
   const hasMore = rows.length > NEEDS_PAGE_SIZE
@@ -71,9 +81,25 @@ export async function getPublicNeeds(
 }
 
 export async function getNeedById(id: string): Promise<NeedsResult<Need>> {
-  const { data, error } = await supabase.from('needs').select(NEED_SELECT).eq('id', id).maybeSingle()
-  if (error) return { ok: false, data: null, error: 'No pudimos cargar la necesidad.', code: 'unknown' }
-  if (!data) return { ok: false, data: null, error: 'No encontramos esta necesidad.', code: 'not_found' }
+  const { data, error } = await supabase
+    .from('needs')
+    .select(NEED_SELECT)
+    .eq('id', id)
+    .maybeSingle()
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: 'No pudimos cargar el pedido de ayuda.',
+      code: 'unknown',
+    }
+  if (!data)
+    return {
+      ok: false,
+      data: null,
+      error: 'No encontramos este pedido de ayuda.',
+      code: 'not_found',
+    }
   return { ok: true, data: data as unknown as Need, error: null, code: null }
 }
 
@@ -103,7 +129,11 @@ export async function getNeedImages(needIds: string[]): Promise<NeedImage[]> {
 
 /** Nombre público del autor de una necesidad (profiles). */
 export async function getAuthorName(userId: string): Promise<string | null> {
-  const { data, error } = await supabase.from('profiles').select('display_name').eq('id', userId).maybeSingle()
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id', userId)
+    .maybeSingle()
   if (error || !data) return null
   return (data as { display_name: string }).display_name
 }

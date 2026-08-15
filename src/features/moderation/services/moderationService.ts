@@ -13,7 +13,10 @@ import { supabase } from '@/shared/lib/supabase'
 const ADMIN_LIST_LIMIT = 200
 
 /** Traduce errores de moderación/reportes a mensajes humanos (UX §25). */
-function mapModerationError(error: { code?: string | null; message?: string } | null, fallback: string): string {
+function mapModerationError(
+  error: { code?: string | null; message?: string } | null,
+  fallback: string,
+): string {
   const code = error?.code ?? ''
   const message = error?.message ?? ''
   if (code === '23505') {
@@ -79,7 +82,9 @@ export async function getReports(): Promise<ModResult<ReportView[]>> {
     need: { title: string }[] | null
     comment: { body: string }[] | null
   })[]
-  const ids = rows.flatMap((row) => [row.reporter_id, row.reported_user_id].filter((id): id is string => Boolean(id)))
+  const ids = rows.flatMap((row) =>
+    [row.reporter_id, row.reported_user_id].filter((id): id is string => Boolean(id)),
+  )
   const names = await displayNameOf(ids)
 
   return {
@@ -88,24 +93,40 @@ export async function getReports(): Promise<ModResult<ReportView[]>> {
       ...row,
       reporter_name: names.get(row.reporter_id) ?? 'Desconocido',
       target_label:
-        row.need?.[0]?.title ?? row.comment?.[0]?.body.slice(0, 80) ?? names.get(row.reported_user_id ?? '') ?? '—',
+        row.need?.[0]?.title ??
+        row.comment?.[0]?.body.slice(0, 80) ??
+        names.get(row.reported_user_id ?? '') ??
+        '—',
     })),
     error: null,
   }
 }
 
-export async function updateReportStatus(reportId: string, status: ReportStatus): Promise<ModResult<null>> {
+export async function updateReportStatus(
+  reportId: string,
+  status: ReportStatus,
+): Promise<ModResult<null>> {
   const { error } = await supabase
     .from('reports')
     .update({ status, resolved_at: status === 'PENDING' ? null : new Date().toISOString() })
     .eq('id', reportId)
-  if (error) return { ok: false, data: null, error: mapModerationError(error, 'No pudimos actualizar el reporte.') }
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: mapModerationError(error, 'No pudimos actualizar el reporte.'),
+    }
   return { ok: true, data: null, error: null }
 }
 
 export async function deleteReport(reportId: string): Promise<ModResult<null>> {
   const { error } = await supabase.from('reports').delete().eq('id', reportId)
-  if (error) return { ok: false, data: null, error: mapModerationError(error, 'No pudimos eliminar el reporte.') }
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: mapModerationError(error, 'No pudimos eliminar el reporte.'),
+    }
   return { ok: true, data: null, error: null }
 }
 
@@ -117,14 +138,17 @@ export async function getAdminNeeds(): Promise<ModResult<AdminNeed[]>> {
     .select('id, title, status, is_hidden, hidden_at, created_at, user_id')
     .order('created_at', { ascending: false })
     .limit(ADMIN_LIST_LIMIT)
-  if (error) return { ok: false, data: null, error: 'No pudimos cargar las necesidades.' }
+  if (error) return { ok: false, data: null, error: 'No pudimos cargar los pedidos de ayuda.' }
 
   const rows = (data ?? []) as (AdminNeed & { user_id: string })[]
   const names = await displayNameOf(rows.map((row) => row.user_id))
 
   return {
     ok: true,
-    data: rows.map(({ user_id, ...row }) => ({ ...row, owner_name: names.get(user_id) ?? 'Desconocido' })),
+    data: rows.map(({ user_id, ...row }) => ({
+      ...row,
+      owner_name: names.get(user_id) ?? 'Desconocido',
+    })),
     error: null,
   }
 }
@@ -141,16 +165,26 @@ export async function moderateNeed(
         ? { is_hidden: false, hidden_at: null }
         : { status: 'CLOSED' as const }
   const { error } = await supabase.from('needs').update(payload).eq('id', needId)
-  if (error) return { ok: false, data: null, error: mapModerationError(error, 'No pudimos moderar la necesidad.') }
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: mapModerationError(error, 'No pudimos moderar el pedido de ayuda.'),
+    }
   return { ok: true, data: null, error: null }
 }
 
 // ---------- Panel admin: usuarios ----------
 
-export async function getAdminUsers(search: string, municipalityId: number | null): Promise<ModResult<AdminUser[]>> {
+export async function getAdminUsers(
+  search: string,
+  municipalityId: number | null,
+): Promise<ModResult<AdminUser[]>> {
   let query = supabase
     .from('profiles')
-    .select('id, display_name, municipality_id, app_role, banned_at, created_at, municipalities(name)')
+    .select(
+      'id, display_name, municipality_id, app_role, banned_at, created_at, municipalities(name)',
+    )
     .order('created_at', { ascending: false })
     .limit(ADMIN_LIST_LIMIT)
   const term = search.trim()
@@ -159,21 +193,34 @@ export async function getAdminUsers(search: string, municipalityId: number | nul
 
   const { data, error } = await query
   if (error) return { ok: false, data: null, error: 'No pudimos cargar los usuarios.' }
-  const rows = (data ?? []) as (Omit<AdminUser, 'municipalities'> & { municipalities: { name: string }[] | null })[]
+  const rows = (data ?? []) as (Omit<AdminUser, 'municipalities'> & {
+    municipalities: { name: string }[] | null
+  })[]
   return {
     ok: true,
-    data: rows.map(({ municipalities, ...row }) => ({ ...row, municipalities: municipalities?.[0] ?? null })),
+    data: rows.map(({ municipalities, ...row }) => ({
+      ...row,
+      municipalities: municipalities?.[0] ?? null,
+    })),
     error: null,
   }
 }
 
 /** Suspende/restaura a un usuario (banned_at). El resto lo resuelve is_banned() en backend. */
-export async function setUserSuspended(userId: string, suspended: boolean): Promise<ModResult<null>> {
+export async function setUserSuspended(
+  userId: string,
+  suspended: boolean,
+): Promise<ModResult<null>> {
   const { error } = await supabase
     .from('profiles')
     .update({ banned_at: suspended ? new Date().toISOString() : null })
     .eq('id', userId)
-  if (error) return { ok: false, data: null, error: mapModerationError(error, 'No pudimos suspender al usuario.') }
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: mapModerationError(error, 'No pudimos suspender al usuario.'),
+    }
   return { ok: true, data: null, error: null }
 }
 
@@ -181,6 +228,11 @@ export async function setUserSuspended(userId: string, suspended: boolean): Prom
 
 export async function getAdminStats(): Promise<ModResult<AdminStats>> {
   const { data, error } = await supabase.rpc('admin_stats')
-  if (error) return { ok: false, data: null, error: mapModerationError(error, 'No pudimos cargar las estadísticas.') }
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: mapModerationError(error, 'No pudimos cargar las estadísticas.'),
+    }
   return { ok: true, data: data as unknown as AdminStats, error: null }
 }

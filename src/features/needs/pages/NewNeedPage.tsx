@@ -7,7 +7,11 @@ import { NeedForm } from '@/features/needs/components/NeedForm'
 import type { NeedFormValues } from '@/features/needs/components/NeedForm'
 import type { ImageUploadState, PickedImage } from '@/features/needs/components/ImagePicker'
 import { useNeedCategories } from '@/features/needs/hooks/useNeedCategories'
-import { attachAddress, createNeed, uploadNeedImage } from '@/features/needs/services/needPublishService'
+import {
+  attachAddress,
+  createNeed,
+  uploadNeedImage,
+} from '@/features/needs/services/needPublishService'
 import type { Need } from '@/features/needs/types'
 import { Alert } from '@/shared/components/Alert'
 import { AppHeader } from '@/shared/components/AppHeader'
@@ -17,7 +21,11 @@ import { PageLoader } from '@/shared/components/PageLoader'
 export function NewNeedPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { municipalities, loading: loadingMunicipalities, error: municipalitiesError } = useMunicipalities()
+  const {
+    municipalities,
+    loading: loadingMunicipalities,
+    error: municipalitiesError,
+  } = useMunicipalities()
   const { categories, loading: loadingCategories, error: categoriesError } = useNeedCategories()
 
   const [submitting, setSubmitting] = useState(false)
@@ -76,7 +84,7 @@ export function NewNeedPage() {
           }),
         )
         if (results.some((result) => !result.ok)) {
-          setGlobalError('Algunas fotos no se subieron. La necesidad ya está publicada.')
+          setGlobalError('Algunas fotos no se subieron. Tu pedido de ayuda ya está publicado.')
         }
       }
 
@@ -85,7 +93,7 @@ export function NewNeedPage() {
         state: partialFailure
           ? {
               notice:
-                'Tu necesidad se publicó, pero algunas fotos o la dirección no se guardaron. Puedes volver a intentarlo.',
+                'Tu pedido de ayuda se publicó, pero algunas fotos o la dirección no se guardaron. Puedes volver a intentarlo.',
             }
           : undefined,
       })
@@ -107,7 +115,7 @@ export function NewNeedPage() {
     <div className="bg-closed-100/40 min-h-screen">
       <AppHeader />
       <main className="mx-auto w-full max-w-2xl px-4 py-6">
-        <h1 className="text-brand-900 text-2xl font-semibold">Publicar una necesidad</h1>
+        <h1 className="text-brand-900 text-2xl font-semibold">Publicar un pedido de ayuda</h1>
         <p className="text-closed-500 mt-1 text-sm">
           Cuenta qué necesitas para que alguien de la comunidad pueda ayudarte.
         </p>
@@ -117,7 +125,7 @@ export function NewNeedPage() {
             <Alert>{municipalitiesError ?? categoriesError}</Alert>
           </div>
         ) : (
-          <div className="mt-6 rounded-xl border border-closed-100 bg-white p-5 shadow-sm sm:p-6">
+          <div className="border-closed-100 mt-6 rounded-xl border bg-white p-5 shadow-sm sm:p-6">
             <NeedForm
               municipalities={municipalities}
               categories={categories}
