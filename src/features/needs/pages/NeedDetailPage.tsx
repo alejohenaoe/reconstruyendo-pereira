@@ -12,7 +12,9 @@ import { useNeedCommunity } from '@/features/help/hooks/useNeedCommunity'
 import type { NeedComment, Offerer } from '@/features/help/types'
 import { NeedGallery } from '@/features/needs/components/NeedGallery'
 import { NeedHeader } from '@/features/needs/components/NeedHeader'
+import { StructuralWarning } from '@/features/needs/components/StructuralWarning'
 import { usePublicNeed } from '@/features/needs/hooks/usePublicNeed'
+import { hasStructuralRisk } from '@/features/needs/types'
 import { Alert } from '@/shared/components/Alert'
 import { AppHeader } from '@/shared/components/AppHeader'
 import { Card } from '@/shared/components/Card'
@@ -74,6 +76,13 @@ export function NeedDetailPage() {
   const myOffer = offerers.find((offer) => offer.user_id === user?.id) ?? null
   const canOffer = isAuthenticated && !isOwner && needActive && !myOffer
 
+  const structuralRisk = hasStructuralRisk({
+    title: need.title,
+    description: need.description,
+    categoryLabel: need.need_categories?.label_es ?? null,
+    needsAssessment: need.needs_assessment,
+  })
+
   const reportNeedUrl = `/report?type=need&id=${need.id}&label=${encodeURIComponent(`El pedido de ayuda "${need.title}"`)}&needId=${need.id}`
   const reportAuthorUrl = `/report?type=user&id=${need.user_id}&label=${encodeURIComponent(`El usuario ${authorName ?? 'del autor'}`)}&needId=${need.id}`
   const reportCommentUrl = (comment: NeedComment) =>
@@ -98,6 +107,12 @@ export function NeedDetailPage() {
         {notice ? (
           <div className="mt-4">
             <Alert variant="info">{notice}</Alert>
+          </div>
+        ) : null}
+
+        {structuralRisk ? (
+          <div className="mt-4">
+            <StructuralWarning context="detail" />
           </div>
         ) : null}
 

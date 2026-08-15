@@ -34,6 +34,84 @@ export interface Need {
   municipalities: Pick<Municipality, 'name'> | null
 }
 
+/**
+ * Términos que sugieren que un pedido de ayuda involucra elementos que sostienen
+ * la vivienda (MVP §22). Se comparan contra el texto normalizado (minúsculas y
+ * sin tildes), por eso se escriben sin tildes y en raíz: así cubren plurales y
+ * variantes ("grieta"/"grietas", "agrietada"/"agrietado").
+ *
+ * La lista incluye la categoría `Evaluación profesional` porque pedir una
+ * evaluación tras el terremoto es, justamente, el caso de "daño cuya naturaleza
+ * no es clara" del que habla el MVP.
+ *
+ * Deliberadamente NO incluye "pared" ni "muro" a secas: aparecen en casi
+ * cualquier pedido (pintar, resanar) y volverían la advertencia ruido constante
+ * (UX §3.5, §38). Sí entran cuando vienen con una señal de daño ("agrietada",
+ * "muro de carga").
+ */
+export const STRUCTURAL_HINT_TERMS = [
+  'columna',
+  'viga',
+  'cimiento',
+  'cimentacion',
+  'muro de carga',
+  'muro estructural',
+  'estructura',
+  'estructural',
+  'placa',
+  'losa',
+  'entrepiso',
+  'grieta',
+  'fisura',
+  'agrietad',
+  'resquebraj',
+  'hundimiento',
+  'se hundio',
+  'desplazamiento',
+  'desplom',
+  'inclinad',
+  'se inclino',
+  'colapso',
+  'colapsad',
+  'derrumb',
+  'se vino abajo',
+  'evaluacion profesional',
+]
+
+export interface StructuralRiskInput {
+  title: string
+  description: string
+  categoryLabel?: string | null
+  needsAssessment?: boolean
+}
+
+/** Minúsculas y sin tildes, para comparar texto escrito por personas. */
+function normalizeText(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+/**
+ * Detecta si un pedido de ayuda puede involucrar daño estructural (MVP §22)
+ * para mostrar la advertencia de evaluación profesional.
+ *
+ * Es una heurística de presentación, no una evaluación técnica: ante la duda
+ * prefiere advertir de más. Marcar "no sé exactamente qué necesito" siempre
+ * cuenta como señal, porque es un daño de naturaleza no clara.
+ */
+export function hasStructuralRisk({
+  title,
+  description,
+  categoryLabel,
+  needsAssessment,
+}: StructuralRiskInput): boolean {
+  if (needsAssessment) return true
+  const text = normalizeText([title, description, categoryLabel ?? ''].join(' '))
+  return STRUCTURAL_HINT_TERMS.some((term) => text.includes(term))
+}
+
 export interface NeedFilters {
   municipalityId: number | null
   categoryId: number | null

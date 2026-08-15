@@ -977,6 +977,34 @@ No como:
 
 ---
 
+## 36.1 Advertencia de daño estructural
+
+Cuando un pedido de ayuda pueda involucrar partes que sostienen la vivienda (columnas, vigas,
+muros de carga, cimentación, losas, grietas, fisuras, hundimientos, desplomes o inclinaciones),
+la interfaz muestra una advertencia que recomienda una evaluación por parte de un ingeniero o
+arquitecto (MVP §22).
+
+La detección es una heurística de presentación, no una evaluación técnica: `hasStructuralRisk()`
+(`src/features/needs/types.ts`) compara el título, la descripción y la categoría —normalizados a
+minúsculas y sin tildes— contra `STRUCTURAL_HINT_TERMS`, e incluye siempre los pedidos marcados
+como `No sé exactamente qué necesito`, por tratarse de un daño de naturaleza no clara. Ante la
+duda advierte de más, pero no se dispara por mencionar "pared" o "muro" sin una señal de daño:
+esas palabras aparecen en casi cualquier pedido y volverían el aviso ruido constante (§3.5, §38).
+
+Se muestra con el componente `StructuralWarning` (`Alert` variante `warning` + icono
+`TriangleAlert`) en dos lugares:
+
+- **Publicación**: aparece mientras la persona escribe, encima del botón de publicar, en cuanto
+  el texto o la categoría dan la señal.
+- **Detalle**: bajo el encabezado del pedido, visible también para quien está pensando en ayudar.
+
+El texto es informativo, nunca alarmista, y deja explícito que la plataforma **no evalúa ni
+certifica** si una vivienda es segura, y que lo que opine allí un profesional que se ofrezca a
+ayudar **no es una certificación oficial**. La interfaz nunca afirma que una estructura sea
+segura.
+
+---
+
 # 37. Prioridad de información en un pedido de ayuda
 
 Cuando exista mucha información, respetar esta prioridad:

@@ -6,7 +6,9 @@ import { Lock } from 'lucide-react'
 import type { Municipality } from '@/features/auth/types'
 import { ImagePicker } from '@/features/needs/components/ImagePicker'
 import type { ImageUploadState, PickedImage } from '@/features/needs/components/ImagePicker'
+import { StructuralWarning } from '@/features/needs/components/StructuralWarning'
 import type { NeedCategory } from '@/features/needs/types'
+import { hasStructuralRisk } from '@/features/needs/types'
 import { Alert } from '@/shared/components/Alert'
 import { Button } from '@/shared/components/Button'
 import { TextField } from '@/shared/components/TextField'
@@ -56,6 +58,15 @@ export function NeedForm({
   const [images, setImages] = useState<PickedImage[]>([])
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [addError, setAddError] = useState<string | null>(null)
+
+  // Se recalcula mientras la persona escribe: la advertencia aparece en cuanto
+  // el texto menciona partes que sostienen la casa (MVP §22).
+  const structuralRisk = hasStructuralRisk({
+    title,
+    description,
+    categoryLabel: categories.find((category) => category.id === categoryId)?.label_es ?? null,
+    needsAssessment,
+  })
 
   function handleAddFiles(files: File[]) {
     setAddError(null)
@@ -286,6 +297,8 @@ export function NeedForm({
           />
         </div>
       </div>
+
+      {structuralRisk ? <StructuralWarning context="publish" /> : null}
 
       <Button type="submit" fullWidth size="lg" loading={submitting}>
         {submitting ? 'Publicando…' : 'Publicar pedido de ayuda'}
