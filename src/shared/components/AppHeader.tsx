@@ -1,18 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import {
-  Bell,
-  HandHeart,
-  Home,
-  LogIn,
-  LogOut,
-  Menu,
-  Plus,
-  ShieldCheck,
-  User,
-  X,
-} from 'lucide-react'
+import { Bell, HandHeart, LogIn, LogOut, Menu, Plus, ShieldCheck, User } from 'lucide-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useIsAdmin } from '@/features/auth/hooks/useIsAdmin'
@@ -30,6 +19,7 @@ export function AppHeader() {
   const navigate = useNavigate()
   const [signingOut, setSigningOut] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
   const isAdmin = useIsAdmin(user?.id ?? null)
   const { unread, refresh } = useUnreadCount()
   const canUseNotifications = status === 'AUTHENTICATED'
@@ -38,9 +28,18 @@ export function AppHeader() {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') setMenuOpen(false)
     }
+    function onPointerDown(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
     if (menuOpen) {
       document.addEventListener('keydown', onKeyDown)
-      return () => document.removeEventListener('keydown', onKeyDown)
+      document.addEventListener('mousedown', onPointerDown)
+      return () => {
+        document.removeEventListener('keydown', onKeyDown)
+        document.removeEventListener('mousedown', onPointerDown)
+      }
     }
   }, [menuOpen])
 
@@ -78,12 +77,11 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="border-arena-200 sticky top-0 z-10 border-b bg-white/90 backdrop-blur">
+      <header className="border-arena-200 sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-brand-800 flex items-center gap-2 text-lg font-semibold">
-              <BrandMark size={22} className="shrink-0" />
-              Reconstruyamos
+            <Link to="/" aria-label="Reconstruyamos" className="flex items-center">
+              <BrandMark size={28} />
             </Link>
             <Link
               to="/needs"
@@ -93,7 +91,7 @@ export function AppHeader() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div ref={menuRef} className="relative flex items-center gap-3">
             {/* Desktop */}
             <nav className="hidden items-center gap-3 md:flex" aria-label="Acceso">
               {status === 'AUTH_LOADING' ? null : status === 'UNAUTHENTICATED' ? (
@@ -149,147 +147,129 @@ export function AppHeader() {
             {/* Móvil: botón menú */}
             <button
               type="button"
-              onClick={() => setMenuOpen(true)}
+              onClick={() => setMenuOpen((open) => !open)}
               className="text-closed-600 hover:text-closed-800 md:hidden"
               aria-label="Abrir menú"
               aria-expanded={menuOpen}
+              aria-haspopup="menu"
             >
               <Menu className="size-6" aria-hidden="true" />
             </button>
-          </div>
-        </div>
 
-        {/* Menú móvil: hoja inferior */}
-        {menuOpen ? (
-          <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 md:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menú"
-            onClick={() => setMenuOpen(false)}
-          >
-            <div
-              className="w-full rounded-t-2xl bg-white p-4"
-              onClick={(event) => {
-                event.stopPropagation()
-              }}
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-brand-900 text-base font-semibold">Menú</h2>
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(false)}
-                  className="text-closed-500 hover:text-closed-700"
-                  aria-label="Cerrar menú"
-                >
-                  <X className="size-5" aria-hidden="true" />
-                </button>
-              </div>
-
-              {status === 'AUTH_LOADING' ? null : status === 'UNAUTHENTICATED' ? (
-                <nav className="flex flex-col gap-1" aria-label="Menú principal">
-                  <Link to="/" className={menuItemClass} onClick={() => setMenuOpen(false)}>
-                    <Home className="size-5" aria-hidden="true" />
-                    Inicio
-                  </Link>
-                  <Link to="/needs" className={menuItemClass} onClick={() => setMenuOpen(false)}>
-                    <HandHeart className="size-5" aria-hidden="true" />
-                    Pedidos de ayuda
-                  </Link>
-                  <div className="border-closed-100 mt-2 flex flex-col gap-2 border-t pt-3">
+            {/* Menú móvil: dropdown */}
+            {menuOpen ? (
+              <div
+                role="menu"
+                aria-label="Menú"
+                className="border-arena-200 absolute top-full right-0 z-50 mt-2 w-72 rounded-xl border bg-white p-2 shadow-lg md:hidden"
+              >
+                {status === 'AUTH_LOADING' ? null : status === 'UNAUTHENTICATED' ? (
+                  <>
                     <Link
-                      to="/login"
-                      className={buttonStyles({ variant: 'secondary', fullWidth: true })}
-                    >
-                      <LogIn className="size-4" aria-hidden="true" />
-                      Ingresar
-                    </Link>
-                    <Link
-                      to="/register?redirect=/needs/new"
-                      className={buttonStyles({ variant: 'primary', fullWidth: true })}
-                    >
-                      Pedir ayuda
-                    </Link>
-                  </div>
-                </nav>
-              ) : (
-                <nav className="flex flex-col gap-1" aria-label="Menú principal">
-                  <Link to="/" className={menuItemClass} onClick={() => setMenuOpen(false)}>
-                    <Home className="size-5" aria-hidden="true" />
-                    Inicio
-                  </Link>
-                  <Link to="/needs" className={menuItemClass} onClick={() => setMenuOpen(false)}>
-                    <HandHeart className="size-5" aria-hidden="true" />
-                    Pedidos de ayuda
-                  </Link>
-                  {status === 'EMAIL_UNVERIFIED' ? (
-                    <Link
-                      to="/verify-email"
+                      to="/needs"
+                      role="menuitem"
                       className={menuItemClass}
                       onClick={() => setMenuOpen(false)}
                     >
-                      <Bell className="size-5" aria-hidden="true" />
-                      Verificar correo
+                      <HandHeart className="size-5" aria-hidden="true" />
+                      Pedidos de ayuda
                     </Link>
-                  ) : (
-                    <>
+                    <Link
+                      to="/login"
+                      role="menuitem"
+                      className={menuItemClass}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <LogIn className="size-5" aria-hidden="true" />
+                      Ingresar
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/needs"
+                      role="menuitem"
+                      className={menuItemClass}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <HandHeart className="size-5" aria-hidden="true" />
+                      Pedidos de ayuda
+                    </Link>
+                    {status === 'EMAIL_UNVERIFIED' ? (
                       <Link
-                        to="/needs/new"
-                        className={menuItemClass}
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        <Plus className="size-5" aria-hidden="true" />
-                        Publicar pedido de ayuda
-                      </Link>
-                      <Link
-                        to="/notifications"
+                        to="/verify-email"
+                        role="menuitem"
                         className={menuItemClass}
                         onClick={() => setMenuOpen(false)}
                       >
                         <Bell className="size-5" aria-hidden="true" />
-                        Notificaciones
-                        {unread > 0 ? (
-                          <span className="bg-brand-600 ml-auto rounded-full px-1.5 py-px text-[10px] font-semibold text-white">
-                            {unread > 9 ? '9+' : unread}
-                          </span>
-                        ) : null}
+                        Verificar correo
                       </Link>
-                      {isAdmin ? (
+                    ) : (
+                      <>
                         <Link
-                          to="/admin"
+                          to="/needs/new"
+                          role="menuitem"
                           className={menuItemClass}
                           onClick={() => setMenuOpen(false)}
                         >
-                          <ShieldCheck className="size-5" aria-hidden="true" />
-                          Panel de administración
+                          <Plus className="size-5" aria-hidden="true" />
+                          Publicar pedido de ayuda
                         </Link>
-                      ) : null}
-                      <Link
-                        to="/account"
-                        className={menuItemClass}
-                        onClick={() => setMenuOpen(false)}
+                        <Link
+                          to="/notifications"
+                          role="menuitem"
+                          className={menuItemClass}
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          <Bell className="size-5" aria-hidden="true" />
+                          Notificaciones
+                          {unread > 0 ? (
+                            <span className="bg-brand-600 ml-auto rounded-full px-1.5 py-px text-[10px] font-semibold text-white">
+                              {unread > 9 ? '9+' : unread}
+                            </span>
+                          ) : null}
+                        </Link>
+                        {isAdmin ? (
+                          <Link
+                            to="/admin"
+                            role="menuitem"
+                            className={menuItemClass}
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            <ShieldCheck className="size-5" aria-hidden="true" />
+                            Panel de administración
+                          </Link>
+                        ) : null}
+                        <Link
+                          to="/account"
+                          role="menuitem"
+                          className={menuItemClass}
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          <User className="size-5" aria-hidden="true" />
+                          {String(user?.user_metadata.display_name ?? 'Mi cuenta')}
+                        </Link>
+                      </>
+                    )}
+                    <div className="border-closed-100 mt-1 flex flex-col border-t pt-1">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={handleSignOut}
+                        disabled={signingOut}
+                        className={`${menuItemClass} text-closed-600 disabled:opacity-60`}
                       >
-                        <User className="size-5" aria-hidden="true" />
-                        {String(user?.user_metadata.display_name ?? 'Mi cuenta')}
-                      </Link>
-                    </>
-                  )}
-                  <div className="border-closed-100 mt-2 flex flex-col gap-2 border-t pt-3">
-                    <button
-                      type="button"
-                      onClick={handleSignOut}
-                      disabled={signingOut}
-                      className={`${buttonStyles({ variant: 'subtle', fullWidth: true })} disabled:opacity-60`}
-                    >
-                      <LogOut className="size-4" aria-hidden="true" />
-                      Salir
-                    </button>
-                  </div>
-                </nav>
-              )}
-            </div>
+                        <LogOut className="size-5" aria-hidden="true" />
+                        Salir
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : null}
           </div>
-        ) : null}
+        </div>
       </header>
       <BottomNav />
     </>

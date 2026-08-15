@@ -220,6 +220,8 @@ La acción `Publicar pedido de ayuda` ocupa una posición central destacada (bot
 
 La barra inferior solo se muestra en móvil (`md:hidden`) y respeta el área segura inferior (`safe-area-inset-bottom`). Las personas sin sesión ven el header con acciones de acceso (`Ingresar` / `Registrarse`), sin barra inferior.
 
+El header muestra a la izquierda únicamente el logo (marca sin texto), clickeable a la portada. En móvil, el botón de hamburguesa abre un dropdown (`role="menu"`) que, sin sesión, ofrece `Pedidos de ayuda` e `Ingresar`; con sesión añade `Publicar pedido de ayuda`, `Notificaciones` (con contador), `Panel de administración`, `Mi cuenta` y `Salir`. Cierra al seleccionar, con `Escape` o al hacer clic fuera.
+
 No saturar la navegación inferior con más de las opciones necesarias.
 
 ---

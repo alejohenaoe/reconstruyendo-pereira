@@ -80,71 +80,65 @@ function HeroProductMockup() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none relative mx-auto w-full max-w-sm lg:max-w-md"
+      className="pointer-events-none relative mx-auto w-full max-w-xs lg:max-w-sm"
     >
       {/* Tarjeta principal: un pedido de ayuda */}
-      <div className="border-arena-200 rounded-xl border bg-white p-3 shadow-lg">
-        <div
-          className="relative aspect-[4/3] overflow-hidden rounded-lg"
-          style={{ backgroundImage: BRICK_PATTERN_URL }}
-        >
-          <span className="bg-brand-600 absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full text-white opacity-90">
-            <HardHat className="size-6" aria-hidden="true" />
-          </span>
+      <div className="border-arena-200 rounded-xl border bg-white p-2.5 shadow-lg">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
+          <img
+            src="/images/hero-pedido.jpg"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         </div>
-        <div className="mt-3 flex flex-col gap-2">
-          <p className="text-brand-900 text-sm font-semibold">Reparar techo de la casa</p>
-          <p className="text-closed-500 flex items-center gap-1 text-xs">
+        <div className="mt-2.5 flex flex-col gap-1.5">
+          <p className="text-brand-900 text-[13px] font-semibold">Reparar techo de la casa</p>
+          <p className="text-closed-500 flex items-center gap-1 text-[11px]">
             <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
             Dosquebradas · La Pradera
           </p>
 
           {/* Hilo: las escenas de la historia (ciclo de 14 s) */}
-          <div className="mt-2 flex flex-col gap-1.5">
-            <div className="animate-story-a border-arena-200 bg-arena-50 flex items-center gap-2 rounded-lg border px-2 py-1.5 motion-reduce:animate-none">
-              <span className="bg-brand-600 flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white">
+          <div className="mt-1.5 flex flex-col gap-1">
+            <div className="animate-story-a border-arena-200 bg-arena-50 flex items-center gap-2 rounded-lg border px-1.5 py-1 motion-reduce:animate-none">
+              <span className="bg-brand-600 flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white">
                 Ju
               </span>
-              <p className="text-closed-700 min-w-0 text-[11px] leading-tight">
+              <p className="text-closed-700 min-w-0 text-[10px] leading-tight">
                 <span className="font-semibold">Juan</span> se ofreció ·{' '}
                 <span className="text-brick-700 font-medium">Albañilería</span>
               </p>
             </div>
-            <div className="animate-story-b border-arena-200 bg-arena-50 flex items-center gap-2 rounded-lg border px-2 py-1.5 motion-reduce:animate-none">
-              <span className="bg-brick-600 flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white">
+            <div className="animate-story-b border-arena-200 bg-arena-50 flex items-center gap-2 rounded-lg border px-1.5 py-1 motion-reduce:animate-none">
+              <span className="bg-brick-600 flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white">
                 Jo
               </span>
-              <p className="text-closed-700 min-w-0 text-[11px] leading-tight">
+              <p className="text-closed-700 min-w-0 text-[10px] leading-tight">
                 <span className="font-semibold">Jorge</span> aporta ·{' '}
                 <span className="text-brick-700 font-medium">2 bultos de cemento</span>
               </p>
             </div>
-            <div className="animate-story-c bg-success-50 border-success-100 text-success-700 flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[11px] font-semibold motion-reduce:animate-none">
-              <CheckCircle className="size-3.5 shrink-0" aria-hidden="true" />
+            <div className="animate-story-c bg-success-50 border-success-100 text-success-700 flex items-center gap-1.5 rounded-lg border px-1.5 py-1 text-[10px] font-semibold motion-reduce:animate-none">
+              <CheckCircle className="size-3 shrink-0" aria-hidden="true" />
               Ayuda en camino
             </div>
           </div>
 
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <span className="bg-need-100 text-need-700 animate-pulse-soft inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium motion-reduce:animate-none">
-              <LifeBuoy className="size-3.5" aria-hidden="true" />
+          <div className="mt-1.5 flex items-center justify-between gap-2">
+            <span className="bg-need-100 text-need-700 animate-pulse-soft inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium motion-reduce:animate-none">
+              <LifeBuoy className="size-3" aria-hidden="true" />
               Necesita ayuda
             </span>
-            <span className="text-brand-700 flex items-center gap-1 text-xs font-medium">
-              <HandHeart className="size-3.5" aria-hidden="true" />3 personas se ofrecieron
+            <span className="text-brand-700 flex items-center gap-1 text-[11px] font-medium">
+              <HandHeart className="size-3" aria-hidden="true" />3 personas se ofrecieron
             </span>
           </div>
+
+          {/* Barra de progreso del ciclo */}
+          <div className="bg-arena-200 mt-2.5 h-1 w-full overflow-hidden rounded-full">
+            <div className="animate-progress bg-brand-600 h-full w-full rounded-full motion-reduce:animate-none" />
+          </div>
         </div>
-      </div>
-
-      {/* Barra de progreso del ciclo */}
-      <div className="bg-arena-200 mt-3 h-1 w-full overflow-hidden rounded-full">
-        <div className="animate-progress bg-brand-600 h-full w-full rounded-full motion-reduce:animate-none" />
-      </div>
-
-      {/* Chip de comunidad (flotante) */}
-      <div className="bg-brick-600 animate-float absolute -bottom-3 -left-2 -rotate-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white shadow-lg motion-reduce:animate-none sm:-left-4">
-        Pedidos abiertos en tu región
       </div>
     </div>
   )
@@ -176,7 +170,7 @@ export function HomePage() {
                 Terremoto del 10 de agosto de 2026
               </span>
               <h1 className="text-brand-900 mt-4 text-4xl font-semibold sm:text-5xl">
-                Ayudemos <span className="text-brand-600">entre todos</span>
+                Ayudemos <span className="text-brand-600">entre todos.</span>
               </h1>
               <p className="text-closed-600 mt-4 text-lg leading-relaxed">
                 Si el terremoto dañó tu casa, pide ayuda para repararla —paredes, techos,
