@@ -6,6 +6,7 @@ import type { MyOffer } from '@/features/profile/types'
 import {
   MY_NEED_GROUP_ORDER,
   MY_OFFER_GROUP_ORDER,
+  capabilityChanges,
   groupMyNeeds,
   groupMyOffers,
 } from '@/features/profile/types'
@@ -93,5 +94,23 @@ describe('groupMyOffers (historial de ayudas, MVP §24)', () => {
   it('devuelve todos los grupos aunque estén vacíos', () => {
     const groups = groupMyOffers([])
     for (const group of MY_OFFER_GROUP_ORDER) expect(groups[group]).toEqual([])
+  })
+})
+
+describe('capabilityChanges (capacidades declaradas, MVP §19)', () => {
+  it('no cambia nada cuando la selección es la misma', () => {
+    expect(capabilityChanges([1, 2], [2, 1])).toEqual({ toAdd: [], toRemove: [] })
+  })
+
+  it('detecta lo que se agrega y lo que se quita', () => {
+    expect(capabilityChanges([1, 2], [2, 3])).toEqual({ toAdd: [3], toRemove: [1] })
+  })
+
+  it('agrega todo cuando no había capacidades declaradas', () => {
+    expect(capabilityChanges([], [4, 5])).toEqual({ toAdd: [4, 5], toRemove: [] })
+  })
+
+  it('quita todo cuando se deselecciona', () => {
+    expect(capabilityChanges([4, 5], [])).toEqual({ toAdd: [], toRemove: [4, 5] })
   })
 })

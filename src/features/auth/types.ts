@@ -9,6 +9,12 @@ export interface SignUpInput {
   password: string
   /** Slug del municipio (ej. `pereira`); el trigger handle_new_user lo resuelve. */
   municipalitySlug: string | null
+  /**
+   * Slugs de las capacidades declaradas (tipo de participación, MVP §19). Viajan
+   * en la metadata porque con la confirmación de correo activa todavía no hay
+   * sesión para escribir en `profile_capabilities`: las materializa el trigger.
+   */
+  capabilitySlugs: string[]
 }
 
 /** Códigos legibles por máquina para que la UI reaccione sin depender de strings. */

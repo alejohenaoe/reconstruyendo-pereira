@@ -19,15 +19,15 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
   - `npm run dev` — dev server Vite (usa el `.env` local).
   - `npm run build` — `tsc -b && vite build` (output `dist/`).
   - `npm run lint` — oxlint. `npm run typecheck` — `tsc -b`.
-  - `npm run test` — tests unitarios Vitest (44 tests, co-localizados en `src/**/*.test.ts`).
-  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (41), auth (10), publish (21), help (53), moderation (40), notifications (47).
+  - `npm run test` — tests unitarios Vitest (48 tests, co-localizados en `src/**/*.test.ts`).
+  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (45), auth (14), publish (21), help (53), moderation (40), notifications (47).
   - `npm run format` / `format:check` — Prettier (incluye `prettier-plugin-tailwindcss`).
 
 ## Estructura
 
 - `src/features/{auth,home,needs,help,profile,moderation,notifications}/` — feature slices; cada una con `pages/`, `components/`, `hooks/`, `services/`, `types.ts`.
 - `src/shared/{components,hooks,lib,types,utils}/` — código compartido. El cliente único de Supabase está en `src/shared/lib/supabase.ts` (alias `@` → `./src`, ver `vite.config.ts`).
-- `supabase/migrations/` — 11 migraciones versionadas (la única vía de cambios de esquema; nunca editar el esquema a mano).
+- `supabase/migrations/` — 12 migraciones versionadas (la única vía de cambios de esquema; nunca editar el esquema a mano).
 - `supabase/tests/` — contratos e2e por API (`*.sh`) + `run_all.sh`.
 
 ## Supabase
@@ -60,6 +60,6 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
 - En bash, el filtro `or=(and(created_at.lt.X),and(created_at.eq.X,id.lt.Y))` exige codificar `/`, `(`, `)`, `+`, `:`; el `OR_FILTER` en peticiones con query (`/notifications?...`) debe llevar el `/` inicial. (supabase-js lo codifica solo; los `.sh` lo hacen a mano.)
 - Los listados usan paginación por cursor keyset `(created_at desc, id desc)`, nunca `select('*')` ni listados completos.
 - Notificaciones: triggers `SECURITY DEFINER` en la migración 0011 (la tabla no expone INSERT → 403 a clientes); payload `{title, actor_name, status?}`; índice parcial `(user_id) where read_at is null`.
-- Migraciones para el primer despliegue: se mantienen las 11 versionadas tal cual (no condensar) — decisión documentada en `docs/IMPLEMENTATION_PLAN.md` (Fase 8).
+- Migraciones para el primer despliegue: se mantienen las versionadas tal cual (no condensar) — decisión documentada en `docs/IMPLEMENTATION_PLAN.md` (Fase 8).
 - Datos privados (teléfono, perfil) nunca en consultas públicas; UI siempre en español, mobile-first y accesible.
 - No añadir dependencias/patrones fuera de alcance sin justificación documentada en los docs.

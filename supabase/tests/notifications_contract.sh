@@ -8,12 +8,15 @@
 #  - marcar leída no afecta a las demás; conteo de no leídas (índice parcial)
 #  - paginación por cursor (created_at desc, id desc), misma forma que el frontend
 set -o pipefail
+# Directorio temporal propio del contrato (no depender de rutas de otras herramientas).
+TMPD="${TMPDIR:-/tmp}/reconstruyendo-tests"
+mkdir -p "$TMPD"
 
 API=http://127.0.0.1:54421
 REST=$API/rest/v1
 AUTH=$API/auth/v1
 KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
-OUT=/tmp/opencode/notif_out.json
+OUT=$TMPD/notif_out.json
 DB=supabase_db_rpbpwwwvakpxzdinvojw
 P=0; F=0
 TS=$(date +%s)
@@ -45,11 +48,11 @@ api(){ # method path token body
 # count: conteo exacto (misma consulta del badge: select=id + read_at is.null)
 count(){ # path token
   local p="$1" t="$2"
-  local curl_cmd=(curl -s -o /dev/null -D /tmp/opencode/notif_h.txt -w "%{http_code}" -X GET \
+  local curl_cmd=(curl -s -o /dev/null -D $TMPD/notif_h.txt -w "%{http_code}" -X GET \
     -H "apikey: $KEY" -H "Prefer: count=exact" -H "Range: 0-0")
   [ -n "$t" ] && curl_cmd+=(-H "Authorization: Bearer $t")
   OUT_CODE=$("${curl_cmd[@]}" "$REST$p")
-  OUT_COUNT=$(grep -i '^content-range:' /tmp/opencode/notif_h.txt | tr -d '\r' | sed 's/.*\///')
+  OUT_COUNT=$(grep -i '^content-range:' $TMPD/notif_h.txt | tr -d '\r' | sed 's/.*\///')
 }
 
 nlist(){ # token user_id

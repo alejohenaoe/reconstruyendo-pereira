@@ -6,6 +6,8 @@ import { AuthLayout } from '@/features/auth/components/AuthLayout'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useMunicipalities } from '@/features/auth/hooks/useMunicipalities'
 import { useRedirectParam } from '@/features/auth/hooks/useRedirectParam'
+import { useCapabilities } from '@/features/help/hooks/useCapabilities'
+import { CapabilityPicker } from '@/features/profile/components/CapabilityPicker'
 import { Alert } from '@/shared/components/Alert'
 import { Button } from '@/shared/components/Button'
 import { TextField } from '@/shared/components/TextField'
@@ -14,19 +16,34 @@ export function RegisterPage() {
   const { status, signUp } = useAuth()
   const navigate = useNavigate()
   const redirect = useRedirectParam()
-  const { municipalities, loading: loadingMunicipalities, error: municipalitiesError } = useMunicipalities()
+  const {
+    municipalities,
+    loading: loadingMunicipalities,
+    error: municipalitiesError,
+  } = useMunicipalities()
+  const { capabilities, loading: loadingCapabilities } = useCapabilities()
 
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [municipalitySlug, setMunicipalitySlug] = useState('')
+  const [capabilityIds, setCapabilityIds] = useState<number[]>([])
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (status === 'AUTHENTICATED') navigate(redirect ?? '/', { replace: true })
-    if (status === 'EMAIL_UNVERIFIED') navigate(`/verify-email${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`, { replace: true })
+    if (status === 'EMAIL_UNVERIFIED')
+      navigate(`/verify-email${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`, {
+        replace: true,
+      })
   }, [status, redirect, navigate])
+
+  function toggleCapability(id: number) {
+    setCapabilityIds((current) =>
+      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
+    )
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -46,6 +63,10 @@ export function RegisterPage() {
       setError('Selecciona tu municipio.')
       return
     }
+    if (capabilityIds.length === 0) {
+      setError('Cuéntanos cómo quieres participar: elige al menos una opción.')
+      return
+    }
 
     setSubmitting(true)
     try {
@@ -55,6 +76,9 @@ export function RegisterPage() {
           email: trimmedEmail,
           password,
           municipalitySlug,
+          capabilitySlugs: capabilities
+            .filter((capability) => capabilityIds.includes(capability.id))
+            .map((capability) => capability.slug),
         },
         redirect,
       )
@@ -76,7 +100,10 @@ export function RegisterPage() {
   }
 
   return (
-    <AuthLayout title="Crear cuenta" subtitle="Regístrate en un momento: nombre, correo y municipio.">
+    <AuthLayout
+      title="Crear cuenta"
+      subtitle="Regístrate en un momento: nombre, correo y municipio."
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error ? <Alert>{error}</Alert> : null}
         {municipalitiesError ? <Alert>{municipalitiesError}</Alert> : null}
@@ -118,7 +145,7 @@ export function RegisterPage() {
             value={municipalitySlug}
             onChange={(event) => setMunicipalitySlug(event.target.value)}
             disabled={loadingMunicipalities}
-            className="text-closed-700 focus:border-brand-500 focus:ring-brand-500 w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:bg-closed-100 disabled:opacity-60"
+            className="text-closed-700 focus:border-brand-500 focus:ring-brand-500 border-closed-100 disabled:bg-closed-100 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-offset-1 focus:outline-none disabled:opacity-60"
           >
             <option value="">Selecciona tu municipio</option>
             {municipalities.map((municipality) => (
@@ -128,6 +155,14 @@ export function RegisterPage() {
             ))}
           </select>
         </div>
+        <CapabilityPicker
+          capabilities={capabilities}
+          selectedIds={capabilityIds}
+          onToggle={toggleCapability}
+          disabled={loadingCapabilities}
+          legend="¿Cómo puedes participar?"
+          description="Elige todas las que apliquen. Puedes necesitar ayuda y también aportar algo."
+        />
         <Button type="submit" fullWidth size="lg" loading={submitting}>
           Crear cuenta
         </Button>

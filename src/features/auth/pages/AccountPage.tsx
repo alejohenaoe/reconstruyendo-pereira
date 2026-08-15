@@ -7,7 +7,10 @@ import { AppHeader } from '@/shared/components/AppHeader'
 import { Button } from '@/shared/components/Button'
 import { TextField } from '@/shared/components/TextField'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+import { useCapabilities } from '@/features/help/hooks/useCapabilities'
 import { getOwnPhone, saveOwnPhone } from '@/features/help/services/helpService'
+import { CapabilityPicker } from '@/features/profile/components/CapabilityPicker'
+import { getMyCapabilities, saveMyCapabilities } from '@/features/profile/services/profileService'
 import { Alert } from '@/shared/components/Alert'
 
 /**
@@ -23,6 +26,13 @@ export function AccountPage() {
   const [savingPhone, setSavingPhone] = useState(false)
   const [phoneError, setPhoneError] = useState<string | null>(null)
   const [phoneSaved, setPhoneSaved] = useState(false)
+  const { capabilities } = useCapabilities()
+  const [capabilityIds, setCapabilityIds] = useState<number[]>([])
+  const [savedCapabilityIds, setSavedCapabilityIds] = useState<number[]>([])
+  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false)
+  const [savingCapabilities, setSavingCapabilities] = useState(false)
+  const [capabilitiesError, setCapabilitiesError] = useState<string | null>(null)
+  const [capabilitiesSaved, setCapabilitiesSaved] = useState(false)
 
   const displayName = String(user?.user_metadata.display_name ?? '')
   const email = user?.email ?? ''
@@ -39,6 +49,50 @@ export function AccountPage() {
       active = false
     }
   }, [user])
+
+  useEffect(() => {
+    if (!user) return
+    let active = true
+    void getMyCapabilities(user.id).then((result) => {
+      if (!active) return
+      if (result.ok) {
+        setCapabilityIds(result.data)
+        setSavedCapabilityIds(result.data)
+      } else {
+        setCapabilitiesError(result.error)
+      }
+      setCapabilitiesLoaded(true)
+    })
+    return () => {
+      active = false
+    }
+  }, [user])
+
+  function toggleCapability(id: number) {
+    setCapabilitiesSaved(false)
+    setCapabilityIds((current) =>
+      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
+    )
+  }
+
+  async function handleSaveCapabilities() {
+    if (!user) return
+    if (capabilityIds.length === 0) {
+      setCapabilitiesError('Elige al menos una forma de participar.')
+      return
+    }
+    setSavingCapabilities(true)
+    setCapabilitiesError(null)
+    setCapabilitiesSaved(false)
+    const result = await saveMyCapabilities(user.id, savedCapabilityIds, capabilityIds)
+    setSavingCapabilities(false)
+    if (!result.ok) {
+      setCapabilitiesError(result.error)
+      return
+    }
+    setSavedCapabilityIds(capabilityIds)
+    setCapabilitiesSaved(true)
+  }
 
   async function handleSavePhone() {
     if (!user) return
@@ -123,6 +177,36 @@ export function AccountPage() {
                 </div>
                 {phoneSaved ? <Alert variant="success">Teléfono guardado.</Alert> : null}
               </div>
+            ) : (
+              <p className="text-closed-500 text-sm">Cargando…</p>
+            )}
+          </div>
+
+          {/* Capacidades declaradas (MVP §19, UX §22): multi-selección, no roles. */}
+          <div className="border-closed-100 flex flex-col gap-3 rounded-xl border bg-white p-6 shadow-sm">
+            {capabilitiesLoaded ? (
+              <>
+                <CapabilityPicker
+                  capabilities={capabilities}
+                  selectedIds={capabilityIds}
+                  onToggle={toggleCapability}
+                  disabled={savingCapabilities}
+                  legend="Cómo participas"
+                  description="Así sabe la comunidad en qué puedes aportar. Puedes cambiarlo cuando quieras."
+                  error={capabilitiesError ?? undefined}
+                />
+                <div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    loading={savingCapabilities}
+                    onClick={() => void handleSaveCapabilities()}
+                  >
+                    Guardar capacidades
+                  </Button>
+                </div>
+                {capabilitiesSaved ? <Alert variant="success">Capacidades guardadas.</Alert> : null}
+              </>
             ) : (
               <p className="text-closed-500 text-sm">Cargando…</p>
             )}

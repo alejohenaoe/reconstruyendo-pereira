@@ -6,12 +6,15 @@
 #  - suspender usuario (is_banned bloquea necesidad/comentario/reporte)
 #  - un usuario normal NO puede ejecutar acciones de admin (verificado por GET)
 set -o pipefail
+# Directorio temporal propio del contrato (no depender de rutas de otras herramientas).
+TMPD="${TMPDIR:-/tmp}/reconstruyendo-tests"
+mkdir -p "$TMPD"
 
 API=http://127.0.0.1:54421
 REST=$API/rest/v1
 AUTH=$API/auth/v1
 KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
-OUT=/tmp/opencode/mod_out.json
+OUT=$TMPD/mod_out.json
 DB=supabase_db_rpbpwwwvakpxzdinvojw
 P=0; F=0
 TS=$(date +%s)

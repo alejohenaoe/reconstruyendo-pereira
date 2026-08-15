@@ -69,6 +69,7 @@ export async function signUp(input: SignUpInput, redirectPath?: string | null): 
       data: {
         display_name: input.displayName,
         municipality: input.municipalitySlug,
+        capabilities: input.capabilitySlugs,
       },
       emailRedirectTo: verificationRedirectTo(redirectPath),
     },

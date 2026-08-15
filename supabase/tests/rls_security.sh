@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # Tests de seguridad RLS vía API (equivalente a lo que vería un atacante/frontend)
 set -o pipefail
+# Directorio temporal propio del contrato (no depender de rutas de otras herramientas).
+TMPD="${TMPDIR:-/tmp}/reconstruyendo-tests"
+mkdir -p "$TMPD"
 
 API=http://127.0.0.1:54421
 REST=$API/rest/v1
 AUTH=$API/auth/v1
 KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
-OUT=/tmp/opencode/rls_out.json
+OUT=$TMPD/rls_out.json
 PASSES=0; FAILS=0
 TS=$(date +%s)
 docker exec supabase_db_rpbpwwwvakpxzdinvojw psql -U postgres -d postgres -c "select pg_notify('pgrst', 'reload schema');" >/dev/null 2>&1
@@ -146,6 +149,17 @@ NLOG=$(docker exec supabase_db_rpbpwwwvakpxzdinvojw psql -U postgres -d postgres
 NBUCK=$(docker exec supabase_db_rpbpwwwvakpxzdinvojw psql -U postgres -d postgres -tAc \
   "select count(*) from storage.buckets where id='need-images' and public and file_size_limit=5242880 and 'image/jpeg' = any(allowed_mime_types);")
 [ "$NBUCK" = "1" ] && pass "bucket need-images configurado (public/5MB/jpeg,png,webp)" || fail "bucket need-images: count=$NBUCK"
+
+echo "=== 9b. Capacidades declaradas (MVP §19) ==="
+api POST "/profile_capabilities" "$TK_A" "{\"profile_id\":\"$ID_A\",\"capability_id\":2}"
+check "A declara su propia capacidad (201)" 201 "$OUT_CODE"
+api POST "/profile_capabilities" "$TK_B" "{\"profile_id\":\"$ID_A\",\"capability_id\":3}"
+check "B NO declara capacidades por A (403)" 403 "$OUT_CODE"
+api DELETE "/profile_capabilities?profile_id=eq.$ID_A&capability_id=eq.2" "$TK_B" ""
+api GET "/profile_capabilities?select=capability_id&profile_id=eq.$ID_A&capability_id=eq.2" "" ""
+[ "$(jq length "$OUT")" = "1" ] && pass "B NO borra capacidades de A (sigue ahi)" || fail "capacidad de A borrada por B"
+api DELETE "/profile_capabilities?profile_id=eq.$ID_A&capability_id=eq.2" "$TK_A" ""
+check "A borra su propia capacidad (204)" 204 "$OUT_CODE"
 
 echo "=== 10. Borrado en cascada ==="
 api DELETE "/needs?id=eq.$NEED_ID" "$TK_A" ""

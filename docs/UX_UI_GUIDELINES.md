@@ -569,6 +569,14 @@ Una persona puede seleccionar más de una capacidad.
 
 No tratar estas opciones como roles mutuamente excluyentes.
 
+Implementación: el registro pide al menos una capacidad con `CapabilityPicker` (casillas de
+verificación sobre el catálogo `capabilities`, nunca un selector único). Como con la confirmación
+de correo activa todavía no hay sesión al terminar el registro, las capacidades viajan como
+arreglo de slugs en la metadata del usuario y el trigger `handle_new_user` las materializa en
+`profile_capabilities` dentro de la misma transacción que crea el perfil; un slug desconocido se
+ignora en vez de romper el registro. Después, `Mi cuenta` permite cambiarlas con el mismo
+componente, guardando solo la diferencia.
+
 ---
 
 # 20. Verificación de correo

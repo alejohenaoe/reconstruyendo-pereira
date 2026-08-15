@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Verificación e2e del flujo de auth (contrato que usa authService) contra el stack local.
 set -o pipefail
+# Directorio temporal propio del contrato (no depender de rutas de otras herramientas).
+TMPD="${TMPDIR:-/tmp}/reconstruyendo-tests"
+mkdir -p "$TMPD"
 API=http://127.0.0.1:54421
 AUTH=$API/auth/v1
 REST=$API/rest/v1
@@ -27,8 +30,8 @@ print(urllib.parse.unquote(m.group(1)) if m else '')
 
 echo "=== Flujo 1: registro + perfil + confirmación ==="
 curl -s -X POST "$AUTH/signup?redirect_to=http%3A%2F%2F127.0.0.1%3A5173%2Fauth%2Fcallback%3Fredirect%3D%252Faccount" -H "apikey: $KEY" -H "Content-Type: application/json" \
-  -d "{\"email\":\"e2e1${TS}@test.local\",\"password\":\"Passw0rd!ABC\",\"data\":{\"display_name\":\"E2E Uno\",\"municipality\":\"dosquebradas\"}}" > /tmp/opencode/s1.json
-J1=$(cat /tmp/opencode/s1.json)
+  -d "{\"email\":\"e2e1${TS}@test.local\",\"password\":\"Passw0rd!ABC\",\"data\":{\"display_name\":\"E2E Uno\",\"municipality\":\"dosquebradas\",\"capabilities\":[\"labor\",\"advice\",\"slug_inexistente\"]}}" > $TMPD/s1.json
+J1=$(cat $TMPD/s1.json)
 ID1=$(echo "$J1" | jq -r .id)
 [ "$(echo "$J1" | jq -r .user_metadata.municipality)" = "dosquebradas" ] && ok "user_metadata.municipality=dosquebradas" || ko "user_metadata.municipality"
 [ "$(echo "$J1" | jq -r '.confirmation_sent_at != null')" = "true" ] && ok "confirmation_sent_at presente (confirmaciones ON)" || ko "confirmation_sent_at"
@@ -37,6 +40,10 @@ ID1=$(echo "$J1" | jq -r .id)
 PROF=$(curl -s "$REST/profiles?select=display_name,municipality_id&id=eq.$ID1" -H "apikey: $KEY")
 [ "$(echo "$PROF" | jq -r '.[0].display_name')" = "E2E Uno" ] && ok "trigger: perfil con display_name" || ko "perfil display_name: $PROF"
 [ "$(echo "$PROF" | jq -r '.[0].municipality_id')" != "null" ] && ok "trigger: municipality_id resuelto (dosquebradas)" || ko "municipality_id null: $PROF"
+
+# capacidades declaradas al registrarse (MVP §19): el trigger las materializa
+CAPS=$(curl -s "$REST/profile_capabilities?select=capabilities(slug)&profile_id=eq.$ID1" -H "apikey: $KEY" | jq -r '[.[].capabilities.slug] | sort | join(",")')
+[ "$CAPS" = "advice,labor" ] && ok "trigger: capacidades del registro (slug inexistente ignorado)" || ko "capacidades: $CAPS"
 
 # enlace de confirmación conserva /auth/callback y el redirect
 LINK=$(latest_link "e2e1${TS}@test.local")
@@ -69,6 +76,15 @@ curl -s -o /dev/null -X POST "$AUTH/recover?redirect_to=http%3A%2F%2F127.0.0.1%3
 sleep 1
 RLINK=$(latest_link "e2e1${TS}@test.local")
 [[ "$RLINK" == *"redirect_to"* && "$RLINK" == *"reset-password"* ]] && ok "enlace de recuperación -> /reset-password" || ko "enlace recuperación: $RLINK"
+echo "=== Flujo 1b: metadata de capacidades inválida no rompe el registro ==="
+curl -s -X POST "$AUTH/signup" -H "apikey: $KEY" -H "Content-Type: application/json" \
+  -d "{\"email\":\"e2e1b${TS}@test.local\",\"password\":\"Passw0rd!ABC\",\"data\":{\"display_name\":\"E2E Uno B\",\"capabilities\":\"labor\"}}" > $TMPD/s1b.json
+ID1B=$(jq -r .id $TMPD/s1b.json)
+[ -n "$ID1B" ] && [ "$ID1B" != "null" ] && ok "registro con capabilities no-arreglo: usuario creado" || ko "registro con capabilities no-arreglo: $(cat $TMPD/s1b.json | head -c 200)"
+PROF1B=$(curl -s "$REST/profiles?select=display_name&id=eq.$ID1B" -H "apikey: $KEY" | jq -r '.[0].display_name')
+[ "$PROF1B" = "E2E Uno B" ] && ok "perfil creado pese a metadata inválida" || ko "perfil no creado: $PROF1B"
+CAPS1B=$(curl -s "$REST/profile_capabilities?select=capability_id&profile_id=eq.$ID1B" -H "apikey: $KEY" | jq 'length')
+[ "$CAPS1B" = "0" ] && ok "sin capacidades cuando la metadata no es un arreglo" || ko "capacidades inesperadas: $CAPS1B"
 
 echo ""
 echo "PASS=$P FAIL=$F"

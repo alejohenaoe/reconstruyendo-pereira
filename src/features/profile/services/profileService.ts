@@ -1,4 +1,5 @@
 import type { MyOffer, MyOffersCursor, MyOffersPage, ProfileResult } from '@/features/profile/types'
+import { capabilityChanges } from '@/features/profile/types'
 import { supabase } from '@/shared/lib/supabase'
 
 export const MY_OFFERS_PAGE_SIZE = 10
@@ -49,4 +50,48 @@ export async function listMyOffers(
     },
     error: null,
   }
+}
+
+/** Capacidades declaradas de una persona (UX §22: se muestran en el perfil). */
+export async function getMyCapabilities(userId: string): Promise<ProfileResult<number[]>> {
+  const { data, error } = await supabase
+    .from('profile_capabilities')
+    .select('capability_id')
+    .eq('profile_id', userId)
+  if (error) return { ok: false, data: null, error: 'No pudimos cargar tus capacidades.' }
+  return {
+    ok: true,
+    data: (data ?? []).map((row) => (row as { capability_id: number }).capability_id),
+    error: null,
+  }
+}
+
+/**
+ * Guarda las capacidades declaradas aplicando solo la diferencia. RLS limita la
+ * escritura al propio perfil (`profile_capabilities owner write`).
+ */
+export async function saveMyCapabilities(
+  userId: string,
+  current: number[],
+  next: number[],
+): Promise<ProfileResult<null>> {
+  const { toAdd, toRemove } = capabilityChanges(current, next)
+
+  if (toRemove.length > 0) {
+    const { error } = await supabase
+      .from('profile_capabilities')
+      .delete()
+      .eq('profile_id', userId)
+      .in('capability_id', toRemove)
+    if (error) return { ok: false, data: null, error: 'No pudimos guardar tus capacidades.' }
+  }
+
+  if (toAdd.length > 0) {
+    const { error } = await supabase
+      .from('profile_capabilities')
+      .insert(toAdd.map((capabilityId) => ({ profile_id: userId, capability_id: capabilityId })))
+    if (error) return { ok: false, data: null, error: 'No pudimos guardar tus capacidades.' }
+  }
+
+  return { ok: true, data: null, error: null }
 }

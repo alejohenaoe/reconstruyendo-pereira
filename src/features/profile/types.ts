@@ -32,6 +32,23 @@ export interface MyOffersPage {
 export type ProfileResult<T> =
   { ok: true; data: T; error: null } | { ok: false; data: null; error: string }
 
+/**
+ * Diferencia entre las capacidades declaradas y las que la persona acaba de
+ * elegir. Se guarda por diferencia (y no borrando todo para reinsertar) para no
+ * dejar el perfil sin capacidades si la segunda escritura falla.
+ */
+export function capabilityChanges(
+  current: number[],
+  next: number[],
+): { toAdd: number[]; toRemove: number[] } {
+  const currentSet = new Set(current)
+  const nextSet = new Set(next)
+  return {
+    toAdd: next.filter((id) => !currentSet.has(id)),
+    toRemove: current.filter((id) => !nextSet.has(id)),
+  }
+}
+
 /** Agrupa conservando el orden de llegada dentro de cada grupo. */
 function groupBy<T, G extends string>(
   items: T[],

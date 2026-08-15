@@ -3,6 +3,9 @@
 # Usuarios reales (registro->confirmación->login) + fixtures vía SQL
 # (la regla "una necesidad activa por usuario" impide variedad por API).
 set -euo pipefail
+# Directorio temporal propio del contrato (no depender de rutas de otras herramientas).
+TMPD="${TMPDIR:-/tmp}/reconstruyendo-tests"
+mkdir -p "$TMPD"
 API=http://127.0.0.1:54421
 AUTH=$API/auth/v1
 REST=$API/rest/v1
@@ -93,7 +96,7 @@ def chunk(t, d):
 ihdr = struct.pack(">IIBBBBB", 8, 8, 8, 2, 0, 0, 0)
 raw = b"".join(b"\x00" + bytes([(y*31) % 256, 120, 160, 255]) * 8 for y in range(8))
 png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
-open("/tmp/opencode/techo.png", "wb").write(png)
+open("$TMPD/techo.png", "wb").write(png)
 print("   png ok")
 PY
 TA=$(curl -s -X POST "$AUTH/token?grant_type=password" -H "apikey: $KEY" -H "Content-Type: application/json" \
@@ -101,11 +104,11 @@ TA=$(curl -s -X POST "$AUTH/token?grant_type=password" -H "apikey: $KEY" -H "Con
 NID=$($DB -tAc "select id from public.needs where title='Necesito reparar el techo tras el sismo';")
 IMG_ID=$(python3 -c "import uuid; print(uuid.uuid4())")
 PATH_="needs/$NID/$IMG_ID.png"
-curl -s -o /dev/null -X POST "$STORE/object/need-images/$PATH_" -H "apikey: $KEY" -H "Authorization: Bearer $TA" -H "Content-Type: image/png" --data-binary @/tmp/opencode/techo.png
+curl -s -o /dev/null -X POST "$STORE/object/need-images/$PATH_" -H "apikey: $KEY" -H "Authorization: Bearer $TA" -H "Content-Type: image/png" --data-binary @$TMPD/techo.png
 $DB -c "insert into public.need_images (need_id, storage_path, kind, is_primary) values ('$NID','$PATH_','BEFORE',true);" >/dev/null
 echo "   need=$NID path=$PATH_"
 
 echo ">> resumen"
 $DB -tAc "select status, count(*) from public.needs group by status order by status;"
 $DB -tAc "select (select count(*) from public.need_images), (select count(*) from public.help_offers), (select count(*) from public.need_offer_counts);"
-echo "NID=$NID" > /tmp/opencode/phase3_env
+echo "NID=$NID" > $TMPD/phase3_env
