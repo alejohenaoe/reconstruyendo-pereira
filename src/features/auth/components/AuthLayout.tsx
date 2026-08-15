@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 
 import { ArrowLeft } from 'lucide-react'
 
+import { BrandMark } from '@/shared/components/BrandMark'
+
 interface AuthLayoutProps {
   title: string
   subtitle?: string
@@ -21,7 +23,11 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
           <ArrowLeft className="size-4" aria-hidden="true" />
           Volver al inicio
         </Link>
-        <Link to="/" className="text-brand-800 mb-6 block text-center text-2xl font-semibold">
+        <Link
+          to="/"
+          className="text-brand-800 mb-6 flex items-center justify-center gap-2 text-2xl font-semibold"
+        >
+          <BrandMark size={28} className="shrink-0" />
           Reconstruyamos
         </Link>
         <div className="rounded-xl bg-white p-6 shadow-md sm:p-8">

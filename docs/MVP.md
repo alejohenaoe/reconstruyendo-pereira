@@ -2,7 +2,7 @@
 
 ## 1. Objetivo del proyecto
 
-Construir el MVP de una aplicación web comunitaria y gratuita cuyo objetivo sea **conectar personas afectadas por situaciones de emergencia, inicialmente el terremoto ocurrido en la región de Pereira, con personas que puedan ayudar mediante trabajo, conocimientos, voluntariado o aportes de materiales**.
+Construir el MVP de una aplicación web comunitaria y gratuita cuyo objetivo sea **conectar personas afectadas por el terremoto del 10 de agosto de 2026 en la región de Pereira, con personas que puedan ayudar mediante trabajo, conocimientos, voluntariado o aportes de materiales para la reconstrucción**.
 
 La plataforma **no maneja dinero**, no procesa donaciones económicas, no realiza contrataciones, no cobra comisiones y no actúa como garante de los trabajos.
 

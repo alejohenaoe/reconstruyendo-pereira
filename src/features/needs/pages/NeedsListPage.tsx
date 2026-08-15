@@ -53,7 +53,9 @@ export function NeedsListPage() {
         <div className="mb-4 flex items-end justify-between gap-2">
           <div>
             <h1 className="text-brand-900 text-2xl font-semibold">Pedidos de ayuda</h1>
-            <p className="text-closed-500 text-sm">Personas de tu región pidiendo ayuda.</p>
+            <p className="text-closed-500 text-sm">
+              Vecinos pidiendo ayuda para reconstruir sus viviendas tras el terremoto.
+            </p>
           </div>
           {status === 'AUTHENTICATED' ? (
             <Link
