@@ -1,4 +1,4 @@
-# Ayudémonos — Reconstruyendo
+# Ayudemos — Reconstruyendo
 
 Plataforma comunitaria para coordinar ayuda tras emergencias: los vecinos
 publican pedidos de ayuda y la comunidad ofrece ayuda concreta (mano de obra,

@@ -85,7 +85,7 @@ export function HomePage() {
               Comunidad del eje cafetero
             </span>
             <h1 className="text-brand-900 mt-4 text-4xl font-semibold sm:text-5xl">
-              Ayudémonos entre todos
+              Ayudemos entre todos
             </h1>
             <p className="text-closed-600 mt-4 max-w-xl text-lg leading-relaxed">
               Conecta personas que necesitan ayuda con quienes pueden aportar trabajo, conocimientos

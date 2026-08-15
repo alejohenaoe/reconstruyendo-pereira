@@ -239,7 +239,7 @@ La página inicial debe explicar inmediatamente la propuesta de valor.
 
 Concepto recomendado:
 
-> **Ayudémonos entre todos**
+> **Ayudemos entre todos**
 
 Subtexto:
 
