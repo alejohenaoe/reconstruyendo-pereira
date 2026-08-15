@@ -1,7 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Bell, HandHeart, LogIn, LogOut, Menu, Plus, ShieldCheck, User } from 'lucide-react'
+import {
+  Bell,
+  ClipboardList,
+  HandHeart,
+  LogIn,
+  LogOut,
+  Menu,
+  Plus,
+  ShieldCheck,
+  User,
+} from 'lucide-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useIsAdmin } from '@/features/auth/hooks/useIsAdmin'
@@ -215,6 +225,24 @@ export function AppHeader() {
                         >
                           <Plus className="size-5" aria-hidden="true" />
                           Publicar pedido de ayuda
+                        </Link>
+                        <Link
+                          to="/my-needs"
+                          role="menuitem"
+                          className={menuItemClass}
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          <ClipboardList className="size-5" aria-hidden="true" />
+                          Mis pedidos de ayuda
+                        </Link>
+                        <Link
+                          to="/my-help"
+                          role="menuitem"
+                          className={menuItemClass}
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          <HandHeart className="size-5" aria-hidden="true" />
+                          Mis ayudas
                         </Link>
                         <Link
                           to="/notifications"

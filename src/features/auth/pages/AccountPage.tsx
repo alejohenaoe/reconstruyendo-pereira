@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+
+import { ChevronRight, HandHeart, HeartHandshake } from 'lucide-react'
 
 import { AppHeader } from '@/shared/components/AppHeader'
 import { Button } from '@/shared/components/Button'
@@ -73,27 +75,29 @@ export function AccountPage() {
       <main className="mx-auto w-full max-w-2xl px-4 py-10">
         <h1 className="text-closed-800 text-2xl font-semibold">Mi cuenta</h1>
         <div className="mt-6 flex flex-col gap-4">
-          <div className="bg-white flex flex-col gap-3 rounded-xl border border-closed-100 p-6 shadow-sm">
+          <div className="border-closed-100 flex flex-col gap-3 rounded-xl border bg-white p-6 shadow-sm">
             <div>
               <p className="text-closed-500 text-xs font-medium uppercase">Nombre</p>
-              <p className="text-closed-800 mt-1 text-base font-medium">{displayName || 'Sin nombre'}</p>
+              <p className="text-closed-800 mt-1 text-base font-medium">
+                {displayName || 'Sin nombre'}
+              </p>
             </div>
             <div>
               <p className="text-closed-500 text-xs font-medium uppercase">Correo</p>
               <p className="text-closed-800 mt-1 text-base">{email}</p>
             </div>
             <div className="bg-success-50 text-success-700 mt-2 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-sm">
-              <span className="size-2 rounded-full bg-success-500" aria-hidden="true" />
+              <span className="bg-success-500 size-2 rounded-full" aria-hidden="true" />
               Correo verificado
             </div>
           </div>
 
-          <div className="bg-white flex flex-col gap-3 rounded-xl border border-closed-100 p-6 shadow-sm">
+          <div className="border-closed-100 flex flex-col gap-3 rounded-xl border bg-white p-6 shadow-sm">
             <div>
               <p className="text-closed-800 text-base font-medium">Teléfono de contacto</p>
               <p className="text-closed-500 mt-1 text-sm">
-                Es privado: solo lo ven las personas con las que tengas una relación de ayuda, y queda
-                registrado cada acceso.
+                Es privado: solo lo ven las personas con las que tengas una relación de ayuda, y
+                queda registrado cada acceso.
               </p>
             </div>
             {phoneLoaded ? (
@@ -108,7 +112,12 @@ export function AccountPage() {
                   onChange={(event) => setPhone(event.target.value)}
                 />
                 <div>
-                  <Button type="button" variant="secondary" loading={savingPhone} onClick={() => void handleSavePhone()}>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    loading={savingPhone}
+                    onClick={() => void handleSavePhone()}
+                  >
                     Guardar teléfono
                   </Button>
                 </div>
@@ -117,6 +126,31 @@ export function AccountPage() {
             ) : (
               <p className="text-closed-500 text-sm">Cargando…</p>
             )}
+          </div>
+
+          {/* Acceso al historial de participaciones (MVP §24, UX §5 y §22). */}
+          <div className="border-closed-100 flex flex-col gap-2 rounded-xl border bg-white p-6 shadow-sm">
+            <p className="text-closed-800 text-base font-medium">Mi actividad</p>
+            <Link
+              to="/my-needs"
+              className="border-closed-100 hover:border-brand-300 hover:bg-arena-50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+            >
+              <span className="text-closed-700 flex items-center gap-2 text-sm font-medium">
+                <HeartHandshake className="text-brand-600 size-5" aria-hidden="true" />
+                Mis pedidos de ayuda
+              </span>
+              <ChevronRight className="text-closed-400 size-4" aria-hidden="true" />
+            </Link>
+            <Link
+              to="/my-help"
+              className="border-closed-100 hover:border-brand-300 hover:bg-arena-50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+            >
+              <span className="text-closed-700 flex items-center gap-2 text-sm font-medium">
+                <HandHeart className="text-brick-600 size-5" aria-hidden="true" />
+                Mis ayudas
+              </span>
+              <ChevronRight className="text-closed-400 size-4" aria-hidden="true" />
+            </Link>
           </div>
 
           <Button type="button" variant="danger" loading={signingOut} onClick={handleSignOut}>

@@ -639,6 +639,26 @@ No presentar un correo verificado como sinónimo de persona confiable.
 
 ---
 
+## 22.1 Mi actividad: mis pedidos y mis ayudas
+
+El historial de participaciones (MVP §24) vive en dos páginas propias, según la arquitectura de
+información de §5, y `Mi cuenta` actúa como su punto de entrada junto con el menú móvil:
+
+- **`/my-needs` — Mis pedidos de ayuda**: los pedidos propios en todos sus estados, agrupados en
+  `Pedido actual` (abierto o en proceso), `Solucionados` y `Cerrados`. Como solo puede haber un
+  pedido activo a la vez (MVP §8), cuando no hay ninguno activo la página ofrece publicar uno.
+- **`/my-help` — Mis ayudas**: las ofertas propias agrupadas en `Ayudas pendientes`,
+  `Ayudas confirmadas` y `Ofertas canceladas`. Una ayuda marcada como realizada sigue contando
+  como pendiente hasta que la confirma quien pidió la ayuda (MVP §11, §16): la interfaz no se
+  adelanta a esa confirmación.
+
+Ambas listas reutilizan la paginación por cursor del listado público y muestran el estado exacto
+de cada elemento con los mismos badges del resto de la aplicación, sin inventar etiquetas nuevas.
+Cuando una oferta apunta a un pedido ocultado por moderación, la tarjeta lo dice en lugar de
+mostrar un título que ya no es visible.
+
+---
+
 # 23. Estados de carga
 
 Toda operación asíncrona debe proporcionar feedback visual.

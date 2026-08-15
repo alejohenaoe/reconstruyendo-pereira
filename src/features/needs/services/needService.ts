@@ -63,20 +63,54 @@ export async function getPublicNeeds(
       code: 'unknown',
     }
 
-  const rows = (data ?? []) as unknown as Need[]
+  return { ok: true, data: toNeedsPage((data ?? []) as unknown as Need[]), error: null, code: null }
+}
+
+/**
+ * Los pedidos de ayuda de una persona, en todos sus estados y con la misma
+ * paginación por cursor (historial, MVP §24). RLS deja ver los propios aunque
+ * estén ocultos por moderación.
+ */
+export async function getNeedsByUser(
+  userId: string,
+  cursor: NeedsCursor | null,
+): Promise<NeedsResult<NeedsPage>> {
+  let query = supabase
+    .from('needs')
+    .select(NEED_SELECT)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
+    .limit(NEEDS_PAGE_SIZE + 1)
+
+  if (cursor) {
+    query = query.or(
+      `and(created_at.lt.${cursor.createdAt}),and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
+    )
+  }
+
+  const { data, error } = await query
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: 'No pudimos cargar tus pedidos de ayuda.',
+      code: 'unknown',
+    }
+
+  return { ok: true, data: toNeedsPage((data ?? []) as unknown as Need[]), error: null, code: null }
+}
+
+/** Corta la fila extra de PAGE_SIZE+1 y arma el cursor de la página siguiente. */
+function toNeedsPage(rows: Need[]): NeedsPage {
   const hasMore = rows.length > NEEDS_PAGE_SIZE
   const needs = hasMore ? rows.slice(0, NEEDS_PAGE_SIZE) : rows
   const last = needs[needs.length - 1] ?? null
 
   return {
-    ok: true,
-    data: {
-      needs,
-      hasMore,
-      nextCursor: hasMore && last ? { createdAt: last.created_at, id: last.id } : null,
-    },
-    error: null,
-    code: null,
+    needs,
+    hasMore,
+    nextCursor: hasMore && last ? { createdAt: last.created_at, id: last.id } : null,
   }
 }
 

@@ -19,7 +19,7 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
   - `npm run dev` — dev server Vite (usa el `.env` local).
   - `npm run build` — `tsc -b && vite build` (output `dist/`).
   - `npm run lint` — oxlint. `npm run typecheck` — `tsc -b`.
-  - `npm run test` — tests unitarios Vitest (29 tests, co-localizados en `src/**/*.test.ts`).
+  - `npm run test` — tests unitarios Vitest (44 tests, co-localizados en `src/**/*.test.ts`).
   - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (41), auth (10), publish (21), help (53), moderation (40), notifications (47).
   - `npm run format` / `format:check` — Prettier (incluye `prettier-plugin-tailwindcss`).
 

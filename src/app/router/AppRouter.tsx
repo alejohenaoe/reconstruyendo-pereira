@@ -20,6 +20,8 @@ import { NeedDetailPage } from '@/features/needs/pages/NeedDetailPage'
 import { NeedsListPage } from '@/features/needs/pages/NeedsListPage'
 import { NewNeedPage } from '@/features/needs/pages/NewNeedPage'
 import { NotificationsPage } from '@/features/notifications/pages/NotificationsPage'
+import { MyHelpPage } from '@/features/profile/pages/MyHelpPage'
+import { MyNeedsPage } from '@/features/profile/pages/MyNeedsPage'
 
 export function AppRouter() {
   return (
@@ -37,6 +39,8 @@ export function AppRouter() {
       <Route element={<ProtectedRoute />}>
         <Route element={<VerifiedRoute />}>
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/my-needs" element={<MyNeedsPage />} />
+          <Route path="/my-help" element={<MyHelpPage />} />
           <Route path="/needs/new" element={<NewNeedPage />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
