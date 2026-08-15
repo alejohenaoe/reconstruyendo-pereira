@@ -46,8 +46,8 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
     `export SUPABASE_ACCESS_TOKEN=$(grep ^SUPABASE_ACCESS_TOKEN .env | cut -d= -f2)`
   - `.env.production` (gitignored) apunta al remoto para builds de producción.
 - La publishable key es **pública** por diseño; la **service_role/secret key NUNCA** debe ir en archivos ni en variables `VITE_` (`.env.example` documenta esto).
-- Para Netlify las `VITE_*` se definen en el dashboard por entorno (production / deploy-preview); no se versionan.
-- Management API (config de auth del remoto, p. ej. `uri_allow_list`/`site_url` para el callback): `PATCH https://api.supabase.com/v1/projects/{ref}/config/auth` con Bearer `$SUPABASE_ACCESS_TOKEN`.
+- **Netlify**: producción en `https://reconstruyamospereira.netlify.app` (site id `8eda2aea-627d-4869-aa21-9e1af4313c6b`). El repo ya está conectado de forma nativa (push a `main` → build y deploy automático; `netlify.toml` define build `npm run build` y publish `dist`). Las `VITE_*` ya están configuradas por entorno en el dashboard de Netlify (no se versionan). Estado local del link en `.netlify/state.json`.
+- Management API (config de auth del remoto, p. ej. `uri_allow_list`/`site_url` para el callback): `PATCH https://api.supabase.com/v1/projects/{ref}/config/auth` con Bearer `$SUPABASE_ACCESS_TOKEN`. **Ojo**: `uri_allow_list` es un **string separado por comas**, no un array ni saltos de línea. Ya configurado: `site_url` = producción y redirects de localhost + producción.
 
 ## Convenciones y gotchas críticas
 

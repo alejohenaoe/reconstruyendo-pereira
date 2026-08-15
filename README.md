@@ -63,6 +63,12 @@ por llamadas directas a la API; fallan si la protección RLS está ausente.
 
 ## Despliegue
 
+> **Estado actual**: producción en `https://reconstruyamospereira.netlify.app`.
+> Las 11 migraciones están aplicadas al proyecto remoto `reconstruyendo-pereira`
+> (ref `rpbpwwwvakpxzdinvojw`), el bucket de Storage `need-images` existe, el repo
+> está conectado de forma nativa a Netlify (push a `main` → build + deploy), y el
+> auth remoto ya tiene `site_url` y redirects de producción + localhost.
+
 ### 1. Base de datos (Supabase remoto)
 
 El proyecto está vinculado (`supabase/.temp/project-ref`). Para aplicar las
