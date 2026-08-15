@@ -33,7 +33,7 @@ export function AppHeader() {
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link to="/" className="text-brand-800 text-lg font-semibold">
-            Ayudémonos
+            Reconstruyamos
           </Link>
           <Link to="/needs" className="text-closed-600 hover:text-brand-700 text-sm font-medium">
             Necesidades

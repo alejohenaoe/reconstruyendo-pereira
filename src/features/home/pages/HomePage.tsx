@@ -13,9 +13,9 @@ export function HomePage() {
     <div className="min-h-screen">
       <AppHeader />
       <main className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center gap-6 px-4 py-16 text-center">
-        <h1 className="text-brand-800 text-3xl font-semibold">Ayudémonos entre todos</h1>
+        <h1 className="text-brand-800 text-3xl font-semibold">Reconstruyamos</h1>
         <p className="text-closed-600 max-w-md text-lg leading-relaxed">
-          Conecta personas que necesitan ayuda con quienes pueden aportar trabajo, conocimientos o materiales.
+          Ayudémonos entre todos. Conecta personas que necesitan ayuda con quienes pueden aportar trabajo, conocimientos o materiales.
         </p>
         <div className="flex w-full flex-col gap-3 sm:max-w-sm sm:flex-row">
           <Link to="/needs" className={buttonStyles({ variant: 'primary', size: 'lg' })}>
