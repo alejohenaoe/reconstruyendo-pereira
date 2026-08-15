@@ -20,14 +20,14 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
   - `npm run build` — `tsc -b && vite build` (output `dist/`).
   - `npm run lint` — oxlint. `npm run typecheck` — `tsc -b`.
   - `npm run test` — tests unitarios Vitest (48 tests, co-localizados en `src/**/*.test.ts`).
-  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (45), auth (14), publish (21), help (53), moderation (40), notifications (47).
+  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (45), auth (14), publish (30), help (53), moderation (40), notifications (47).
   - `npm run format` / `format:check` — Prettier (incluye `prettier-plugin-tailwindcss`).
 
 ## Estructura
 
 - `src/features/{auth,home,needs,help,profile,moderation,notifications}/` — feature slices; cada una con `pages/`, `components/`, `hooks/`, `services/`, `types.ts`.
 - `src/shared/{components,hooks,lib,types,utils}/` — código compartido. El cliente único de Supabase está en `src/shared/lib/supabase.ts` (alias `@` → `./src`, ver `vite.config.ts`).
-- `supabase/migrations/` — 12 migraciones versionadas (la única vía de cambios de esquema; nunca editar el esquema a mano).
+- `supabase/migrations/` — 13 migraciones versionadas (la única vía de cambios de esquema; nunca editar el esquema a mano).
 - `supabase/tests/` — contratos e2e por API (`*.sh`) + `run_all.sh`.
 
 ## Supabase

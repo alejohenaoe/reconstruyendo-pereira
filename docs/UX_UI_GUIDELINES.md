@@ -385,6 +385,22 @@ Cada estado debe utilizar:
 - Iconografía apropiada cuando corresponda.
 - Color como refuerzo, no como único indicador.
 
+## 11.1 Cierre: "Cómo quedó"
+
+Marcar un pedido como solucionado abre el panel de cierre (`ResolutionPanel`) en lugar de cambiar
+el estado de inmediato: es el momento en que la persona quiere contar cómo terminó y agradecer
+(MVP §23). El panel ofrece una actualización pública opcional y hasta tres fotos del resultado,
+que se guardan como `need_images.kind = 'AFTER'`. Nada de eso es obligatorio; si la persona no
+escribe ni sube nada, el pedido simplemente pasa a `RESOLVED`.
+
+Las fotos se suben antes de cambiar el estado, para que un fallo a mitad de camino no deje un
+pedido marcado como solucionado con fotos incompletas.
+
+Cuando existe actualización o fotos posteriores, el detalle muestra una tarjeta **Cómo quedó**
+con el relato y su galería, y la galería original pasa a titularse **Fotografías (antes)**. La
+tarjeta es pública: el cierre es parte del historial que la comunidad puede ver. El autor puede
+volver a editar la actualización o añadir fotos después, desde las acciones de estado.
+
 ---
 
 # 12. Publicar un pedido de ayuda

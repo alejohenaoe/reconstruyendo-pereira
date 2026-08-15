@@ -168,12 +168,19 @@ export async function addComment(needId: string, body: string): Promise<HelpResu
   return { ok: true, data: null, error: null, code: null }
 }
 
-/** Cambio de estado de la necesidad por su autor (OPEN → IN_PROGRESS → RESOLVED; cierre a CLOSED). */
+/**
+ * Cambio de estado de la necesidad por su autor (OPEN → IN_PROGRESS → RESOLVED;
+ * cierre a CLOSED). Al solucionar se puede guardar en la misma escritura la
+ * actualización pública del cierre (MVP §23).
+ */
 export async function updateNeedStatus(
   needId: string,
   status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED',
+  resolutionNote?: string | null,
 ): Promise<HelpResult<null>> {
-  const { error } = await supabase.from('needs').update({ status }).eq('id', needId)
+  const patch: { status: typeof status; resolution_note?: string | null } = { status }
+  if (resolutionNote !== undefined) patch.resolution_note = resolutionNote
+  const { error } = await supabase.from('needs').update(patch).eq('id', needId)
   if (error) {
     return {
       ok: false,
@@ -201,5 +208,25 @@ export async function saveOwnPhone(userId: string, phone: string): Promise<HelpR
     .upsert({ profile_id: userId, phone }, { onConflict: 'profile_id' })
   if (error)
     return { ok: false, data: null, error: 'No pudimos guardar el teléfono.', code: 'unknown' }
+  return { ok: true, data: null, error: null, code: null }
+}
+
+/** Guarda o edita la actualización del cierre sin tocar el estado (MVP §23). */
+export async function saveResolutionNote(
+  needId: string,
+  note: string | null,
+): Promise<HelpResult<null>> {
+  const { error } = await supabase
+    .from('needs')
+    .update({ resolution_note: note })
+    .eq('id', needId)
+  if (error) {
+    return {
+      ok: false,
+      data: null,
+      error: mapCommunityError(error, 'No pudimos guardar la actualización.'),
+      code: 'unknown',
+    }
+  }
   return { ok: true, data: null, error: null, code: null }
 }

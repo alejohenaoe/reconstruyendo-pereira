@@ -113,6 +113,36 @@ echo "$PUB" | jq -r '.[0].title' | grep -q "puerta trasera" && ok "anon ve la ne
 LEAK=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: $KEY" "$REST/needs?select=id,need_address(id,address)&id=eq.$NID")
 [ "$LEAK" != "200" ] && ok "no se filtran datos privados (embed $LEAK)" || ko "se filtran datos privados (embed 200)"
 
+echo "=== 8. Cierre del pedido: cómo quedó (MVP §23) ==="
+# El dueño lo pasa a IN_PROGRESS y luego a RESOLVED con la actualización pública.
+PROG=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH "$REST/needs?id=eq.$NID" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_O" -H "Content-Type: application/json" -d '{"status":"IN_PROGRESS"}')
+check "dueño pasa a IN_PROGRESS (204)" "$PROG" 204
+RES=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH "$REST/needs?id=eq.$NID" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_O" -H "Content-Type: application/json" -d '{"status":"RESOLVED","resolution_note":"Ya quedó el techo. Gracias a quienes ayudaron."}')
+check "dueño resuelve con actualización (204)" "$RES" 204
+NOTE=$(curl -s -H "apikey: $KEY" "$REST/needs?select=status,resolution_note&id=eq.$NID" | jq -r '.[0].resolution_note')
+[ "$NOTE" = "Ya quedó el techo. Gracias a quienes ayudaron." ] && ok "anon lee la actualización del cierre" || ko "actualización: $NOTE"
+
+# Un tercero no puede escribir la actualización de un pedido ajeno.
+curl -s -o /dev/null -X PATCH "$REST/needs?id=eq.$NID" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_T" -H "Content-Type: application/json" -d '{"resolution_note":"Texto de un tercero"}'
+NOTE_T=$(curl -s -H "apikey: $KEY" "$REST/needs?select=resolution_note&id=eq.$NID" | jq -r '.[0].resolution_note')
+[ "$NOTE_T" != "Texto de un tercero" ] && ok "tercero NO escribe la actualización ajena" || ko "tercero escribió la actualización"
+
+# Fotos "después" del dueño.
+S_AFT=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$STORE/object/need-images/needs/$NID/despues1.png" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_O" -H "Content-Type: image/png" --data-binary @"$PNG")
+check "dueño sube foto del resultado (200)" "$S_AFT" 200
+IMG_AFT=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$REST/need_images" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_O" -H "Content-Type: application/json" -H "Prefer: return=representation" -d "{\"need_id\":\"$NID\",\"storage_path\":\"needs/$NID/despues1.png\",\"kind\":\"AFTER\",\"is_primary\":false}")
+check "dueño vincula foto AFTER (201)" "$IMG_AFT" 201
+KINDS=$(curl -s -H "apikey: $KEY" "$REST/need_images?select=kind&need_id=eq.$NID" | jq -r '[.[].kind] | sort | unique | join(",")')
+[ "$KINDS" = "AFTER,BEFORE" ] && ok "la galería distingue antes/después" || ko "kinds: $KINDS"
+
+# Una actualización demasiado corta la rechaza el CHECK de la columna.
+SHORT=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH "$REST/needs?id=eq.$NID" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_O" -H "Content-Type: application/json" -d '{"resolution_note":"x"}')
+check "actualización de 1 carácter rechazada (400)" "$SHORT" 400
+
+# Un pedido solucionado no acepta nuevas ofertas (MVP §23).
+OFF_RES=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$REST/help_offers" -H "apikey: $KEY" -H "Authorization: Bearer $TOK_T" -H "Content-Type: application/json" -d "{\"user_id\":\"$UID_T\",\"need_id\":\"$NID\",\"capability_id\":2,\"message\":\"Quiero ayudar aunque ya esté solucionado.\"}")
+{ [ "$OFF_RES" = "400" ] || [ "$OFF_RES" = "403" ]; } && ok "pedido solucionado no acepta ofertas ($OFF_RES)" || ko "aceptó oferta en pedido solucionado ($OFF_RES)"
+
 echo ""
 echo "=================================="
 echo "PASS=$P FAIL=$F"

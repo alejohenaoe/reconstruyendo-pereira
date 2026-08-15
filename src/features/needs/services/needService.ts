@@ -13,7 +13,7 @@ import { supabase } from '@/shared/lib/supabase'
 export const NEEDS_PAGE_SIZE = 8
 
 const NEED_SELECT =
-  'id,user_id,title,description,category_id,municipality_id,neighborhood,status,needs_assessment,created_at,need_categories(label_es),municipalities(name)'
+  'id,user_id,title,description,category_id,municipality_id,neighborhood,status,needs_assessment,resolution_note,created_at,need_categories(label_es),municipalities(name)'
 
 const IMAGE_BUCKET = 'need-images'
 

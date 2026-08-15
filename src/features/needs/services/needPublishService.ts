@@ -17,7 +17,7 @@ export interface UploadedNeedImage {
 }
 
 const NEED_PUBLISH_SELECT =
-  'id,user_id,title,description,category_id,municipality_id,neighborhood,status,needs_assessment,created_at'
+  'id,user_id,title,description,category_id,municipality_id,neighborhood,status,needs_assessment,resolution_note,created_at'
 
 /** Traduce errores de publicación a mensajes humanos (UX §25). */
 export function mapPublishError(error: { code?: string | null; message?: string }): string {
@@ -78,6 +78,7 @@ export async function uploadNeedImage(
   needId: string,
   file: File,
   isPrimary: boolean,
+  kind: 'BEFORE' | 'AFTER' = 'BEFORE',
 ): Promise<NeedsResult<UploadedNeedImage>> {
   let blob: Blob
   try {
@@ -110,7 +111,7 @@ export async function uploadNeedImage(
   const { error: insertError } = await supabase.from('need_images').insert({
     need_id: needId,
     storage_path: storagePath,
-    kind: 'BEFORE',
+    kind,
     is_primary: isPrimary,
   })
   if (insertError) {

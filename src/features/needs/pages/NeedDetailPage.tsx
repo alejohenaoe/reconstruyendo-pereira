@@ -1,6 +1,6 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, CheckCircle } from 'lucide-react'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { CommentsSection } from '@/features/help/components/CommentsSection'
@@ -76,6 +76,9 @@ export function NeedDetailPage() {
   const myOffer = offerers.find((offer) => offer.user_id === user?.id) ?? null
   const canOffer = isAuthenticated && !isOwner && needActive && !myOffer
 
+  const beforeImages = images.filter((image) => image.kind !== 'AFTER')
+  const afterImages = images.filter((image) => image.kind === 'AFTER')
+
   const structuralRisk = hasStructuralRisk({
     title: need.title,
     description: need.description,
@@ -142,10 +145,26 @@ export function NeedDetailPage() {
 
           <Card className="flex flex-col gap-4">
             <h2 className="text-brand-800 text-sm font-semibold tracking-wide uppercase">
-              Fotografías
+              {afterImages.length > 0 ? 'Fotografías (antes)' : 'Fotografías'}
             </h2>
-            <NeedGallery images={images} />
+            <NeedGallery images={beforeImages} />
           </Card>
+
+          {/* Cierre del pedido: cómo quedó y agradecimiento público (MVP §23). */}
+          {need.resolution_note || afterImages.length > 0 ? (
+            <Card className="border-success-100 flex flex-col gap-4">
+              <h2 className="text-success-700 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
+                <CheckCircle className="size-4" aria-hidden="true" />
+                Cómo quedó
+              </h2>
+              {need.resolution_note ? (
+                <p className="text-closed-700 text-sm leading-relaxed whitespace-pre-line">
+                  {need.resolution_note}
+                </p>
+              ) : null}
+              {afterImages.length > 0 ? <NeedGallery images={afterImages} /> : null}
+            </Card>
+          ) : null}
 
           {isOwner ? (
             <Card className="flex flex-col gap-4">
@@ -155,6 +174,7 @@ export function NeedDetailPage() {
               <NeedStatusActions
                 needId={need.id}
                 status={need.status}
+                resolutionNote={need.resolution_note}
                 onChanged={() => void reloadNeed()}
               />
             </Card>

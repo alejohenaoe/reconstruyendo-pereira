@@ -22,6 +22,7 @@ function need(id: string, status: NeedStatus): Need {
     neighborhood: null,
     status,
     needs_assessment: false,
+    resolution_note: null,
     created_at: `2026-08-1${id}T00:00:00Z`,
     need_categories: null,
     municipalities: null,
