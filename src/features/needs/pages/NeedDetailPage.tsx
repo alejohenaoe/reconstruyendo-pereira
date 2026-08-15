@@ -15,6 +15,7 @@ import { NeedHeader } from '@/features/needs/components/NeedHeader'
 import { usePublicNeed } from '@/features/needs/hooks/usePublicNeed'
 import { Alert } from '@/shared/components/Alert'
 import { AppHeader } from '@/shared/components/AppHeader'
+import { Card } from '@/shared/components/Card'
 import { PageLoader } from '@/shared/components/PageLoader'
 import { buttonStyles } from '@/shared/components/buttonStyles'
 
@@ -81,7 +82,7 @@ export function NeedDetailPage() {
     `/report?type=user&id=${offerer.user_id}&label=${encodeURIComponent(`El usuario ${offerer.display_name}`)}&needId=${need.id}`
 
   return (
-    <div className="bg-closed-100/40 min-h-screen">
+    <div className="bg-arena-50 min-h-screen">
       <AppHeader />
       <main className="mx-auto w-full max-w-2xl px-4 py-6">
         <Link
@@ -114,26 +115,26 @@ export function NeedDetailPage() {
           </div>
         ) : null}
 
-        <section className="mt-6 flex flex-col gap-6">
-          <div>
-            <h2 className="text-brand-800 mb-2 text-sm font-semibold tracking-wide uppercase">
+        <section className="mt-6 flex flex-col gap-4">
+          <Card className="flex flex-col gap-4">
+            <h2 className="text-brand-800 text-sm font-semibold tracking-wide uppercase">
               Descripción
             </h2>
             <p className="text-closed-700 text-sm leading-relaxed whitespace-pre-line">
               {need.description}
             </p>
-          </div>
+          </Card>
 
-          <div>
-            <h2 className="text-brand-800 mb-2 text-sm font-semibold tracking-wide uppercase">
+          <Card className="flex flex-col gap-4">
+            <h2 className="text-brand-800 text-sm font-semibold tracking-wide uppercase">
               Fotografías
             </h2>
             <NeedGallery images={images} />
-          </div>
+          </Card>
 
           {isOwner ? (
-            <div>
-              <h2 className="text-brand-800 mb-2 text-sm font-semibold tracking-wide uppercase">
+            <Card className="flex flex-col gap-4">
+              <h2 className="text-brand-800 text-sm font-semibold tracking-wide uppercase">
                 Estado del pedido de ayuda
               </h2>
               <NeedStatusActions
@@ -141,11 +142,11 @@ export function NeedDetailPage() {
                 status={need.status}
                 onChanged={() => void reloadNeed()}
               />
-            </div>
+            </Card>
           ) : null}
 
-          <div>
-            <h2 className="text-brand-800 mb-2 text-sm font-semibold tracking-wide uppercase">
+          <Card className="flex flex-col gap-4">
+            <h2 className="text-brand-800 text-sm font-semibold tracking-wide uppercase">
               Personas que se ofrecieron{offerers.length > 0 ? ` (${offerers.length})` : ''}
             </h2>
             <OfferersSection
@@ -156,13 +157,13 @@ export function NeedDetailPage() {
               onChanged={() => void reloadCommunity()}
               reportUrlFor={isAuthenticated ? reportOffererUrl : undefined}
             />
-          </div>
+          </Card>
 
           {communityError ? <Alert variant="info">{communityError}</Alert> : null}
 
           <div>
             {!isAuthenticated ? (
-              <div className="border-brand-200 bg-brand-50 rounded-md border p-4 text-sm">
+              <div className="border-brand-200 bg-brand-50 rounded-lg border p-4 text-sm">
                 <p className="text-brand-800 font-medium">¿Puedes ayudar?</p>
                 <p className="text-brand-700 mt-1">
                   Crea una cuenta o inicia sesión para ofrecer tu ayuda.
@@ -195,8 +196,8 @@ export function NeedDetailPage() {
             ) : null}
           </div>
 
-          <div>
-            <h2 className="text-brand-800 mb-2 text-sm font-semibold tracking-wide uppercase">
+          <Card className="flex flex-col gap-4">
+            <h2 className="text-brand-800 text-sm font-semibold tracking-wide uppercase">
               Hilo de colaboración
             </h2>
             <CommentsSection
@@ -206,7 +207,7 @@ export function NeedDetailPage() {
               onChanged={() => void reloadCommunity()}
               reportUrlFor={isAuthenticated ? reportCommentUrl : undefined}
             />
-          </div>
+          </Card>
         </section>
       </main>
     </div>

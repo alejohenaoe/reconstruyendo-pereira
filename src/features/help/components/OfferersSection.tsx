@@ -13,7 +13,7 @@ import { timeAgo } from '@/shared/utils/timeAgo'
 const smallBtn =
   'inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60'
 const primarySmall = `${smallBtn} border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100`
-const subtleSmall = `${smallBtn} border-transparent text-closed-600 hover:bg-closed-100`
+const subtleSmall = `${smallBtn} border-transparent text-closed-600 hover:bg-arena-100`
 
 const NEXT_LABELS: Partial<Record<HelpOfferStatus, string>> = {
   CONTACTED: 'Marcar en contacto',
@@ -74,7 +74,7 @@ export function OfferersSection({
 
   function nextLabel(status: HelpOfferStatus): string | null {
     const next = HELP_OFFER_OWNER_NEXT[status]
-    return next ? NEXT_LABELS[next] ?? null : null
+    return next ? (NEXT_LABELS[next] ?? null) : null
   }
 
   if (offerers.length === 0) {
@@ -91,11 +91,14 @@ export function OfferersSection({
           const busy = loadingFor === offer.offer_id
           const revealed = contactFor === offer.offer_id && contact
           const ownerPhone = isOwner
-            ? contact?.offerers?.find((o) => o.offer_id === offer.offer_id)?.phone ?? null
+            ? (contact?.offerers?.find((o) => o.offer_id === offer.offer_id)?.phone ?? null)
             : null
 
           return (
-            <li key={offer.offer_id} className="border-closed-100 rounded-md border bg-white px-3 py-2.5">
+            <li
+              key={offer.offer_id}
+              className="border-arena-200 rounded-lg border bg-white px-3 py-2.5"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <HandHeart className="text-brand-600 size-4 shrink-0" aria-hidden="true" />
@@ -104,20 +107,29 @@ export function OfferersSection({
                 </div>
                 <span className="text-closed-400 text-xs">{timeAgo(offer.offered_at)}</span>
                 {reportUrlFor ? (
-                  <Link to={reportUrlFor(offer)} className="text-closed-400 hover:text-danger-600 text-xs underline">
+                  <Link
+                    to={reportUrlFor(offer)}
+                    className="text-closed-400 hover:text-danger-600 text-xs underline"
+                  >
                     Reportar
                   </Link>
                 ) : null}
               </div>
 
               <p className="text-closed-500 mt-1 text-xs">
-                Se ofrece a ayudar con: <span className="text-closed-700 font-medium">{offer.capability_label}</span>
+                Se ofrece a ayudar con:{' '}
+                <span className="text-closed-700 font-medium">{offer.capability_label}</span>
               </p>
               <p className="text-closed-700 mt-1 text-sm whitespace-pre-line">{offer.message}</p>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {(isOwner || isMine) && (
-                  <button type="button" className={primarySmall} disabled={busy} onClick={() => void handleContact(offer.offer_id)}>
+                  <button
+                    type="button"
+                    className={primarySmall}
+                    disabled={busy}
+                    onClick={() => void handleContact(offer.offer_id)}
+                  >
                     <Phone className="size-3.5" aria-hidden="true" />
                     Contactar
                   </button>
@@ -159,7 +171,7 @@ export function OfferersSection({
               </div>
 
               {revealed ? (
-                <div className="border-info-100 bg-info-50 text-info-700 mt-2 rounded-md border px-3 py-2 text-sm">
+                <div className="border-info-100 bg-info-50 text-info-700 mt-2 rounded-lg border px-3 py-2 text-sm">
                   {isOwner ? (
                     <p>
                       Teléfono de {offer.display_name}:{' '}
@@ -167,7 +179,10 @@ export function OfferersSection({
                     </p>
                   ) : (
                     <p>
-                      Teléfono del autor: <span className="font-semibold">{contact?.owner?.phone ?? 'no registró teléfono.'}</span>
+                      Teléfono del autor:{' '}
+                      <span className="font-semibold">
+                        {contact?.owner?.phone ?? 'no registró teléfono.'}
+                      </span>
                       {contact?.owner?.address ? (
                         <span className="mt-1 block">Dirección: {contact.owner.address}</span>
                       ) : null}

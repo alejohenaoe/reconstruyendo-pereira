@@ -4,5 +4,10 @@ interface SkeletonProps {
 
 /** Esqueleto de carga con pulso sutil (UX §23). */
 export function Skeleton({ className }: SkeletonProps) {
-  return <div className={`animate-pulse rounded-md bg-closed-100 ${className ?? ''}`} aria-hidden="true" />
+  return (
+    <div
+      className={`bg-arena-200 animate-pulse rounded-md ${className ?? ''}`}
+      aria-hidden="true"
+    />
+  )
 }

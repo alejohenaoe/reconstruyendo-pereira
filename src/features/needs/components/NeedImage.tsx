@@ -32,9 +32,9 @@ export function NeedImage({ src, fallbackSrc, alt, className }: NeedImageProps) 
   }
 
   return (
-    <div className={`relative overflow-hidden bg-closed-100 ${className ?? ''}`}>
+    <div className={`bg-arena-100 relative overflow-hidden ${className ?? ''}`}>
       {state === 'loading' ? (
-        <div className="absolute inset-0 animate-pulse bg-closed-100" aria-hidden="true" />
+        <div className="bg-arena-100 absolute inset-0 animate-pulse" aria-hidden="true" />
       ) : null}
       {activeSrc && state !== 'error' ? (
         <img

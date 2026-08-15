@@ -7,7 +7,7 @@ import { Alert } from '@/shared/components/Alert'
 import { Button } from '@/shared/components/Button'
 
 const selectClass =
-  'w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-closed-100 disabled:opacity-60'
+  'w-full rounded-md border border-arena-200 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-arena-100 disabled:opacity-60'
 const textareaClass = `${selectClass} resize-y`
 
 interface HelpOfferFormProps {
@@ -50,10 +50,14 @@ export function HelpOfferForm({ needId, capabilities, onOffered }: HelpOfferForm
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(event)} className="border-brand-200 bg-brand-50 rounded-md border p-4">
+    <form
+      onSubmit={(event) => void handleSubmit(event)}
+      className="border-brand-200 bg-brand-50 rounded-lg border p-4"
+    >
       <p className="text-brand-800 font-medium">¿Cómo puedes ayudar?</p>
       <p className="text-brand-700 mt-1 text-sm">
-        Tu oferta será visible para el autor y la comunidad. Solo se contactará contigo si hay relación de ayuda.
+        Tu oferta será visible para el autor y la comunidad. Solo se contactará contigo si hay
+        relación de ayuda.
       </p>
 
       <div className="mt-3 flex flex-col gap-3">
@@ -61,7 +65,9 @@ export function HelpOfferForm({ needId, capabilities, onOffered }: HelpOfferForm
           name="capability"
           value={capabilityId ?? ''}
           className={selectClass}
-          onChange={(event) => setCapabilityId(event.target.value ? Number(event.target.value) : null)}
+          onChange={(event) =>
+            setCapabilityId(event.target.value ? Number(event.target.value) : null)
+          }
         >
           <option value="">Tipo de ayuda</option>
           {capabilities.map((capability) => (

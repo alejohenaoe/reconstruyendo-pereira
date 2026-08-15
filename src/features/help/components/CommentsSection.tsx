@@ -11,7 +11,7 @@ import { Button } from '@/shared/components/Button'
 import { timeAgo } from '@/shared/utils/timeAgo'
 
 const textareaClass =
-  'w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-closed-100 disabled:opacity-60 resize-y'
+  'w-full rounded-md border border-arena-200 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-arena-100 disabled:opacity-60 resize-y'
 
 interface CommentsSectionProps {
   needId: string
@@ -23,7 +23,13 @@ interface CommentsSectionProps {
 }
 
 /** Hilo de colaboración (MVP §14): comentarios claramente distintos de las ofertas. */
-export function CommentsSection({ needId, comments, canComment, onChanged, reportUrlFor }: CommentsSectionProps) {
+export function CommentsSection({
+  needId,
+  comments,
+  canComment,
+  onChanged,
+  reportUrlFor,
+}: CommentsSectionProps) {
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -54,8 +60,14 @@ export function CommentsSection({ needId, comments, canComment, onChanged, repor
       ) : (
         <ul className="flex flex-col gap-2">
           {comments.map((comment) => (
-            <li key={comment.id} className="border-closed-100 flex gap-2 rounded-md border bg-white px-3 py-2">
-              <MessageCircle className="text-closed-400 mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <li
+              key={comment.id}
+              className="border-arena-200 flex gap-2 rounded-lg border bg-white px-3 py-2"
+            >
+              <MessageCircle
+                className="text-closed-400 mt-0.5 size-4 shrink-0"
+                aria-hidden="true"
+              />
               <div>
                 <p className="text-closed-800 text-sm">
                   <span className="font-medium">{comment.display_name}</span>
@@ -63,7 +75,10 @@ export function CommentsSection({ needId, comments, canComment, onChanged, repor
                 </p>
                 <p className="text-closed-700 mt-0.5 text-sm whitespace-pre-line">{comment.body}</p>
                 {reportUrlFor ? (
-                  <Link to={reportUrlFor(comment)} className="text-closed-400 hover:text-danger-600 mt-1 inline-block text-xs underline">
+                  <Link
+                    to={reportUrlFor(comment)}
+                    className="text-closed-400 hover:text-danger-600 mt-1 inline-block text-xs underline"
+                  >
                     Reportar
                   </Link>
                 ) : null}

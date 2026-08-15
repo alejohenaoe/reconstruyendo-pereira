@@ -21,10 +21,10 @@ export function TextField({ label, error, hint, id, name, className, ...rest }: 
         name={name}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className={`w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:bg-closed-100 disabled:opacity-60 ${
+        className={`disabled:bg-arena-100 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none disabled:opacity-60 ${
           error
             ? 'border-danger-500 focus:ring-danger-500'
-            : 'border-closed-100 focus:border-brand-500 focus:ring-brand-500'
+            : 'border-arena-200 focus:border-brand-500 focus:ring-brand-500'
         } ${className ?? ''}`}
         {...rest}
       />

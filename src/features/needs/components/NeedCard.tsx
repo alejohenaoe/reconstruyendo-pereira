@@ -20,7 +20,7 @@ export function NeedCard({ need, offerCount, image }: NeedCardProps) {
   return (
     <Link
       to={`/needs/${need.id}`}
-      className="group border-closed-100 focus-visible:ring-brand-600 flex gap-4 rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2"
+      className="group focus-visible:ring-brand-600 border-arena-200 flex gap-4 rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-lg focus:outline-none focus-visible:ring-2"
     >
       <NeedImage
         src={image?.thumb ?? null}

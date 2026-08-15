@@ -15,6 +15,7 @@ import {
 import type { Need } from '@/features/needs/types'
 import { Alert } from '@/shared/components/Alert'
 import { AppHeader } from '@/shared/components/AppHeader'
+import { Card } from '@/shared/components/Card'
 import { PageLoader } from '@/shared/components/PageLoader'
 
 /** Página de publicación (Fase 4): crear necesidad → fotos → dirección. */
@@ -112,7 +113,7 @@ export function NewNeedPage() {
   }
 
   return (
-    <div className="bg-closed-100/40 min-h-screen">
+    <div className="bg-arena-50 min-h-screen">
       <AppHeader />
       <main className="mx-auto w-full max-w-2xl px-4 py-6">
         <h1 className="text-brand-900 text-2xl font-semibold">Publicar un pedido de ayuda</h1>
@@ -125,7 +126,7 @@ export function NewNeedPage() {
             <Alert>{municipalitiesError ?? categoriesError}</Alert>
           </div>
         ) : (
-          <div className="border-closed-100 mt-6 rounded-xl border bg-white p-5 shadow-sm sm:p-6">
+          <Card className="mt-6">
             <NeedForm
               municipalities={municipalities}
               categories={categories}
@@ -134,7 +135,7 @@ export function NewNeedPage() {
               globalError={globalError}
               onSubmit={handleSubmit}
             />
-          </div>
+          </Card>
         )}
       </main>
     </div>

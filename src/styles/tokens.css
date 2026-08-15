@@ -107,4 +107,121 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+
+  /* Animaciones: flotación, pulso sutil y secuencia "story" del hero (14 s) */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.5s ease-in-out infinite;
+  --animate-story-a: story-a 14s ease-in-out infinite;
+  --animate-story-b: story-b 14s ease-in-out infinite;
+  --animate-story-c: story-c 14s ease-in-out infinite;
+  --animate-progress: progress 14s linear infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Escena 1: llega una oferta (0.6 s → 8.1 s) */
+  @keyframes story-a {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    4% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    56% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    62% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  /* Escena 2: otro aporte (3.9 s → 10.4 s, se acumula con la 1) */
+  @keyframes story-b {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    28% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    32% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    72% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    78% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  /* Escena 3: ayuda en camino (8.4 s → 13.2 s) */
+  @keyframes story-c {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    60% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    64% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    90% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    96% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes progress {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
 }

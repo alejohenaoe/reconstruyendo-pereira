@@ -12,6 +12,7 @@ import { usePublicNeeds } from '@/features/needs/hooks/usePublicNeeds'
 import type { NeedFilters as NeedFiltersValue, NeedStatus } from '@/features/needs/types'
 import { NEED_STATUS_ORDER } from '@/features/needs/types'
 import { AppHeader } from '@/shared/components/AppHeader'
+import { EmptyState } from '@/shared/components/EmptyState'
 import { Skeleton } from '@/shared/components/Skeleton'
 import { buttonStyles } from '@/shared/components/buttonStyles'
 
@@ -47,7 +48,7 @@ export function NeedsListPage() {
   }
 
   return (
-    <div className="bg-closed-100/40 min-h-screen">
+    <div className="bg-arena-50 min-h-screen">
       <AppHeader />
       <main className="mx-auto w-full max-w-2xl px-4 py-6">
         <div className="mb-4 flex items-end justify-between gap-2">
@@ -86,36 +87,47 @@ export function NeedsListPage() {
             <Skeleton className="h-28" />
           </div>
         ) : error ? (
-          <div className="text-closed-600 mt-8 flex flex-col items-center gap-4 text-center">
-            <p>{error}</p>
-            <button
-              type="button"
-              onClick={() => void reload()}
-              className={buttonStyles({ variant: 'secondary' })}
-            >
-              Reintentar
-            </button>
-          </div>
-        ) : needs.length === 0 ? (
-          <div className="mt-10 flex flex-col items-center gap-3 text-center">
-            <HelpCircle className="text-closed-300 size-10" aria-hidden="true" />
-            <h2 className="text-closed-700 text-lg font-semibold">
-              {hasActiveFilters
-                ? 'No encontramos pedidos de ayuda con estos filtros.'
-                : 'Todavía no hay pedidos de ayuda publicados.'}
-            </h2>
-            {hasActiveFilters ? (
+          <EmptyState
+            icon={HelpCircle}
+            title="No pudimos cargar los pedidos de ayuda"
+            description={error}
+            action={
               <button
                 type="button"
-                onClick={() =>
-                  updateFilters({ municipalityId: null, categoryId: null, status: null })
-                }
-                className={buttonStyles({ variant: 'subtle' })}
+                onClick={() => void reload()}
+                className={buttonStyles({ variant: 'secondary' })}
               >
-                Limpiar filtros
+                Reintentar
               </button>
-            ) : null}
-          </div>
+            }
+          />
+        ) : needs.length === 0 ? (
+          <EmptyState
+            icon={HelpCircle}
+            title={
+              hasActiveFilters
+                ? 'No encontramos pedidos de ayuda con estos filtros.'
+                : 'Todavía no hay pedidos de ayuda publicados.'
+            }
+            description={
+              hasActiveFilters
+                ? 'Prueba con otros municipios, categorías o estados.'
+                : 'El primero puede ser el tuyo: pide ayuda para reparar tu vivienda.'
+            }
+            action={
+              hasActiveFilters ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({ municipalityId: null, categoryId: null, status: null })
+                  }
+                  className={buttonStyles({ variant: 'subtle' })}
+                >
+                  Limpiar filtros
+                </button>
+              ) : null
+            }
+          />
         ) : (
           <>
             <ul className="mt-4 flex flex-col gap-3">

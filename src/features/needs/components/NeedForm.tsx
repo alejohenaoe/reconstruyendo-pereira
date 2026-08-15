@@ -25,7 +25,7 @@ export interface NeedFormValues {
 const MAX_PHOTOS = 5
 
 const selectClass =
-  'w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-closed-100 disabled:opacity-60'
+  'w-full rounded-md border border-arena-200 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-arena-100 disabled:opacity-60'
 const textareaClass = `${selectClass} resize-y`
 
 interface NeedFormProps {
@@ -265,7 +265,7 @@ export function NeedForm({
         />
       </div>
 
-      <div className="border-info-100 bg-info-50 rounded-md border p-4">
+      <div className="border-info-100 bg-info-50 rounded-lg border p-4">
         <p className="text-info-700 flex items-center gap-1.5 text-sm font-medium">
           <Lock className="size-4 shrink-0" aria-hidden="true" />
           Dirección exacta (opcional)

@@ -7,6 +7,7 @@ import {
   HardHat,
   HeartHandshake,
   HelpCircle,
+  LifeBuoy,
   MapPin,
   MessageSquare,
   PenLine,
@@ -71,61 +72,81 @@ const values = [
 
 const tradeChips = ['Reconstrucción de viviendas', 'Paredes', 'Techos', 'Retiro de escombros']
 
-/** Ilustración decorativa del hero: una casa en reconstrucción (sin imágenes externas). */
-function HeroIllustration() {
+const BRICK_PATTERN_URL =
+  'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2724%27 viewBox=%270 0 48 24%27%3E%3Cg fill=%27none%27 stroke=%27%23e9ddc6%27 stroke-width=%272%27%3E%3Crect x=%270.5%27 y=%270.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3Crect x=%2724.5%27 y=%270.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3Crect x=%2712.5%27 y=%2712.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3Crect x=%2736.5%27 y=%2712.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3C/g%3E%3C/svg%3E")'
+
+/** Mockup del producto en CSS puro (sin imágenes): la historia de un pedido de ayuda en bucle. */
+function HeroProductMockup() {
   return (
-    <svg viewBox="0 0 340 260" aria-hidden="true" className="mx-auto w-full max-w-sm lg:max-w-md">
-      {/* Cielo cálido */}
-      <rect width="340" height="260" rx="24" fill="#f4eee1" />
-      <circle cx="282" cy="52" r="26" fill="#e9ddc6" />
-      <circle cx="250" cy="70" r="4" fill="#82c9b1" />
-      <circle cx="272" cy="92" r="3" fill="#f0c2ab" />
-      <circle cx="232" cy="96" r="3" fill="#82c9b1" />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none relative mx-auto w-full max-w-sm lg:max-w-md"
+    >
+      {/* Tarjeta principal: un pedido de ayuda */}
+      <div className="border-arena-200 rounded-xl border bg-white p-3 shadow-lg">
+        <div
+          className="relative aspect-[4/3] overflow-hidden rounded-lg"
+          style={{ backgroundImage: BRICK_PATTERN_URL }}
+        >
+          <span className="bg-brand-600 absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full text-white opacity-90">
+            <HardHat className="size-6" aria-hidden="true" />
+          </span>
+        </div>
+        <div className="mt-3 flex flex-col gap-2">
+          <p className="text-brand-900 text-sm font-semibold">Reparar techo de la casa</p>
+          <p className="text-closed-500 flex items-center gap-1 text-xs">
+            <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
+            Dosquebradas · La Pradera
+          </p>
 
-      {/* Casco de obra */}
-      <path d="M52 80 a15 15 0 0 1 30 0 Z" fill="#26745d" />
-      <rect x="46" y="80" width="42" height="7" rx="3.5" fill="#26745d" />
+          {/* Hilo: las escenas de la historia (ciclo de 14 s) */}
+          <div className="mt-2 flex flex-col gap-1.5">
+            <div className="animate-story-a border-arena-200 bg-arena-50 flex items-center gap-2 rounded-lg border px-2 py-1.5 motion-reduce:animate-none">
+              <span className="bg-brand-600 flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white">
+                Ju
+              </span>
+              <p className="text-closed-700 min-w-0 text-[11px] leading-tight">
+                <span className="font-semibold">Juan</span> se ofreció ·{' '}
+                <span className="text-brick-700 font-medium">Albañilería</span>
+              </p>
+            </div>
+            <div className="animate-story-b border-arena-200 bg-arena-50 flex items-center gap-2 rounded-lg border px-2 py-1.5 motion-reduce:animate-none">
+              <span className="bg-brick-600 flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white">
+                Jo
+              </span>
+              <p className="text-closed-700 min-w-0 text-[11px] leading-tight">
+                <span className="font-semibold">Jorge</span> aporta ·{' '}
+                <span className="text-brick-700 font-medium">2 bultos de cemento</span>
+              </p>
+            </div>
+            <div className="animate-story-c bg-success-50 border-success-100 text-success-700 flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[11px] font-semibold motion-reduce:animate-none">
+              <CheckCircle className="size-3.5 shrink-0" aria-hidden="true" />
+              Ayuda en camino
+            </div>
+          </div>
 
-      {/* Casa en reconstrucción */}
-      <ellipse cx="170" cy="152" rx="76" ry="10" fill="#e9ddc6" />
-      <path d="M128 82 L170 44 L212 82 Z" fill="#f0c2ab" />
-      <rect
-        x="134"
-        y="82"
-        width="72"
-        height="66"
-        rx="10"
-        fill="#d7f0e6"
-        stroke="#b0e0cf"
-        strokeWidth="3"
-      />
-      {/* Apertura en la pared (zona a reparar) */}
-      <rect
-        x="144"
-        y="96"
-        width="26"
-        height="46"
-        rx="4"
-        fill="#faf7f1"
-        stroke="#e9ddc6"
-        strokeWidth="3"
-      />
-      {/* Ladrillo entrando en la pared */}
-      <rect
-        x="178"
-        y="108"
-        width="20"
-        height="11"
-        rx="2"
-        fill="#b85c38"
-        transform="rotate(-8 188 113)"
-      />
-      {/* Corazón sobre el techo */}
-      <path
-        d="M170 40c-1.1-1.2-2.8-2.2-4.3-2.2-2.2 0-4 1.8-4 3.9 0 1.2.5 2.3 1.4 3.1l6.9 6.9 6.9-6.9c.9-.8 1.4-1.9 1.4-3.1 0-2.1-1.8-3.9-4-3.9-1.5 0-3.2 1-4.3 2.2Z"
-        fill="#b85c38"
-      />
-    </svg>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <span className="bg-need-100 text-need-700 animate-pulse-soft inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium motion-reduce:animate-none">
+              <LifeBuoy className="size-3.5" aria-hidden="true" />
+              Necesita ayuda
+            </span>
+            <span className="text-brand-700 flex items-center gap-1 text-xs font-medium">
+              <HandHeart className="size-3.5" aria-hidden="true" />3 personas se ofrecieron
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Barra de progreso del ciclo */}
+      <div className="bg-arena-200 mt-3 h-1 w-full overflow-hidden rounded-full">
+        <div className="animate-progress bg-brand-600 h-full w-full rounded-full motion-reduce:animate-none" />
+      </div>
+
+      {/* Chip de comunidad (flotante) */}
+      <div className="bg-brick-600 animate-float absolute -bottom-3 -left-2 -rotate-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white shadow-lg motion-reduce:animate-none sm:-left-4">
+        Pedidos abiertos en tu región
+      </div>
+    </div>
   )
 }
 
@@ -147,10 +168,7 @@ export function HomePage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 opacity-40"
-            style={{
-              backgroundImage:
-                'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2724%27 viewBox=%270 0 48 24%27%3E%3Cg fill=%27none%27 stroke=%27%23e9ddc6%27 stroke-width=%272%27%3E%3Crect x=%270.5%27 y=%270.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3Crect x=%2724.5%27 y=%270.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3Crect x=%2712.5%27 y=%2712.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3Crect x=%2736.5%27 y=%2712.5%27 width=%2723%27 height=%2711%27 rx=%272%27/%3E%3C/g%3E%3C/svg%3E")',
-            }}
+            style={{ backgroundImage: BRICK_PATTERN_URL }}
           />
           <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="mx-auto w-full max-w-xl text-center lg:mx-0 lg:text-left">
@@ -192,7 +210,7 @@ export function HomePage() {
             </div>
 
             <div className="hidden sm:block">
-              <HeroIllustration />
+              <HeroProductMockup />
             </div>
           </div>
         </section>

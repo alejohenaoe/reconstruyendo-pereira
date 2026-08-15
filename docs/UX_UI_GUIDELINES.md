@@ -862,9 +862,19 @@ Definido en `src/styles/tokens.css` (única fuente de verdad, compatible con Tai
 
 Los botones se definen en `src/shared/components/buttonStyles.ts` con variantes `primary`
 (teal), `secondary` (blanco con borde brand), `brick` (ayudar/reconstrucción), `danger` y
-`subtle`. El hero de la página de inicio usa una textura de ladrillos decorativa y una
-ilustración SVG propia (casa en reconstrucción con casco, ladrillo y corazón), sin imágenes
-externas.
+`subtle`. El hero de la página de inicio usa una textura de ladrillos decorativa y un mockup
+del producto construido en CSS puro (sin imágenes externas): la tarjeta de un pedido de ayuda
+cuenta en bucle la historia de una publicación → una oferta (Juan, albañilería) → otro aporte
+(Jorge, cemento) → "Ayuda en camino", con una barra de progreso del ciclo (14 s). La
+secuencia usa keyframes definidos en `tokens.css` (`animate-story-a/b/c`, `animate-float`,
+`animate-pulse-soft`, `animate-progress`) y respeta `prefers-reduced-motion`:
+`motion-reduce:animate-none` deja visible la historia completa en estado estático.
+
+Aplicación del patrón (Fase 2): el listado, el detalle y la publicación de pedidos de ayuda
+se construyen con superficies `Card` (blanco, borde `arena-200`, `rounded-xl`) sobre fondo
+`arena-50`; los selects y textareas usan bordes arena; los estados vacíos usan `EmptyState`;
+los hilos, ofertas y el formulario de oferta mantienen los acentos brand/brick. Los estados
+de los pedidos (`NeedStatus`) y de las ofertas conservan sus colores semánticos.
 
 ---
 

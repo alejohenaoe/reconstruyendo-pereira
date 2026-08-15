@@ -19,7 +19,7 @@ interface NeedFiltersProps {
 }
 
 const selectClass =
-  'w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm text-closed-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20'
+  'w-full rounded-md border border-arena-200 bg-white px-3 py-2 text-sm text-closed-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20'
 
 /** Filtros del listado público (UX §39): inline en desktop, panel/modal en móvil. */
 export function NeedFilters({ filters, onChange, municipalities, categories }: NeedFiltersProps) {
@@ -125,7 +125,7 @@ export function NeedFilters({ filters, onChange, municipalities, categories }: N
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="border-closed-100 text-closed-700 hover:border-brand-300 flex w-full items-center justify-between rounded-md border bg-white px-3 py-2 text-sm font-medium"
+          className="border-arena-200 text-closed-700 hover:border-brand-300 flex w-full items-center justify-between rounded-md border bg-white px-3 py-2 text-sm font-medium"
         >
           <span className="flex items-center gap-2">
             <ListFilter className="size-4" aria-hidden="true" />

@@ -13,7 +13,10 @@ export function Alert({ variant = 'error', children }: AlertProps) {
   }[variant]
 
   return (
-    <div role={variant === 'error' ? 'alert' : undefined} className={`rounded-md border px-4 py-3 text-sm ${styles}`}>
+    <div
+      role={variant === 'error' ? 'alert' : undefined}
+      className={`rounded-lg border px-4 py-3 text-sm ${styles}`}
+    >
       {children}
     </div>
   )

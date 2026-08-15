@@ -52,15 +52,15 @@ export function ImagePicker({
               <img
                 src={image.previewUrl}
                 alt="Vista previa de la foto"
-                className="h-full w-full rounded-md border border-closed-100 object-cover"
+                className="border-arena-200 h-full w-full rounded-md border object-cover"
               />
               {state === 'uploading' ? (
-                <div className="bg-black/50 absolute inset-0 flex items-center justify-center rounded-md">
-                  <Loader2 className="text-white size-5 animate-spin" aria-hidden="true" />
+                <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/50">
+                  <Loader2 className="size-5 animate-spin text-white" aria-hidden="true" />
                 </div>
               ) : null}
               {state === 'error' ? (
-                <div className="bg-black/50 absolute inset-0 flex items-center justify-center rounded-md">
+                <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/50">
                   <TriangleAlert className="text-danger-400 size-5" aria-hidden="true" />
                 </div>
               ) : null}
@@ -68,7 +68,7 @@ export function ImagePicker({
                 type="button"
                 onClick={() => onRemove(image.id)}
                 disabled={disabled || state === 'uploading'}
-                className="bg-black/60 text-white hover:bg-black/80 absolute -top-1.5 -right-1.5 rounded-full p-1 disabled:cursor-not-allowed disabled:opacity-50"
+                className="absolute -top-1.5 -right-1.5 rounded-full bg-black/60 p-1 text-white hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Quitar esta foto"
               >
                 <Trash2 className="size-3.5" aria-hidden="true" />
@@ -78,7 +78,7 @@ export function ImagePicker({
         })}
 
         {canAdd ? (
-          <label className="border-closed-100 text-closed-500 hover:border-brand-300 hover:text-brand-600 flex h-20 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed text-xs font-medium">
+          <label className="border-arena-200 text-closed-500 hover:border-brand-300 hover:text-brand-600 flex h-20 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed text-xs font-medium">
             <ImagePlus className="size-5" aria-hidden="true" />
             Agregar
             <input
