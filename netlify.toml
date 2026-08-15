@@ -1,0 +1,22 @@
+# Configuración de Netlify (Fase 8).
+# Build: Vite produce la SPA en `dist`.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA redirects: el router maneja las rutas del cliente y el callback de auth.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Variables por entorno (ARCH §45): se definen en el dashboard de Netlify,
+# NO se versionan aquí porque la key publishable es propia de cada proyecto
+# (remoto vs. staging). Ver README.md -> Despliegue.
+#   Site settings -> Environment variables (nivel site o por contexto):
+#     production:     VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY del proyecto remoto
+#     deploy-preview: apuntar a un proyecto de staging si se quiere aislar datos
+#
+# [context.production.environment]
+#   VITE_SUPABASE_URL = "https://<ref>.supabase.co"
+#   VITE_SUPABASE_PUBLISHABLE_KEY = "<anon key del proyecto remoto>"

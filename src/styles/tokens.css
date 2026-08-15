@@ -1,0 +1,91 @@
+/*
+ * Design tokens centralizados (UX_UI_GUIDELINES.md §31).
+ * Fuente única de verdad para colores, tipografía, radios, sombras y breakpoints.
+ * Compatibles con Tailwind CSS v4 mediante @theme.
+ */
+
+@theme {
+  /* Tipografía */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Marca: teal profundo — comunidad, esperanza, serenidad (UX §32) */
+  --color-brand-50: #effaf6;
+  --color-brand-100: #d7f0e6;
+  --color-brand-200: #b0e0cf;
+  --color-brand-300: #82c9b1;
+  --color-brand-400: #52ad90;
+  --color-brand-500: #359175;
+  --color-brand-600: #26745d;
+  --color-brand-700: #205e4c;
+  --color-brand-800: #1d4b3e;
+  --color-brand-900: #193e34;
+  --color-brand-950: #0b241d;
+
+  /* Estado OPEN — Necesita ayuda (atención, naranja cálido) */
+  --color-need-50: #fff7ed;
+  --color-need-100: #ffedd5;
+  --color-need-500: #f97316;
+  --color-need-600: #ea580c;
+  --color-need-700: #c2410c;
+
+  /* Estado IN_PROGRESS — En proceso (ámbar) */
+  --color-progress-50: #fffbeb;
+  --color-progress-100: #fef3c7;
+  --color-progress-500: #f59e0b;
+  --color-progress-600: #d97706;
+  --color-progress-700: #b45309;
+
+  /* Estado RESOLVED — Solucionada (verde) */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+
+  /* Estado CLOSED — Cerrada (neutral) */
+  --color-closed-100: #f1f5f9;
+  --color-closed-500: #64748b;
+  --color-closed-600: #475569;
+  --color-closed-700: #334155;
+
+  /* Semánticos: error/destructivo */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+
+  /* Semánticos: información */
+  --color-info-50: #eff6ff;
+  --color-info-100: #dbeafe;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
+
+  /* Semánticos: advertencia */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  /* Radios */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+
+  /* Breakpoints centralizados */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
