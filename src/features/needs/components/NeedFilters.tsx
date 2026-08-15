@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Eraser, ListFilter, X } from 'lucide-react'
 
 import type { Municipality } from '@/features/auth/types'
-import type { NeedCategory, NeedFilters as NeedFiltersValue, NeedStatus } from '@/features/needs/types'
+import type {
+  NeedCategory,
+  NeedFilters as NeedFiltersValue,
+  NeedStatus,
+} from '@/features/needs/types'
 import { NEED_STATUS_LABELS, NEED_STATUS_ORDER } from '@/features/needs/types'
 import { Button } from '@/shared/components/Button'
 
@@ -20,6 +24,16 @@ const selectClass =
 /** Filtros del listado público (UX §39): inline en desktop, panel/modal en móvil. */
 export function NeedFilters({ filters, onChange, municipalities, categories }: NeedFiltersProps) {
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    if (open) {
+      document.addEventListener('keydown', onKeyDown)
+      return () => document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
 
   const activeCount = [filters.municipalityId, filters.categoryId, filters.status].filter(
     (value) => value !== null,
@@ -43,7 +57,11 @@ export function NeedFilters({ filters, onChange, municipalities, categories }: N
     <>
       <label className="flex flex-col gap-1">
         <span className="text-closed-600 text-xs font-medium">Municipio</span>
-        <select className={selectClass} value={filters.municipalityId ?? ''} onChange={(event) => setMunicipality(event.target.value)}>
+        <select
+          className={selectClass}
+          value={filters.municipalityId ?? ''}
+          onChange={(event) => setMunicipality(event.target.value)}
+        >
           <option value="">Todos los municipios</option>
           {municipalities.map((municipality) => (
             <option key={municipality.id} value={municipality.id}>
@@ -54,7 +72,11 @@ export function NeedFilters({ filters, onChange, municipalities, categories }: N
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-closed-600 text-xs font-medium">Categoría</span>
-        <select className={selectClass} value={filters.categoryId ?? ''} onChange={(event) => setCategory(event.target.value)}>
+        <select
+          className={selectClass}
+          value={filters.categoryId ?? ''}
+          onChange={(event) => setCategory(event.target.value)}
+        >
           <option value="">Todas las categorías</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
@@ -65,7 +87,11 @@ export function NeedFilters({ filters, onChange, municipalities, categories }: N
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-closed-600 text-xs font-medium">Estado</span>
-        <select className={selectClass} value={filters.status ?? ''} onChange={(event) => setStatus(event.target.value)}>
+        <select
+          className={selectClass}
+          value={filters.status ?? ''}
+          onChange={(event) => setStatus(event.target.value)}
+        >
           <option value="">Todos los estados</option>
           {NEED_STATUS_ORDER.map((status) => (
             <option key={status} value={status}>
@@ -99,20 +125,22 @@ export function NeedFilters({ filters, onChange, municipalities, categories }: N
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="border-closed-100 bg-white text-closed-700 hover:border-brand-300 flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm font-medium"
+          className="border-closed-100 text-closed-700 hover:border-brand-300 flex w-full items-center justify-between rounded-md border bg-white px-3 py-2 text-sm font-medium"
         >
           <span className="flex items-center gap-2">
             <ListFilter className="size-4" aria-hidden="true" />
             Filtros
           </span>
           {clearable ? (
-            <span className="bg-brand-600 text-white rounded-full px-2 py-0.5 text-xs">{activeCount}</span>
+            <span className="bg-brand-600 rounded-full px-2 py-0.5 text-xs text-white">
+              {activeCount}
+            </span>
           ) : null}
         </button>
 
         {open ? (
           <div
-            className="bg-black/40 fixed inset-0 z-50 flex items-end justify-center sm:hidden"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Filtros"
