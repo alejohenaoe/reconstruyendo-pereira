@@ -7,6 +7,23 @@
   }
 
   body {
-    @apply text-closed-700 bg-white font-sans antialiased;
+    @apply text-closed-700 bg-arena-50 font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  /* Espacio bajo el contenido en móvil para la barra de navegación inferior (BottomNav). */
+  main {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    main {
+      padding-bottom: 0;
+    }
   }
 }

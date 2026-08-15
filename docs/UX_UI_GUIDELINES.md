@@ -207,17 +207,18 @@ El pedido de ayuda debe ser el objeto principal de la experiencia.
 
 ## 6.1 Navegación móvil
 
-En móvil utilizar una navegación sencilla.
+En móvil utilizar una barra de navegación inferior fija (`BottomNav`) para personas con sesión iniciada.
 
 Debe facilitar el acceso a las funciones principales:
 
 - Inicio.
 - Pedidos de ayuda.
-- Mis ayudas.
-- Mis pedidos de ayuda.
+- Avisos (notificaciones).
 - Perfil.
 
-La acción `Publicar pedido de ayuda` puede ocupar una posición destacada cuando corresponda.
+La acción `Publicar pedido de ayuda` ocupa una posición central destacada (botón flotante elevado).
+
+La barra inferior solo se muestra en móvil (`md:hidden`) y respeta el área segura inferior (`safe-area-inset-bottom`). Las personas sin sesión ven el header con acciones de acceso (`Ingresar` / `Registrarse`), sin barra inferior.
 
 No saturar la navegación inferior con más de las opciones necesarias.
 
@@ -241,14 +242,20 @@ Concepto recomendado:
 
 > **Ayudemos entre todos**
 
+Contexto (siempre visible en el hero):
+
+> Terremoto del 10 de agosto de 2026
+
 Subtexto:
 
-> Conecta personas que necesitan ayuda con quienes pueden aportar trabajo, conocimientos o materiales.
+> Si el terremoto dañó tu casa, pide ayuda para repararla —paredes, techos, escombros—. Si puedes aportar mano de obra, materiales o conocimientos, ofrece tu ayuda a tu comunidad.
 
 Acciones principales:
 
-- `Necesito ayuda`
-- `Quiero ayudar`
+- `Pedir ayuda` (botón primario teal, hacia `publicar pedido`).
+- `Ayudar` (botón terracota/brick, hacia los pedidos de ayuda).
+
+Bajo las acciones, una franja de chips con los oficios de reconstrucción (p. ej. `Reconstrucción de viviendas · Paredes · Techos · Retiro de escombros`) para dejar claro el contexto de construcción.
 
 Debajo debe aparecer un acceso visible a:
 
@@ -831,6 +838,33 @@ Centralizar al menos:
 Los tokens deben ser compatibles con Tailwind y mantener una única fuente de verdad.
 
 No introducir una segunda librería de componentes visuales si no existe un pedido de ayuda clara.
+
+## 31.1 Dirección visual: "Cantera cálida"
+
+El sistema visual se construye alrededor de una cantera cálida: superficies en tonos arena
+cálidos y texturizados, acentos teal de confianza (la marca) y terracota ("brick") para las
+acciones de ayuda y reconstrucción. Transmite calidez de comunidad, construcción y esperanza,
+sin caer en tonos fríos o institucionales.
+
+Definido en `src/styles/tokens.css` (única fuente de verdad, compatible con Tailwind):
+
+- **Neutros arena**: `arena-50 #faf7f1` (fondo general), `arena-100 #f4eee1` (secciones
+  alternas), `arena-200 #e9ddc6` (bordes y acentos), `arena-300 #d9c6a3`.
+- **Marca (teal)**: escala `brand` existente, invariable (confianza y comunidad).
+- **Terracota**: `brick-500 #c96f4a`, `brick-600 #b85c38`, `brick-700 #98492c` para la acción
+  `Ayudar` y elementos de reconstrucción.
+- **Tipografía**: `Sora` para títulos (`--font-display`) e `Inter` para texto (`--font-sans`),
+  cargadas desde Google Fonts en `index.html`. Títulos `h1`–`h3` usan `font-display`.
+- **Radios y sombras**: radios mayores (`rounded-lg` 1rem, `rounded-xl` 1.25rem) y sombras
+  suaves y amplias.
+- **Superficies**: el fondo por defecto es `arena-50`; las tarjetas usan `Card` (fondo blanco,
+  borde `arena-200`, `rounded-xl`).
+
+Los botones se definen en `src/shared/components/buttonStyles.ts` con variantes `primary`
+(teal), `secondary` (blanco con borde brand), `brick` (ayudar/reconstrucción), `danger` y
+`subtle`. El hero de la página de inicio usa una textura de ladrillos decorativa y una
+ilustración SVG propia (casa en reconstrucción con casco, ladrillo y corazón), sin imágenes
+externas.
 
 ---
 

@@ -2,12 +2,17 @@
  * Design tokens centralizados (UX_UI_GUIDELINES.md §31).
  * Fuente única de verdad para colores, tipografía, radios, sombras y breakpoints.
  * Compatibles con Tailwind CSS v4 mediante @theme.
+ * Dirección visual: "Cantera cálida" — comunidad, esperanza y oficio de la reconstrucción.
  */
 
 @theme {
   /* Tipografía */
   --font-sans:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-display:
+    'Sora', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
 
   /* Marca: teal profundo — comunidad, esperanza, serenidad (UX §32) */
   --color-brand-50: #effaf6;
@@ -21,6 +26,20 @@
   --color-brand-800: #1d4b3e;
   --color-brand-900: #193e34;
   --color-brand-950: #0b241d;
+
+  /* Arena — neutros cálidos: fondo, superficies y bordes suaves */
+  --color-arena-50: #faf7f1;
+  --color-arena-100: #f4eee1;
+  --color-arena-200: #e9ddc6;
+  --color-arena-300: #d9c6a3;
+
+  /* Ladrillo — acento de obra (terracota), uso moderado: destacados y CTA secundarios */
+  --color-brick-50: #fdf3ee;
+  --color-brick-100: #f8e0d3;
+  --color-brick-200: #f0c2ab;
+  --color-brick-500: #c96f4a;
+  --color-brick-600: #b85c38;
+  --color-brick-700: #98492c;
 
   /* Estado OPEN — Necesita ayuda (atención, naranja cálido) */
   --color-need-50: #fff7ed;
@@ -71,17 +90,17 @@
   --color-warning-700: #b45309;
 
   /* Radios */
-  --radius-xs: 0.125rem;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.25rem;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
 
-  /* Sombras */
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
-  --shadow-md: 0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow-lg: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  /* Sombras suaves y cálidas */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 2px 8px -2px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 12px 24px -8px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.06);
 
   /* Breakpoints centralizados */
   --breakpoint-sm: 640px;
