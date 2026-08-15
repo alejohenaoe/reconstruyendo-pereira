@@ -314,7 +314,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 ### Fase 8 — Testing y despliegue
 
-**Estado: COMPLETADA en el repositorio (unit 29/29, contratos 6/6, typecheck/lint/build verdes). El despliegue en vivo (db push al remoto + Netlify) queda documentado y listo; los pasos de ejecución que tocan recursos reales requieren la cuenta del usuario (Netlify CLI y dashboard).**
+**Estado: COMPLETADA — incluye el despliegue en vivo.** Producción en `https://reconstruyamospereira.netlify.app`, conectado de forma nativa al repo (push a `main` → build y deploy). Proyecto Supabase remoto `reconstruyendo-pereira` con las 11 migraciones aplicadas, bucket de Storage `need-images` funcional y auth configurado (`site_url` + redirects localhost/producción). Unit 29/29, contratos 6/6, typecheck/lint/build verdes.
 
 **Contenido entregado**
 
@@ -332,7 +332,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 - `npm run test` verde (29/29).
 - Los tests de seguridad fallan cuando la protección RLS está ausente y pasan cuando está presente (los contratos fallan si la RLS no protege; se verifica contra una base con RLS aplicada).
-- Deploy en Netlify funcional con auth callback configurado (pendiente de ejecutar con la cuenta del usuario; configuración del repo lista).
+- Deploy en Netlify funcional con auth callback configurado — **cumplido**: `https://reconstruyamospereira.netlify.app` (site id `8eda2aea-627d-4869-aa21-9e1af4313c6b`), repo conectado de forma nativa, `VITE_*` por entorno en el dashboard de Netlify, y redirects de auth en el remoto (localhost + producción).
 
 ## 6. Reglas transversales para todas las fases
 
