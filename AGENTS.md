@@ -44,6 +44,8 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
   - `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` — requeridas por `src/shared/lib/supabase.ts` (lanza error si faltan).
   - `SUPABASE_ACCESS_TOKEN` — **token de acceso personal de Supabase (Management API / CLI)**. Está guardado en `.env`. Para usarlo en comandos:
     `export SUPABASE_ACCESS_TOKEN=$(grep ^SUPABASE_ACCESS_TOKEN .env | cut -d= -f2)`
+  - `GH_TOKEN` — **token de acceso personal de GitHub (push/HTTPS, scope `repo`)**. Está guardado en `.env`. El push del repo ya funciona vía `gh auth setup-git`; si hace falta usar este token:
+    `export GH_TOKEN=$(grep ^GH_TOKEN .env | cut -d= -f2)` (nota: no tiene scope `workflow`; solo se necesitaría para añadir archivos en `.github/workflows/`).
   - `.env.production` (gitignored) apunta al remoto para builds de producción.
 - La publishable key es **pública** por diseño; la **service_role/secret key NUNCA** debe ir en archivos ni en variables `VITE_` (`.env.example` documenta esto).
 - **Netlify**: producción en `https://reconstruyamospereira.netlify.app` (site id `8eda2aea-627d-4869-aa21-9e1af4313c6b`). El repo ya está conectado de forma nativa (push a `main` → build y deploy automático; `netlify.toml` define build `npm run build` y publish `dist`). Las `VITE_*` ya están configuradas por entorno en el dashboard de Netlify (no se versionan). Estado local del link en `.netlify/state.json`.
