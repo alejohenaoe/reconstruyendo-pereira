@@ -9,13 +9,15 @@ import {
 } from '@/features/needs/services/needService'
 import type { Need, NeedFilters, NeedsCursor } from '@/features/needs/types'
 
+type ImageMap = Record<string, { thumb: string; original: string }>
+
 /**
  * Lista pública con filtros y paginación por cursor.
  * Los conteos e imágenes se cargan agrupados por página (sin N+1).
  */
 export function usePublicNeeds(filters: NeedFilters) {
   const [needs, setNeeds] = useState<Need[]>([])
-  const [images, setImages] = useState<Record<string, { thumb: string; original: string }>>({})
+  const [images, setImages] = useState<ImageMap>({})
   const [offerCounts, setOfferCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -27,27 +29,37 @@ export function usePublicNeeds(filters: NeedFilters) {
   const requestRef = useRef(0)
   const loadingMoreRef = useRef(false)
 
-  function applyAssets(loadedNeeds: Need[]) {
+  /**
+   * Miniaturas y conteos de una página, pedidos agrupados (sin N+1).
+   * Una recarga reemplaza lo anterior; al paginar se acumula, porque si no
+   * "Cargar más" dejaría sin miniatura ni conteo a las tarjetas ya cargadas.
+   */
+  function applyAssets(loadedNeeds: Need[], mode: 'replace' | 'append') {
     const ids = loadedNeeds.map((need) => need.id)
     if (ids.length === 0) {
-      setImages({})
-      setOfferCounts({})
+      if (mode === 'replace') {
+        setImages({})
+        setOfferCounts({})
+      }
       return
     }
     void Promise.all([getOfferCounts(ids), getNeedImages(ids)]).then(([counts, rows]) => {
-      const countMap: Record<string, number> = {}
-      for (const row of counts) countMap[row.need_id] = row.offer_count
-      const imageMap: Record<string, { thumb: string; original: string }> = {}
-      for (const row of rows) {
-        if (!imageMap[row.need_id]) {
-          imageMap[row.need_id] = {
+      setOfferCounts((current) => {
+        const next = mode === 'replace' ? {} : { ...current }
+        for (const row of counts) next[row.need_id] = row.offer_count
+        return next
+      })
+      setImages((current) => {
+        const next: ImageMap = mode === 'replace' ? {} : { ...current }
+        for (const row of rows) {
+          if (next[row.need_id]) continue
+          next[row.need_id] = {
             thumb: needImageUrl(row.storage_path, 160, 120),
             original: needImageOriginalUrl(row.storage_path),
           }
         }
-      }
-      setOfferCounts(countMap)
-      setImages(imageMap)
+        return next
+      })
     })
   }
 
@@ -70,7 +82,7 @@ export function usePublicNeeds(filters: NeedFilters) {
       setNeeds(result.data.needs)
       setHasMore(result.data.hasMore)
       cursorRef.current = result.data.nextCursor
-      applyAssets(result.data.needs)
+      applyAssets(result.data.needs, 'replace')
     }
     setLoading(false)
   }, [])
@@ -91,7 +103,7 @@ export function usePublicNeeds(filters: NeedFilters) {
     setNeeds((prev) => [...prev, ...result.data.needs])
     setHasMore(result.data.hasMore)
     cursorRef.current = result.data.nextCursor
-    applyAssets(result.data.needs)
+    applyAssets(result.data.needs, 'append')
   }, [])
 
   useEffect(() => {
