@@ -44,7 +44,7 @@ export function NeedsTable({ needs, onChanged }: NeedsTableProps) {
         {needs.map((need) => (
           <li
             key={need.id}
-            className="border-closed-100 flex flex-col gap-2 rounded-md border bg-white px-3 py-2"
+            className="border-arena-200 flex flex-col gap-2 rounded-lg border bg-white px-4 py-3 shadow-sm"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="min-w-0">

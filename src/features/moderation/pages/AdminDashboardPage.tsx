@@ -12,7 +12,7 @@ export function AdminDashboardPage() {
   return (
     <>
       <div>
-        <h1 className="text-closed-800 text-xl font-semibold">Resumen</h1>
+        <h1 className="text-brand-900 text-xl font-semibold">Resumen</h1>
         <p className="text-closed-500 mt-1 text-sm">Estado general de la comunidad.</p>
       </div>
       {error ? <p className="text-danger-600 text-sm">{error}</p> : <AdminStatsCards stats={stats} />}

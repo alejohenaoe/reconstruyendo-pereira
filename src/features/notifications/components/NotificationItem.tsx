@@ -17,12 +17,12 @@ export function NotificationItem({ notification, onRead, onDelete }: Notificatio
 
   return (
     <li
-      className={`rounded-md border p-4 ${isUnread ? 'border-brand-200 bg-brand-50/50' : 'border-closed-100 bg-white'}`}
+      className={`rounded-lg border p-4 shadow-sm ${isUnread ? 'border-brand-200 bg-brand-50/60' : 'border-arena-200 bg-white'}`}
     >
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className={`mt-1.5 size-2 shrink-0 rounded-full ${isUnread ? 'bg-brand-600' : 'bg-closed-200'}`}
+          className={`mt-1.5 size-2 shrink-0 rounded-full ${isUnread ? 'bg-brand-600' : 'bg-closed-300'}`}
         />
         <div className="min-w-0 flex-1">
           <p className={`text-closed-700 text-sm ${isUnread ? 'font-medium' : ''}`}>{notificationMessage(notification)}</p>

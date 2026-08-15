@@ -21,7 +21,7 @@ export function buttonStyles({
       'border-brand-200 bg-white text-brand-800 hover:bg-brand-50 focus-visible:ring-brand-600 border',
     brick: 'bg-brick-600 text-white shadow-sm hover:bg-brick-700 focus-visible:ring-brick-600',
     danger: 'bg-danger-600 text-white shadow-sm hover:bg-danger-700 focus-visible:ring-danger-600',
-    subtle: 'text-closed-600 hover:bg-closed-100 focus-visible:ring-closed-500',
+    subtle: 'text-closed-600 hover:bg-arena-100 focus-visible:ring-closed-500',
   }
   const sizes: Record<ButtonSize, string> = {
     sm: 'px-2.5 py-1.5 text-xs',

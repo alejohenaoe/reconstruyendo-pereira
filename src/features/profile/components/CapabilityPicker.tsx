@@ -46,7 +46,7 @@ export function CapabilityPicker({
                 value={capability.slug}
                 checked={checked}
                 onChange={() => onToggle(capability.id)}
-                className="text-brand-600 border-closed-100 focus:ring-brand-500 size-4 shrink-0 rounded"
+                className="text-brand-600 border-arena-300 focus:ring-brand-500 size-4 shrink-0 rounded"
               />
               {capability.label_es}
             </label>

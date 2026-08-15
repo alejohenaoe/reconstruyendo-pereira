@@ -26,7 +26,7 @@ export function NotificationsPage() {
       <main className="mx-auto w-full max-w-2xl px-4 py-8">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-closed-800 text-xl font-semibold">Notificaciones</h1>
+            <h1 className="text-brand-900 text-xl font-semibold">Notificaciones</h1>
             <p className="text-closed-500 mt-1 text-sm">
               {unread > 0
                 ? `Tienes ${unread} ${unread === 1 ? 'notificación' : 'notificaciones'} por leer.`

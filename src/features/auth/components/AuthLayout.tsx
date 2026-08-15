@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 
 import { BrandMark } from '@/shared/components/BrandMark'
+import { Card } from '@/shared/components/Card'
 
 interface AuthLayoutProps {
   title: string
@@ -14,7 +15,7 @@ interface AuthLayoutProps {
 /** Marco de las páginas de autenticación: tarjeta centrada con la marca (UX §3.3, §27). */
 export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
-    <main className="bg-brand-50 flex min-h-screen flex-col items-center justify-center px-4 py-12">
+    <main className="bg-arena-50 flex min-h-screen flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <Link
           to="/"
@@ -25,16 +26,16 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
         </Link>
         <Link
           to="/"
-          className="text-brand-800 mb-6 flex items-center justify-center gap-2 text-2xl font-semibold"
+          className="text-brand-800 font-display mb-6 flex items-center justify-center gap-2 text-2xl font-semibold"
         >
           <BrandMark size={28} className="shrink-0" />
           Reconstruyamos
         </Link>
-        <div className="rounded-xl bg-white p-6 shadow-md sm:p-8">
-          <h1 className="text-closed-800 text-xl font-semibold">{title}</h1>
+        <Card className="p-6 sm:p-8">
+          <h1 className="text-brand-900 text-xl font-semibold">{title}</h1>
           {subtitle ? <p className="text-closed-500 mt-1 text-sm">{subtitle}</p> : null}
           <div className="mt-6">{children}</div>
-        </div>
+        </Card>
       </div>
     </main>
   )

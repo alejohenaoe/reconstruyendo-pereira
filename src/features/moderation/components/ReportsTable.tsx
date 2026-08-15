@@ -46,7 +46,7 @@ export function ReportsTable({ reports, onChanged }: ReportsTableProps) {
       {error ? <p className="text-danger-600 text-sm">{error}</p> : null}
       <ul className="flex flex-col gap-3">
         {reports.map((report) => (
-          <li key={report.id} className="border-closed-100 flex flex-col gap-2 rounded-md border bg-white p-3">
+          <li key={report.id} className="border-arena-200 flex flex-col gap-2 rounded-lg border bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-center gap-2">
               <ReportStatusBadge status={report.status} />
               <ReportReasonBadge reason={report.reason} />

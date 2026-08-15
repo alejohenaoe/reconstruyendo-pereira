@@ -12,9 +12,9 @@ import { buttonStyles } from '@/shared/components/buttonStyles'
 import { Link } from 'react-router-dom'
 
 const radioClass =
-  'border-closed-100 flex cursor-pointer items-start gap-2 rounded-md border bg-white px-3 py-2 text-sm text-closed-700 transition-colors has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50'
+  'border-arena-200 flex cursor-pointer items-start gap-2 rounded-md border bg-white px-3 py-2 text-sm text-closed-700 transition-colors has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50'
 const textareaClass =
-  'w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 resize-y'
+  'w-full rounded-md border border-arena-200 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 resize-y'
 
 interface ReportFormProps {
   target: ReportTarget
@@ -60,7 +60,7 @@ export function ReportForm({ target, onDone }: ReportFormProps) {
 
   return (
     <form onSubmit={(event) => void handleSubmit(event)} className="flex flex-col gap-4">
-      <div className="border-closed-100 flex items-start gap-3 rounded-md border bg-white p-4">
+      <div className="border-arena-200 flex items-start gap-3 rounded-lg border bg-white p-4 shadow-sm">
         <ShieldAlert className="text-brand-600 mt-0.5 size-5 shrink-0" aria-hidden="true" />
         <div>
           <p className="text-closed-800 text-sm font-medium">Estás reportando: {target.label}</p>

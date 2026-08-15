@@ -12,6 +12,7 @@ import { getOwnPhone, saveOwnPhone } from '@/features/help/services/helpService'
 import { CapabilityPicker } from '@/features/profile/components/CapabilityPicker'
 import { getMyCapabilities, saveMyCapabilities } from '@/features/profile/services/profileService'
 import { Alert } from '@/shared/components/Alert'
+import { Card } from '@/shared/components/Card'
 
 /**
  * Página "Mi cuenta" (UX §22). Muestra datos básicos y el teléfono de
@@ -127,9 +128,9 @@ export function AccountPage() {
     <div className="min-h-screen">
       <AppHeader />
       <main className="mx-auto w-full max-w-2xl px-4 py-10">
-        <h1 className="text-closed-800 text-2xl font-semibold">Mi cuenta</h1>
+        <h1 className="text-brand-900 text-2xl font-semibold">Mi cuenta</h1>
         <div className="mt-6 flex flex-col gap-4">
-          <div className="border-closed-100 flex flex-col gap-3 rounded-xl border bg-white p-6 shadow-sm">
+          <Card className="flex flex-col gap-3">
             <div>
               <p className="text-closed-500 text-xs font-medium uppercase">Nombre</p>
               <p className="text-closed-800 mt-1 text-base font-medium">
@@ -144,9 +145,9 @@ export function AccountPage() {
               <span className="bg-success-500 size-2 rounded-full" aria-hidden="true" />
               Correo verificado
             </div>
-          </div>
+          </Card>
 
-          <div className="border-closed-100 flex flex-col gap-3 rounded-xl border bg-white p-6 shadow-sm">
+          <Card className="flex flex-col gap-3">
             <div>
               <p className="text-closed-800 text-base font-medium">Teléfono de contacto</p>
               <p className="text-closed-500 mt-1 text-sm">
@@ -180,10 +181,10 @@ export function AccountPage() {
             ) : (
               <p className="text-closed-500 text-sm">Cargando…</p>
             )}
-          </div>
+          </Card>
 
           {/* Capacidades declaradas (MVP §19, UX §22): multi-selección, no roles. */}
-          <div className="border-closed-100 flex flex-col gap-3 rounded-xl border bg-white p-6 shadow-sm">
+          <Card className="flex flex-col gap-3">
             {capabilitiesLoaded ? (
               <>
                 <CapabilityPicker
@@ -210,14 +211,14 @@ export function AccountPage() {
             ) : (
               <p className="text-closed-500 text-sm">Cargando…</p>
             )}
-          </div>
+          </Card>
 
           {/* Acceso al historial de participaciones (MVP §24, UX §5 y §22). */}
-          <div className="border-closed-100 flex flex-col gap-2 rounded-xl border bg-white p-6 shadow-sm">
+          <Card className="flex flex-col gap-2">
             <p className="text-closed-800 text-base font-medium">Mi actividad</p>
             <Link
               to="/my-needs"
-              className="border-closed-100 hover:border-brand-300 hover:bg-arena-50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+              className="border-arena-200 hover:border-brand-300 hover:bg-arena-50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
             >
               <span className="text-closed-700 flex items-center gap-2 text-sm font-medium">
                 <HeartHandshake className="text-brand-600 size-5" aria-hidden="true" />
@@ -227,7 +228,7 @@ export function AccountPage() {
             </Link>
             <Link
               to="/my-help"
-              className="border-closed-100 hover:border-brand-300 hover:bg-arena-50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+              className="border-arena-200 hover:border-brand-300 hover:bg-arena-50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
             >
               <span className="text-closed-700 flex items-center gap-2 text-sm font-medium">
                 <HandHeart className="text-brick-600 size-5" aria-hidden="true" />
@@ -235,7 +236,7 @@ export function AccountPage() {
               </span>
               <ChevronRight className="text-closed-400 size-4" aria-hidden="true" />
             </Link>
-          </div>
+          </Card>
 
           <Button type="button" variant="danger" loading={signingOut} onClick={handleSignOut}>
             Cerrar sesión

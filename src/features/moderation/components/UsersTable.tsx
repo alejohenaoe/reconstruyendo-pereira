@@ -37,7 +37,7 @@ export function UsersTable({ users, onChanged }: UsersTableProps) {
       {error ? <p className="text-danger-600 text-sm">{error}</p> : null}
       <ul className="flex flex-col gap-2">
         {users.map((user) => (
-          <li key={user.id} className="border-closed-100 flex items-center justify-between gap-3 rounded-md border bg-white px-3 py-2">
+          <li key={user.id} className="border-arena-200 flex items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3 shadow-sm">
             <div className="min-w-0">
               <p className="text-closed-800 truncate text-sm">
                 <span className="font-medium">{user.display_name}</span>

@@ -900,6 +900,20 @@ secuencia usa keyframes definidos en `tokens.css` (`animate-story-a/b/c`, `anima
 `animate-pulse-soft`, `animate-progress`) y respeta `prefers-reduced-motion`:
 `motion-reduce:animate-none` deja visible la historia completa en estado estático.
 
+La escala neutra `closed` es también el gris de texto de toda la interfaz y está completa
+(100–800): los títulos de página usan `text-brand-900`, el texto principal `closed-700`/`800`, el
+secundario `closed-500` y el terciario `closed-400`. Antes faltaban `closed-200/300/400/800` en
+los tokens, de modo que utilidades como `text-closed-800` no generaban CSS y los títulos caían al
+color heredado; al añadir cualquier tono nuevo hay que definirlo en `tokens.css`, nunca darlo por
+supuesto por parecerse a una escala de Tailwind.
+
+Aplicación del patrón (Fase 3): autenticación, `Mi cuenta`, notificaciones, reporte, 404 y panel
+de administración. Las páginas de auth usan fondo `arena-50` y `Card` (antes `bg-brand-50` con
+una tarjeta blanca suelta); `Mi cuenta` pasa a `Card`; las filas de notificaciones, reportes,
+usuarios y pedidos del panel usan borde `arena-200`, `rounded-lg` y sombra suave; los controles
+de formulario mantienen `rounded-md` con borde arena. La navegación del panel y el menú del
+header comparten el mismo `hover:bg-arena-100`.
+
 Aplicación del patrón (Fase 2): el listado, el detalle y la publicación de pedidos de ayuda
 se construyen con superficies `Card` (blanco, borde `arena-200`, `rounded-xl`) sobre fondo
 `arena-50`; los selects y textareas usan bordes arena; los estados vacíos usan `EmptyState`;

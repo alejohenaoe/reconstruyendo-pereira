@@ -62,11 +62,16 @@
   --color-success-600: #16a34a;
   --color-success-700: #15803d;
 
-  /* Estado CLOSED — Cerrada (neutral) */
+  /* Estado CLOSED — Cerrada (neutral). Escala completa: también es el gris de
+     texto de toda la interfaz (títulos en 800, texto secundario en 400/500). */
   --color-closed-100: #f1f5f9;
+  --color-closed-200: #e2e8f0;
+  --color-closed-300: #cbd5e1;
+  --color-closed-400: #94a3b8;
   --color-closed-500: #64748b;
   --color-closed-600: #475569;
   --color-closed-700: #334155;
+  --color-closed-800: #1e293b;
 
   /* Semánticos: error/destructivo */
   --color-danger-50: #fef2f2;

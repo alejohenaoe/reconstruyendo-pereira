@@ -145,7 +145,7 @@ export function RegisterPage() {
             value={municipalitySlug}
             onChange={(event) => setMunicipalitySlug(event.target.value)}
             disabled={loadingMunicipalities}
-            className="text-closed-700 focus:border-brand-500 focus:ring-brand-500 border-closed-100 disabled:bg-closed-100 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-offset-1 focus:outline-none disabled:opacity-60"
+            className="text-closed-700 focus:border-brand-500 focus:ring-brand-500 border-arena-200 disabled:bg-arena-100 w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-offset-1 focus:outline-none disabled:opacity-60"
           >
             <option value="">Selecciona tu municipio</option>
             {municipalities.map((municipality) => (

@@ -7,7 +7,7 @@ import { TextField } from '@/shared/components/TextField'
 import { PageLoader } from '@/shared/components/PageLoader'
 
 const selectClass =
-  'w-full rounded-md border border-closed-100 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20'
+  'w-full rounded-md border border-arena-200 bg-white px-3 py-2 text-sm text-closed-700 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20'
 
 export function AdminUsersPage() {
   const { municipalities } = useMunicipalities()
@@ -26,7 +26,7 @@ export function AdminUsersPage() {
   return (
     <>
       <div>
-        <h1 className="text-closed-800 text-xl font-semibold">Usuarios</h1>
+        <h1 className="text-brand-900 text-xl font-semibold">Usuarios</h1>
         <p className="text-closed-500 mt-1 text-sm">Busca, filtra y suspende usuarios según lo resuelva la moderación.</p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">

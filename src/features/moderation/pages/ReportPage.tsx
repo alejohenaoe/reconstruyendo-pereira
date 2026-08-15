@@ -40,7 +40,7 @@ export function ReportPage() {
           Volver
         </button>
 
-        <h1 className="text-closed-800 text-xl font-semibold">Reportar</h1>
+        <h1 className="text-brand-900 text-xl font-semibold">Reportar</h1>
         <p className="text-closed-500 mt-1 mb-4 text-sm">
           Ayúdanos a mantener la comunidad segura. Este contenido será revisado por moderación.
         </p>

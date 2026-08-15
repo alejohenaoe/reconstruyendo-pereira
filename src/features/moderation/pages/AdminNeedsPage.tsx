@@ -10,7 +10,7 @@ export function AdminNeedsPage() {
   return (
     <>
       <div>
-        <h1 className="text-closed-800 text-xl font-semibold">Pedidos de ayuda</h1>
+        <h1 className="text-brand-900 text-xl font-semibold">Pedidos de ayuda</h1>
         <p className="text-closed-500 mt-1 text-sm">
           Oculta o cierra pedidos de ayuda cuando la moderación lo indique.
         </p>

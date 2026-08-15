@@ -173,7 +173,7 @@ export function NeedForm({
           maxLength={4000}
           placeholder="Cuenta qué pasó, qué necesitas y en qué puede ayudar alguien."
           aria-invalid={fieldErrors.description ? true : undefined}
-          className={`${textareaClass} ${fieldErrors.description ? 'border-danger-500' : 'border-closed-100'}`}
+          className={`${textareaClass} ${fieldErrors.description ? 'border-danger-500' : 'border-arena-200'}`}
           onChange={(event) => setDescription(event.target.value)}
         />
         {fieldErrors.description ? (
@@ -251,7 +251,7 @@ export function NeedForm({
             type="checkbox"
             name="needs_assessment"
             checked={needsAssessment}
-            className="text-brand-600 border-closed-100 focus:ring-brand-500 mt-0.5 size-4 shrink-0 rounded"
+            className="text-brand-600 border-arena-300 focus:ring-brand-500 mt-0.5 size-4 shrink-0 rounded"
             onChange={(event) => setNeedsAssessment(event.target.checked)}
           />
           <span>

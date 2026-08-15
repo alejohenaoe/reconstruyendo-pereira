@@ -25,7 +25,10 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="border-closed-100 rounded-md border bg-white p-3">
+          <div
+            key={card.label}
+            className="border-arena-200 rounded-lg border bg-white p-4 shadow-sm"
+          >
             <p className="text-closed-500 text-xs font-medium uppercase">{card.label}</p>
             <p className="text-brand-800 mt-1 text-2xl font-semibold">{card.value}</p>
             <p className="text-closed-500 text-xs">{card.detail}</p>
@@ -40,7 +43,7 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
           {Object.entries(stats.needs_by_status).map(([status, count]) => (
             <span
               key={status}
-              className="border-closed-100 text-closed-700 rounded-full border bg-white px-3 py-1 text-sm"
+              className="border-arena-200 text-closed-700 rounded-full border bg-white px-3 py-1 text-sm shadow-sm"
             >
               {NEED_STATUS_LABELS[status as keyof typeof NEED_STATUS_LABELS] ?? status}: {count}
             </span>

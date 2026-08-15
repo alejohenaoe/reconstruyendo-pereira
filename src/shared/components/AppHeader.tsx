@@ -21,7 +21,7 @@ import { BottomNav } from '@/shared/components/BottomNav'
 import { BrandMark } from '@/shared/components/BrandMark'
 
 const menuItemClass =
-  'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-closed-700 hover:bg-closed-100'
+  'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-closed-700 hover:bg-arena-100'
 
 /** Cabecera global mínima (UX_UI_GUIDELINES.md §6). Refleja el estado de auth. */
 export function AppHeader() {
@@ -280,7 +280,7 @@ export function AppHeader() {
                         </Link>
                       </>
                     )}
-                    <div className="border-closed-100 mt-1 flex flex-col border-t pt-1">
+                    <div className="border-arena-200 mt-1 flex flex-col border-t pt-1">
                       <button
                         type="button"
                         role="menuitem"
