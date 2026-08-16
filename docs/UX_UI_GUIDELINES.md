@@ -475,6 +475,13 @@ No convertir cada interacción en un formulario complejo.
 
 El usuario debe poder participar desde el propio hilo cuando corresponda.
 
+Implementación: al escribir se elige el tipo con tres píldoras (`Comentario`, `Ofrezco material`,
+`Recomendación`), y el mensaje publicado lo muestra con icono y color propios; el comentario
+normal no lleva distintivo, para no llenar el hilo de etiquetas. La **oferta de ayuda formal no
+es un tipo de mensaje**: vive en `help_offers` con su ciclo de estados, y duplicarla aquí
+confundiría "se ofreció" con "ayudó" (§16). El aviso al dueño distingue `ofreció materiales` de
+`comentó` (MVP §27).
+
 ## 14.1 Moderación de comentarios
 
 Un comentario nunca se borra al moderarlo: se **oculta** (`need_comments.is_hidden`). Deja de

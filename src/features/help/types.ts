@@ -1,5 +1,6 @@
 /** Estados de una oferta de ayuda (public.help_offer_status). */
-export type HelpOfferStatus = 'OFFERED' | 'CONTACTED' | 'AGREED' | 'COMPLETED' | 'CONFIRMED' | 'CANCELLED'
+export type HelpOfferStatus =
+  'OFFERED' | 'CONTACTED' | 'AGREED' | 'COMPLETED' | 'CONFIRMED' | 'CANCELLED'
 
 /** Lenguaje preciso (UX §16/§17): ofrecerse ≠ haber ayudado. */
 export const HELP_OFFER_STATUS_LABELS: Record<HelpOfferStatus, string> = {
@@ -39,11 +40,32 @@ export interface Offerer {
   offered_at: string
 }
 
+/** Qué representa un mensaje del hilo (MVP §14, public.comment_kind). */
+export type CommentKind = 'COMMENT' | 'MATERIAL' | 'RECOMMENDATION'
+
+export const COMMENT_KIND_LABELS: Record<CommentKind, string> = {
+  COMMENT: 'Comentario',
+  MATERIAL: 'Ofrece material',
+  RECOMMENDATION: 'Recomendación profesional',
+}
+
+/** Lo que se le ofrece a quien escribe, en el orden en que se muestra. */
+export const COMMENT_KIND_OPTIONS: { kind: CommentKind; label: string; hint: string }[] = [
+  { kind: 'COMMENT', label: 'Comentario', hint: 'Una opinión o una pregunta.' },
+  { kind: 'MATERIAL', label: 'Ofrezco material', hint: 'Puedes aportar cemento, tejas, arena…' },
+  {
+    kind: 'RECOMMENDATION',
+    label: 'Recomendación',
+    hint: 'Aportas conocimiento técnico sobre el trabajo.',
+  },
+]
+
 export interface NeedComment {
   id: string
   need_id: string
   user_id: string
   body: string
+  kind: CommentKind
   created_at: string
   display_name: string
 }
@@ -58,7 +80,12 @@ export interface OwnerContact {
 }
 
 export interface NeedContact {
-  owner: { user_id: string; display_name: string; phone: string | null; address: string | null } | null
+  owner: {
+    user_id: string
+    display_name: string
+    phone: string | null
+    address: string | null
+  } | null
   offerers: OwnerContact[] | null
 }
 

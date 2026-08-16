@@ -34,6 +34,31 @@ describe('notificationMessage', () => {
     expect(message).toBe('Ana comentó en «Reparar techo».')
   })
 
+  it('distingue una oferta de materiales de un comentario normal (MVP §27)', () => {
+    const message = notificationMessage(
+      notification('COMMENT', { title: 'Reparar techo', actor_name: 'Jorge', kind: 'MATERIAL' }),
+    )
+    expect(message).toBe('Jorge ofreció materiales en «Reparar techo».')
+  })
+
+  it('distingue una recomendación profesional', () => {
+    const message = notificationMessage(
+      notification('COMMENT', {
+        title: 'Reparar techo',
+        actor_name: 'Marta',
+        kind: 'RECOMMENDATION',
+      }),
+    )
+    expect(message).toBe('Marta dejó una recomendación en «Reparar techo».')
+  })
+
+  it('un comentario sin tipo se lee como comentario', () => {
+    const message = notificationMessage(
+      notification('COMMENT', { title: 'Reparar techo', actor_name: 'Ana', kind: 'COMMENT' }),
+    )
+    expect(message).toBe('Ana comentó en «Reparar techo».')
+  })
+
   it('describe una ayuda confirmada al oferente', () => {
     const message = notificationMessage(
       notification('HELP_CONFIRMED', { title: 'Reparar techo', actor_name: 'María' }),

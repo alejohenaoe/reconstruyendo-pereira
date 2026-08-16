@@ -1,5 +1,6 @@
 import type {
   Capability,
+  CommentKind,
   HelpOfferStatus,
   HelpResult,
   NeedComment,
@@ -128,7 +129,7 @@ export async function getNeedContact(needId: string): Promise<HelpResult<NeedCon
 export async function getComments(needId: string): Promise<HelpResult<NeedComment[]>> {
   const { data, error } = await supabase
     .from('need_comments')
-    .select('id, need_id, user_id, body, created_at')
+    .select('id, need_id, user_id, body, kind, created_at')
     .eq('need_id', needId)
     .order('created_at', { ascending: true })
     .limit(COMMENT_LIMIT)
@@ -155,8 +156,20 @@ export async function getComments(needId: string): Promise<HelpResult<NeedCommen
   }
 }
 
-export async function addComment(needId: string, body: string): Promise<HelpResult<null>> {
-  const { error } = await supabase.from('need_comments').insert({ need_id: needId, body })
+/**
+ * Publica un mensaje en el hilo. El `user_id` explícito lo exige la RLS
+ * (`user_id = auth.uid()`) porque la columna no tiene valor por defecto: sin
+ * él el insert se rechaza con 403.
+ */
+export async function addComment(
+  needId: string,
+  userId: string,
+  body: string,
+  kind: CommentKind,
+): Promise<HelpResult<null>> {
+  const { error } = await supabase
+    .from('need_comments')
+    .insert({ need_id: needId, user_id: userId, body, kind })
   if (error) {
     return {
       ok: false,
@@ -216,10 +229,7 @@ export async function saveResolutionNote(
   needId: string,
   note: string | null,
 ): Promise<HelpResult<null>> {
-  const { error } = await supabase
-    .from('needs')
-    .update({ resolution_note: note })
-    .eq('id', needId)
+  const { error } = await supabase.from('needs').update({ resolution_note: note }).eq('id', needId)
   if (error) {
     return {
       ok: false,

@@ -96,6 +96,21 @@ api GET "/need_comments?need_id=eq.$NID&select=id,body" "" ""
 check "anon lee el hilo (200)" "$OUT_CODE" 200
 [ "$(jq length "$OUT")" = "2" ] && ok "hilo con 2 comentarios" || ko "hilo con 2 comentarios (got $(jq length "$OUT"))"
 
+# El cliente DEBE enviar user_id: la columna no tiene default y la RLS exige
+# user_id = auth.uid(). Omitirlo fue un bug real del cliente (403 silencioso).
+api POST "/need_comments" "$TOK_B" "{\"need_id\":\"$NID\",\"body\":\"Comentario sin user_id explícito.\"}"
+check "comentar sin user_id se rechaza (403)" "$OUT_CODE" 403
+
+# Tipos de mensaje del hilo (MVP §14): por defecto COMMENT.
+api GET "/need_comments?need_id=eq.$NID&select=kind" "" ""
+[ "$(jq -r '[.[].kind] | unique | join(",")' "$OUT")" = "COMMENT" ] && ok "los mensajes existentes quedan como COMMENT" || ko "kind por defecto: $(jq -c '[.[].kind]' "$OUT")"
+api POST "/need_comments" "$TOK_C" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_C\",\"kind\":\"MATERIAL\",\"body\":\"Puedo aportar dos bultos de cemento.\"}"
+check2xx "Carlos ofrece material en el hilo (201)" "$OUT_CODE"
+api GET "/need_comments?need_id=eq.$NID&kind=eq.MATERIAL&select=id,body" "" ""
+[ "$(jq length "$OUT")" = "1" ] && ok "la oferta de material se distingue en el hilo" || ko "oferta de material: $(jq length "$OUT")"
+api POST "/need_comments" "$TOK_C" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_C\",\"kind\":\"INVENTADO\",\"body\":\"Tipo que no existe en el enum.\"}"
+check "un tipo inexistente se rechaza (400)" "$OUT_CODE" 400
+
 echo "=== 4. Contacto privado (RPC + log) ==="
 RPC_BODY=$(curl -s -X POST "$REST/rpc/get_need_contact" -H "apikey: $KEY" -H "Content-Type: application/json" -H "Authorization: Bearer $TOK_C" -H "Prefer: return=representation" -d "{\"need_id\":\"$NID\"}")
 { [ "$RPC_BODY" = "null" ] || [ -z "$RPC_BODY" ]; } && ok "extraño no obtiene contacto (null)" || ko "extraño obtiene contacto: $RPC_BODY"

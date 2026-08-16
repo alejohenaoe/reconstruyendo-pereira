@@ -88,8 +88,8 @@ nlist "$TOK_B" "$UID_B"
 
 api POST "/need_comments" "$TOK_B" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_B\",\"body\":\"Hola, ¿el fin de semana te sirve?\"}"
 check2xx "Nico comenta (201)" "$OUT_CODE"
-api POST "/need_comments" "$TOK_C" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_C\",\"body\":\"Yo también puedo ayudar con material.\"}"
-check2xx "Carla comenta (201)" "$OUT_CODE"
+api POST "/need_comments" "$TOK_C" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_C\",\"kind\":\"MATERIAL\",\"body\":\"Yo también puedo ayudar con material.\"}"
+check2xx "Carla ofrece material (201)" "$OUT_CODE"
 api POST "/need_comments" "$TOK_A" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_A\",\"body\":\"Gracias a ambos por ofrecerse.\"}"
 check2xx "Nora comenta en su necesidad (201)" "$OUT_CODE"
 
@@ -100,6 +100,9 @@ jq -r '.[] | select(.type=="COMMENT") | .payload.actor_name' "$OUT" | grep -q "N
 jq -r '.[] | select(.type=="COMMENT") | .payload.actor_name' "$OUT" | grep -q "Carla Extraña" && ok "comentario de Carla notificado" || ko "comentario de Carla notificado"
 jq -r '.[] | select(.type=="COMMENT") | .payload.actor_name' "$OUT" | grep -q "Nora Autora" && ko "el autor no se auto-notifica su comentario" || ok "el autor no se auto-notifica su comentario"
 jq -r '.[0].payload.title' "$OUT" | grep -q "Necesito reparar el techo" && ok "payload incluye el título" || ko "payload incluye el título"
+# El payload lleva el tipo del mensaje para distinguir "ofreció materiales" (MVP §27).
+jq -r '.[] | select(.type=="COMMENT" and .payload.actor_name=="Carla Extraña") | .payload.kind' "$OUT" | grep -q "MATERIAL" && ok "el aviso distingue la oferta de material" || ko "payload sin kind=MATERIAL: $(jq -c '[.[] | select(.type=="COMMENT") | .payload]' "$OUT")"
+jq -r '.[] | select(.type=="COMMENT" and .payload.actor_name=="Nico Ayudante") | .payload.kind' "$OUT" | grep -q "COMMENT" && ok "un comentario normal viaja como COMMENT" || ko "payload de comentario normal sin kind"
 nlist "$TOK_C" "$UID_C"
 [ "$(jq length "$OUT")" = "0" ] && ok "la extraña no recibe notificaciones" || ko "la extraña no recibe notificaciones"
 

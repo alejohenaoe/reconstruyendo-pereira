@@ -6,6 +6,8 @@ export interface NotificationPayload {
   title: string
   actor_name: string
   status?: string
+  /** Tipo de mensaje del hilo, solo en notificaciones COMMENT (MVP §14, §27). */
+  kind?: string
 }
 
 export interface AppNotification {
@@ -43,8 +45,16 @@ export function notificationMessage(notification: AppNotification): string {
   switch (notification.type) {
     case 'HELP_OFFER':
       return `${actor} se ofreció a ayudarte en ${title}.`
-    case 'COMMENT':
+    case 'COMMENT': {
+      // MVP §27 pide distinguir el aviso de materiales del comentario normal.
+      if (notification.payload.kind === 'MATERIAL') {
+        return `${actor} ofreció materiales en ${title}.`
+      }
+      if (notification.payload.kind === 'RECOMMENDATION') {
+        return `${actor} dejó una recomendación en ${title}.`
+      }
       return `${actor} comentó en ${title}.`
+    }
     case 'HELP_CONFIRMED':
       return `${actor} confirmó tu ayuda en ${title}.`
     case 'NEED_STATUS_CHANGE': {
