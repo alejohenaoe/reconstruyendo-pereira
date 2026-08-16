@@ -17,29 +17,30 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  // Cuando el correo está sin verificar no basta con el mensaje: hay que ofrecer
+  // la salida (reenviar el enlace), sin sacar a la persona del formulario.
+  const [needsVerification, setNeedsVerification] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   // Quien ya inició sesión no debe ver el login (UX §21).
   useEffect(() => {
     if (status === 'AUTHENTICATED') navigate(redirect ?? '/', { replace: true })
-    if (status === 'EMAIL_UNVERIFIED') navigate(`/verify-email${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`, { replace: true })
+    if (status === 'EMAIL_UNVERIFIED')
+      navigate(`/verify-email${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`, {
+        replace: true,
+      })
   }, [status, redirect, navigate])
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    setNeedsVerification(false)
     setSubmitting(true)
     try {
       const result = await signIn(email.trim(), password)
       if (!result.ok) {
-        if (result.code === 'email_not_confirmed') {
-          navigate(
-            `/verify-email?redirect=${redirect ? encodeURIComponent(redirect) : ''}&email=${encodeURIComponent(email.trim())}`,
-            { replace: true },
-          )
-          return
-        }
         setError(result.error)
+        setNeedsVerification(result.code === 'email_not_confirmed')
         return
       }
       navigate(redirect ?? '/', { replace: true })
@@ -51,7 +52,21 @@ export function LoginPage() {
   return (
     <AuthLayout title="Entrar" subtitle="Inicia sesión para ayudar o pedir ayuda.">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {error ? <Alert>{error}</Alert> : null}
+        {error ? (
+          <Alert variant={needsVerification ? 'warning' : 'error'}>
+            {error}
+            {needsVerification ? (
+              <Link
+                to={`/verify-email?email=${encodeURIComponent(email.trim())}${
+                  redirect ? `&redirect=${encodeURIComponent(redirect)}` : ''
+                }`}
+                className="mt-1 block font-medium underline"
+              >
+                Reenviar el enlace de verificación
+              </Link>
+            ) : null}
+          </Alert>
+        ) : null}
         <TextField
           label="Correo electrónico"
           name="email"

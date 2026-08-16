@@ -17,7 +17,11 @@ export function useIsAdmin(userId: string | null): boolean | null {
     let active = true
     void (async () => {
       try {
-        const { data } = await supabase.from('profiles').select('app_role').eq('id', userId).maybeSingle()
+        const { data } = await supabase
+          .from('profiles')
+          .select('app_role')
+          .eq('id', userId)
+          .maybeSingle()
         if (active) setIsAdmin(data?.app_role === 'ADMIN')
       } catch {
         if (active) setIsAdmin(false)

@@ -9,12 +9,18 @@ function authError(code: string | undefined, message: string): AuthError {
 
 describe('mapAuthError', () => {
   it('detecta correo ya registrado', () => {
-    expect(mapAuthError(authError('user_already_exists', '')).message).toContain('Ya existe una cuenta')
-    expect(mapAuthError(authError('', 'User already registered')).message).toContain('Ya existe una cuenta')
+    expect(mapAuthError(authError('user_already_exists', '')).message).toContain(
+      'Ya existe una cuenta',
+    )
+    expect(mapAuthError(authError('', 'User already registered')).message).toContain(
+      'Ya existe una cuenta',
+    )
   })
 
   it('detecta credenciales inválidas', () => {
-    expect(mapAuthError(authError('', 'Invalid login credentials')).message).toBe('Correo o contraseña incorrectos.')
+    expect(mapAuthError(authError('', 'Invalid login credentials')).message).toBe(
+      'Correo o contraseña incorrectos.',
+    )
   })
 
   it('detecta correo sin confirmar', () => {
@@ -22,7 +28,9 @@ describe('mapAuthError', () => {
   })
 
   it('detecta contraseña débil', () => {
-    expect(mapAuthError(authError('', 'Password should be at least 6 characters')).message).toContain('6 caracteres')
+    expect(
+      mapAuthError(authError('', 'Password should be at least 6 characters')).message,
+    ).toContain('6 caracteres')
     expect(mapAuthError(authError('', 'Weak password')).message).toContain('6 caracteres')
   })
 
@@ -42,6 +50,8 @@ describe('mapAuthError', () => {
 
   it('usa un mensaje genérico para errores desconocidos', () => {
     expect(mapAuthError(authError(undefined, 'Something else')).code).toBe('unknown')
-    expect(mapAuthError(authError(undefined, 'Something else')).message).toContain('Inténtalo de nuevo')
+    expect(mapAuthError(authError(undefined, 'Something else')).message).toContain(
+      'Inténtalo de nuevo',
+    )
   })
 })

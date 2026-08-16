@@ -45,7 +45,8 @@ export async function compressImage(file: File): Promise<CompressedImage> {
 
     const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
-        (result) => (result ? resolve(result) : reject(new Error('No pudimos comprimir esa imagen.'))),
+        (result) =>
+          result ? resolve(result) : reject(new Error('No pudimos comprimir esa imagen.')),
         'image/webp',
         WEBP_QUALITY,
       )

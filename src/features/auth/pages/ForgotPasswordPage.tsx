@@ -40,9 +40,16 @@ export function ForgotPasswordPage() {
       <AuthLayout title="Revisa tu correo">
         <div className="flex flex-col gap-4">
           <p className="text-closed-600 text-sm leading-relaxed">
-            Si existe una cuenta con ese correo, te enviamos un enlace para restablecer tu contraseña.
+            Si existe una cuenta con ese correo, te enviamos un enlace para restablecer tu
+            contraseña.
           </p>
-          <Button type="button" variant="primary" size="lg" fullWidth onClick={() => window.location.reload()}>
+          <Button
+            type="button"
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={() => window.location.reload()}
+          >
             Volver
           </Button>
         </div>

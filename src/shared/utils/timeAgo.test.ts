@@ -32,7 +32,11 @@ describe('timeAgo', () => {
 
   it('usa fecha larga para una semana o más', () => {
     const iso = dateSecondsAgo(10 * 24 * 60 * 60)
-    const expected = new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
+    const expected = new Date(iso).toLocaleDateString('es-CO', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
     expect(timeAgo(iso)).toBe(expected)
   })
 

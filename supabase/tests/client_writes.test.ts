@@ -19,6 +19,7 @@ import {
   moderateComment,
   moderateNeed,
 } from '@/features/moderation/services/moderationService'
+import { signIn } from '@/features/auth/services/authService'
 import { saveMyCapabilities } from '@/features/profile/services/profileService'
 import { blockUser, listMyBlocks, unblockUser } from '@/features/profile/services/blockService'
 import {
@@ -55,7 +56,7 @@ async function createUser(tag: string): Promise<{ id: string; email: string }> {
   return { id, email }
 }
 
-async function signIn(email: string): Promise<void> {
+async function session(email: string): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password: PASSWORD })
   if (error) throw new Error(`signIn ${email}: ${error.message}`)
 }
@@ -76,7 +77,7 @@ beforeAll(async () => {
 
 describe('Escrituras del cliente, tal como las hace el navegador', () => {
   it('createNeed publica el pedido de ayuda', async () => {
-    await signIn(owner.email)
+    await session(owner.email)
     const result = await createNeed(
       {
         title: 'Auditoría del cliente',
@@ -110,7 +111,7 @@ describe('Escrituras del cliente, tal como las hace el navegador', () => {
   })
 
   it('createHelpOffer registra la oferta de quien ayuda', async () => {
-    await signIn(helper.email)
+    await session(helper.email)
     const result = await createHelpOffer(
       needId,
       helper.id,
@@ -155,7 +156,7 @@ describe('Escrituras del cliente, tal como las hace el navegador', () => {
   })
 
   it('updateOfferStatus avanza la oferta desde el dueño', async () => {
-    await signIn(owner.email)
+    await session(owner.email)
     offerId = sql(`select id from public.help_offers where need_id = '${needId}' limit 1;`)
     if (!offerId) return
     const result = await updateOfferStatus(offerId, 'CONTACTED')
@@ -196,7 +197,7 @@ describe('Escrituras del cliente, tal como las hace el navegador', () => {
   })
 
   it('moderateComment oculta un comentario desde el panel', async () => {
-    await signIn(admin.email)
+    await session(admin.email)
     const result = await moderateComment(commentId, true)
     expect(result.error).toBeNull()
     expect(sql(`select is_hidden from public.need_comments where id = '${commentId}';`)).toBe('t')
@@ -218,7 +219,7 @@ describe('Bloqueo entre personas (MVP §21)', () => {
 
   beforeAll(async () => {
     neighbor = await createUser('neighbor')
-    await signIn(neighbor.email)
+    await session(neighbor.email)
     const created = await createNeed(
       {
         title: 'Pedido del vecino',
@@ -234,13 +235,13 @@ describe('Bloqueo entre personas (MVP §21)', () => {
     sharedNeedId = created.data.id
     await addComment(sharedNeedId, neighbor.id, 'Mensaje del dueño del pedido.', 'COMMENT')
 
-    await signIn(helper.email)
+    await session(helper.email)
     await createHelpOffer(sharedNeedId, helper.id, 2, 'Puedo ayudar con esto el domingo.')
     await addComment(sharedNeedId, helper.id, 'Mensaje de quien ofrece ayuda.', 'COMMENT')
   })
 
   it('antes del bloqueo cada quien ve al otro', async () => {
-    await signIn(neighbor.email)
+    await session(neighbor.email)
     const offerers = await getOfferers(sharedNeedId)
     expect(offerers.data!.some((offer) => offer.user_id === helper.id)).toBe(true)
     const thread = await getComments(sharedNeedId)
@@ -262,7 +263,7 @@ describe('Bloqueo entre personas (MVP §21)', () => {
   })
 
   it('el bloqueo es simétrico: la otra persona tampoco lo ve, aunque no se entere', async () => {
-    await signIn(helper.email)
+    await session(helper.email)
     const thread = await getComments(sharedNeedId)
     expect(thread.data!.map((comment) => comment.user_id)).toEqual([helper.id])
     // Y no puede consultar quién lo bloqueó.
@@ -284,7 +285,7 @@ describe('Bloqueo entre personas (MVP §21)', () => {
   })
 
   it('desbloquear devuelve la visibilidad', async () => {
-    await signIn(neighbor.email)
+    await session(neighbor.email)
     expect((await unblockUser(neighbor.id, helper.id)).error).toBeNull()
     expect((await listMyBlocks(neighbor.id)).data).toHaveLength(0)
     const offerers = await getOfferers(sharedNeedId)
@@ -299,5 +300,24 @@ describe('Bloqueo entre personas (MVP §21)', () => {
 
   it('no se puede registrar un bloqueo a nombre de otra persona', async () => {
     expect((await blockUser(helper.id, admin.id)).ok).toBe(false)
+  })
+})
+
+describe('Entrar sin el correo verificado (UX §20, §25)', () => {
+  it('devuelve un motivo entendible y su código, no un fallo mudo', async () => {
+    const email = `audit_unverified_${stamp}@test.local`
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password: PASSWORD,
+      options: { data: { display_name: 'Audit Sin Verificar', municipality: 'pereira' } },
+    })
+    expect(signUpError).toBeNull()
+
+    // Sin confirmar el correo, el login se rechaza: la interfaz necesita el
+    // código para ofrecer "reenviar el enlace" en lugar de un error genérico.
+    const result = await signIn(email, PASSWORD)
+    expect(result.ok).toBe(false)
+    expect(result.code).toBe('email_not_confirmed')
+    expect(result.error).toContain('correo')
   })
 })

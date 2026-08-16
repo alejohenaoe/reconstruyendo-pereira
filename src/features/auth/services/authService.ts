@@ -1,6 +1,12 @@
 import type { AuthError, SupabaseClient } from '@supabase/supabase-js'
 
-import type { AuthErrorCode, AuthResult, AuthSignUpResult, Municipality, SignUpInput } from '@/features/auth/types'
+import type {
+  AuthErrorCode,
+  AuthResult,
+  AuthSignUpResult,
+  Municipality,
+  SignUpInput,
+} from '@/features/auth/types'
 import { supabase } from '@/shared/lib/supabase'
 
 /** Ruta que procesa la sesión devuelta por los enlaces de correo (confirmación y reset). */
@@ -22,19 +28,34 @@ export function mapAuthError(error: AuthError): { message: string; code: AuthErr
   const message = error.message ?? ''
   const m = message.toLowerCase()
 
-  if (code === 'user_already_exists' || m.includes('already registered') || m.includes('already been registered')) {
+  if (
+    code === 'user_already_exists' ||
+    m.includes('already registered') ||
+    m.includes('already been registered')
+  ) {
     return { message: 'Ya existe una cuenta con este correo.', code: 'user_already_exists' }
   }
   if (code === 'over_email_send_rate_limit' || m.includes('rate limit')) {
-    return { message: 'Enviamos demasiados correos a esta dirección. Espera un momento e inténtalo de nuevo.', code: 'rate_limited' }
+    return {
+      message:
+        'Enviamos demasiados correos a esta dirección. Espera un momento e inténtalo de nuevo.',
+      code: 'rate_limited',
+    }
   }
   if (m.includes('invalid login credentials')) {
     return { message: 'Correo o contraseña incorrectos.', code: 'invalid_credentials' }
   }
   if (m.includes('email not confirmed')) {
-    return { message: 'Todavía no confirmas tu correo. Revisa tu bandeja de entrada.', code: 'email_not_confirmed' }
+    return {
+      message: 'Todavía no confirmas tu correo. Revisa tu bandeja de entrada.',
+      code: 'email_not_confirmed',
+    }
   }
-  if (m.includes('password should be at least') || m.includes('password must be at least') || m.includes('weak password')) {
+  if (
+    m.includes('password should be at least') ||
+    m.includes('password must be at least') ||
+    m.includes('weak password')
+  ) {
     return { message: 'La contraseña debe tener al menos 6 caracteres.', code: 'weak_password' }
   }
   if (m.includes('signup') && m.includes('disabled')) {
@@ -44,24 +65,40 @@ export function mapAuthError(error: AuthError): { message: string; code: AuthErr
     return { message: 'No encontramos una cuenta con este correo.', code: 'user_not_found' }
   }
   if (m.includes('invalid otp') || m.includes('invalid token')) {
-    return { message: 'Este enlace es inválido o ya expiró. Solicita uno nuevo.', code: 'invalid_token' }
+    return {
+      message: 'Este enlace es inválido o ya expiró. Solicita uno nuevo.',
+      code: 'invalid_token',
+    }
   }
   if (m.includes('new password should be different')) {
-    return { message: 'La nueva contraseña debe ser diferente de la anterior.', code: 'same_password' }
+    return {
+      message: 'La nueva contraseña debe ser diferente de la anterior.',
+      code: 'same_password',
+    }
   }
   if (m.includes('failed to fetch') || m.includes('network')) {
-    return { message: 'No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.', code: 'network' }
+    return {
+      message: 'No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.',
+      code: 'network',
+    }
   }
   return { message: 'Ocurrió un problema con tu cuenta. Inténtalo de nuevo.', code: 'unknown' }
 }
 
 export async function getMunicipalities(): Promise<AuthResult<Municipality[]>> {
-  const { data, error } = await supabase.from('municipalities').select('id, slug, name').order('name')
-  if (error) return { ok: false, data: null, error: 'No pudimos cargar los municipios.', code: 'unknown' }
+  const { data, error } = await supabase
+    .from('municipalities')
+    .select('id, slug, name')
+    .order('name')
+  if (error)
+    return { ok: false, data: null, error: 'No pudimos cargar los municipios.', code: 'unknown' }
   return { ok: true, data: data as Municipality[], error: null, code: null }
 }
 
-export async function signUp(input: SignUpInput, redirectPath?: string | null): Promise<AuthResult<AuthSignUpResult>> {
+export async function signUp(
+  input: SignUpInput,
+  redirectPath?: string | null,
+): Promise<AuthResult<AuthSignUpResult>> {
   const { data, error } = await supabase.auth.signUp({
     email: input.email,
     password: input.password,
@@ -79,7 +116,12 @@ export async function signUp(input: SignUpInput, redirectPath?: string | null): 
     return { ok: false, data: null, error: mapped.message, code: mapped.code }
   }
   // Con confirmación habilitada, signUp no devuelve sesión: el usuario debe verificar.
-  return { ok: true, data: { needsEmailConfirmation: data.session === null }, error: null, code: null }
+  return {
+    ok: true,
+    data: { needsEmailConfirmation: data.session === null },
+    error: null,
+    code: null,
+  }
 }
 
 export async function signIn(email: string, password: string): Promise<AuthResult> {
@@ -106,7 +148,10 @@ export async function resetPassword(email: string): Promise<AuthResult> {
   return { ok: true, data: undefined, error: null, code: null }
 }
 
-export async function resendVerification(email: string, redirectPath?: string | null): Promise<AuthResult> {
+export async function resendVerification(
+  email: string,
+  redirectPath?: string | null,
+): Promise<AuthResult> {
   const { error } = await supabase.auth.resend({
     type: 'signup',
     email,
@@ -128,11 +173,15 @@ export async function updatePassword(newPassword: string): Promise<AuthResult> {
   return { ok: true, data: undefined, error: null, code: null }
 }
 
-export async function getSession(): Promise<{ session: Awaited<ReturnType<SupabaseClient['auth']['getSession']>>['data']['session'] }> {
+export async function getSession(): Promise<{
+  session: Awaited<ReturnType<SupabaseClient['auth']['getSession']>>['data']['session']
+}> {
   const { data } = await supabase.auth.getSession()
   return { session: data.session }
 }
 
-export function onAuthStateChange(listener: Parameters<SupabaseClient['auth']['onAuthStateChange']>[0]) {
+export function onAuthStateChange(
+  listener: Parameters<SupabaseClient['auth']['onAuthStateChange']>[0],
+) {
   return supabase.auth.onAuthStateChange(listener)
 }

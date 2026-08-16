@@ -55,7 +55,10 @@ export interface AuthContextValue {
   status: AuthStatus
   user: User | null
   session: Session | null
-  signUp: (input: SignUpInput, redirectPath?: string | null) => Promise<AuthResult<AuthSignUpResult>>
+  signUp: (
+    input: SignUpInput,
+    redirectPath?: string | null,
+  ) => Promise<AuthResult<AuthSignUpResult>>
   signIn: (email: string, password: string) => Promise<AuthResult>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<AuthResult>

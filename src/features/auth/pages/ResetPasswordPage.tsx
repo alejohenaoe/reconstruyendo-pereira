@@ -52,7 +52,9 @@ export function ResetPasswordPage() {
     return (
       <AuthLayout title="Contraseña actualizada">
         <div className="flex flex-col gap-4">
-          <p className="text-closed-600 text-sm leading-relaxed">Tu contraseña se actualizó correctamente.</p>
+          <p className="text-closed-600 text-sm leading-relaxed">
+            Tu contraseña se actualizó correctamente.
+          </p>
           <ButtonLink to="/login" variant="primary" size="lg" fullWidth>
             Entrar
           </ButtonLink>

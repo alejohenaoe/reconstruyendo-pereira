@@ -660,6 +660,19 @@ La interfaz nunca debe presentar `email no verificado` como un error técnico.
 
 ---
 
+## 20.1 Entrar sin el correo verificado
+
+Si alguien intenta entrar sin haber verificado su correo, el login **lo dice en el propio
+formulario** (aviso ámbar) y ofrece el enlace para reenviar la verificación. Nunca se redirige en
+silencio.
+
+La pantalla `/verify-email` **no expulsa a quien llega sin sesión**: explica que no se pudo iniciar
+sesión porque falta verificar, deja reenviar el enlace y ofrece volver a entrar. Antes rebotaba al
+login con una recarga completa, así que el intento fallido terminaba en el formulario vacío y sin
+ningún mensaje: la persona no tenía forma de saber qué había pasado.
+
+---
+
 # 21. Login y retorno a la acción
 
 Cuando un usuario llegue a una acción que requiera autenticación, la aplicación debe conservar el contexto siempre que sea posible.

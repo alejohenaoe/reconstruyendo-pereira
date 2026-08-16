@@ -13,7 +13,13 @@ import {
   signUp as serviceSignUp,
   updatePassword as serviceUpdatePassword,
 } from '@/features/auth/services/authService'
-import type { AuthContextValue, AuthResult, AuthSignUpResult, AuthStatus, SignUpInput } from '@/features/auth/types'
+import type {
+  AuthContextValue,
+  AuthResult,
+  AuthSignUpResult,
+  AuthStatus,
+  SignUpInput,
+} from '@/features/auth/types'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -70,14 +76,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const handleSignOut = useCallback((): Promise<void> => serviceSignOut(), [])
 
-  const handleResetPassword = useCallback((email: string): Promise<AuthResult> => resetPassword(email), [])
-
-  const handleResendVerification = useCallback(
-    (email: string, redirectPath?: string | null): Promise<AuthResult> => resendVerification(email, redirectPath),
+  const handleResetPassword = useCallback(
+    (email: string): Promise<AuthResult> => resetPassword(email),
     [],
   )
 
-  const handleUpdatePassword = useCallback((newPassword: string): Promise<AuthResult> => serviceUpdatePassword(newPassword), [])
+  const handleResendVerification = useCallback(
+    (email: string, redirectPath?: string | null): Promise<AuthResult> =>
+      resendVerification(email, redirectPath),
+    [],
+  )
+
+  const handleUpdatePassword = useCallback(
+    (newPassword: string): Promise<AuthResult> => serviceUpdatePassword(newPassword),
+    [],
+  )
 
   const handleRefreshSession = useCallback(async () => {
     const { session: nextSession } = await getSession()
