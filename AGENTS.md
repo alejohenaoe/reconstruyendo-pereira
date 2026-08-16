@@ -20,7 +20,7 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
   - `npm run build` — `tsc -b && vite build` (output `dist/`).
   - `npm run lint` — oxlint. `npm run typecheck` — `tsc -b`.
   - `npm run test` — tests unitarios Vitest (48 tests, co-localizados en `src/**/*.test.ts`).
-  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (45), auth (14), publish (30), help (53), moderation (40), notifications (47).
+  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (45), auth (14), publish (30), help (53), moderation (43), notifications (47).
   - `npm run format` / `format:check` — Prettier (incluye `prettier-plugin-tailwindcss`).
 
 ## Estructura
@@ -56,7 +56,8 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
 ## Convenciones y gotchas críticas
 
 - **RLS es la autoridad definitiva**: los contratos verifican por API que un usuario no pueda leer/editar/confirmar datos ajenos ni saltarse restricciones. Si un contrato falla, arreglar RLS en migración, no en la UI.
-- PATCH con 0 filas afectadas devuelve **204** (no hay cuerpo); verificar el resultado con un GET posterior. Con `return=representation` la respuesta es un **array** (acceder con `.[0].id`). Los embeds de PostgREST devuelven **arrays**.
+- PATCH con 0 filas afectadas devuelve **204** (no hay cuerpo); verificar el resultado con un GET posterior. Con `return=representation` la respuesta es un **array** (acceder con `.[0].id`).
+- Embeds de PostgREST: una relación **a-uno** (FK saliente, p. ej. `need_comments → needs(title)`) llega como **objeto**; una **a-muchos** llega como arreglo. Ojo: `postgrest-js` los infiere como arreglos porque el proyecto no usa tipos generados de la base, así que hace falta `as unknown as ...` — pero leerlos con `[0]` en tiempo de ejecución da `undefined` (fue el bug de `target_label` en el panel de reportes). Comprobado por contrato en `moderation_contract.sh`.
 - En bash, el filtro `or=(and(created_at.lt.X),and(created_at.eq.X,id.lt.Y))` exige codificar `/`, `(`, `)`, `+`, `:`; el `OR_FILTER` en peticiones con query (`/notifications?...`) debe llevar el `/` inicial. (supabase-js lo codifica solo; los `.sh` lo hacen a mano.)
 - Los listados usan paginación por cursor keyset `(created_at desc, id desc)`, nunca `select('*')` ni listados completos.
 - Notificaciones: triggers `SECURITY DEFINER` en la migración 0011 (la tabla no expone INSERT → 403 a clientes); payload `{title, actor_name, status?}`; índice parcial `(user_id) where read_at is null`.

@@ -17,7 +17,10 @@ export function UsersTable({ users, onChanged }: UsersTableProps) {
 
   async function toggleSuspend(user: AdminUser) {
     const suspending = !user.banned_at
-    if (suspending && !window.confirm(`¿Suspender a ${user.display_name}? Ya no podrá publicar ni participar.`)) {
+    if (
+      suspending &&
+      !window.confirm(`¿Suspender a ${user.display_name}? Ya no podrá publicar ni participar.`)
+    ) {
       return
     }
     setBusyId(user.id)
@@ -37,15 +40,23 @@ export function UsersTable({ users, onChanged }: UsersTableProps) {
       {error ? <p className="text-danger-600 text-sm">{error}</p> : null}
       <ul className="flex flex-col gap-2">
         {users.map((user) => (
-          <li key={user.id} className="border-arena-200 flex items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3 shadow-sm">
+          <li
+            key={user.id}
+            className="border-arena-200 flex items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3 shadow-sm"
+          >
             <div className="min-w-0">
               <p className="text-closed-800 truncate text-sm">
                 <span className="font-medium">{user.display_name}</span>
-                {user.app_role === 'ADMIN' ? <span className="text-brand-700 ml-2 text-xs font-semibold">ADMIN</span> : null}
-                {user.banned_at ? <span className="text-danger-600 ml-2 text-xs font-semibold">Suspendido</span> : null}
+                {user.app_role === 'ADMIN' ? (
+                  <span className="text-brand-700 ml-2 text-xs font-semibold">ADMIN</span>
+                ) : null}
+                {user.banned_at ? (
+                  <span className="text-danger-600 ml-2 text-xs font-semibold">Suspendido</span>
+                ) : null}
               </p>
               <p className="text-closed-500 truncate text-xs">
-                {user.municipalities?.name ?? 'Sin municipio'} · registrado {timeAgo(user.created_at)}
+                {user.municipalities?.name ?? 'Sin municipio'} · registrado{' '}
+                {timeAgo(user.created_at)}
               </p>
             </div>
             {user.app_role === 'USER' ? (

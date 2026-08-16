@@ -17,7 +17,9 @@ interface ReportReasonBadgeProps {
 
 export function ReportReasonBadge({ reason }: ReportReasonBadgeProps) {
   return (
-    <span className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CONFIG[reason]}`}>
+    <span
+      className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CONFIG[reason]}`}
+    >
       {REPORT_REASON_LABELS[reason]}
     </span>
   )

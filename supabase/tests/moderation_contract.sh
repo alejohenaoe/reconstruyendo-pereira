@@ -130,6 +130,13 @@ api PATCH "/need_comments?id=eq.$COMMENT_ID" "$TOK_ADM" '{"is_hidden":true,"hidd
 check2xx "admin oculta el comentario (204)" "$OUT_CODE"
 api GET "/need_comments?need_id=eq.$NID&select=id" "" ""
 [ "$(jq length "$OUT")" = "0" ] && ok "anon ya no ve el comentario oculto" || ko "anon ve el comentario oculto"
+# El autor sigue viendo lo suyo (RLS: not is_hidden or auth.uid() = user_id).
+api GET "/need_comments?id=eq.$COMMENT_ID&select=id,is_hidden" "$TOK_A" ""
+[ "$(jq length "$OUT")" = "1" ] && ok "el autor sigue viendo su comentario oculto" || ko "el autor perdió su comentario"
+# Listado del panel: filtrar por ocultos es lo que usa /admin/comments.
+api GET "/need_comments?is_hidden=eq.true&select=id,body,need:needs(title)" "$TOK_ADM" ""
+[ "$(jq length "$OUT")" -ge 1 ] && ok "el panel lista los comentarios ocultados" || ko "el panel no lista ocultados"
+jq -e '.[0].need.title != null' "$OUT" >/dev/null && ok "el embed del pedido llega como objeto (no arreglo)" || ko "embed inesperado: $(jq -c '.[0].need' "$OUT")"
 api PATCH "/need_comments?id=eq.$COMMENT_ID" "$TOK_ADM" '{"is_hidden":false,"hidden_at":null}'
 check2xx "admin restaura el comentario (204)" "$OUT_CODE"
 

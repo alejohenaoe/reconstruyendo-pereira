@@ -475,6 +475,19 @@ No convertir cada interacción en un formulario complejo.
 
 El usuario debe poder participar desde el propio hilo cuando corresponda.
 
+## 14.1 Moderación de comentarios
+
+Un comentario nunca se borra al moderarlo: se **oculta** (`need_comments.is_hidden`). Deja de
+verse en el hilo para la comunidad, pero su autor lo sigue viendo y el registro se conserva, que
+es lo que pide la trazabilidad del MVP (§21, §25).
+
+El panel tiene la pestaña `/admin/comments`, con filtro `Todos` / `Solo ocultados`, el texto del
+comentario, su autor, el pedido al que pertenece y la acción de ocultar o restaurar. Ocultar pide
+confirmación, como toda acción destructiva (§26).
+
+Además, un reporte que apunta a un comentario ofrece `Ocultar comentario` directamente desde la
+lista de reportes: el circuito reporte → decisión se cierra sin cambiar de pantalla.
+
 ---
 
 # 15. Oferta de ayuda

@@ -14,7 +14,9 @@ interface ReportStatusBadgeProps {
 
 export function ReportStatusBadge({ status }: ReportStatusBadgeProps) {
   return (
-    <span className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CONFIG[status]}`}>
+    <span
+      className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CONFIG[status]}`}
+    >
       {REPORT_STATUS_LABELS[status]}
     </span>
   )

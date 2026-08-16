@@ -10,6 +10,7 @@ import { ResetPasswordPage } from '@/features/auth/pages/ResetPasswordPage'
 import { VerifyEmailPage } from '@/features/auth/pages/VerifyEmailPage'
 import { HomePage } from '@/features/home/pages/HomePage'
 import { NotFoundPage } from '@/features/home/pages/NotFoundPage'
+import { AdminCommentsPage } from '@/features/moderation/pages/AdminCommentsPage'
 import { AdminDashboardPage } from '@/features/moderation/pages/AdminDashboardPage'
 import { AdminLayout } from '@/features/moderation/components/AdminLayout'
 import { AdminNeedsPage } from '@/features/moderation/pages/AdminNeedsPage'
@@ -54,6 +55,7 @@ export function AppRouter() {
           <Route path="/admin/reports" element={<AdminReportsPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/needs" element={<AdminNeedsPage />} />
+          <Route path="/admin/comments" element={<AdminCommentsPage />} />
         </Route>
       </Route>
 

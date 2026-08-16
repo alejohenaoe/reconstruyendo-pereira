@@ -14,6 +14,7 @@ const items = [
   { to: '/admin/reports', label: 'Reportes', end: false },
   { to: '/admin/users', label: 'Usuarios', end: false },
   { to: '/admin/needs', label: 'Pedidos de ayuda', end: false },
+  { to: '/admin/comments', label: 'Comentarios', end: false },
 ]
 
 /** Layout del panel admin: cabecera global + navegación lateral. */

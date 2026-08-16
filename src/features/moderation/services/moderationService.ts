@@ -1,4 +1,5 @@
 import type {
+  AdminComment,
   AdminNeed,
   AdminStats,
   AdminUser,
@@ -72,16 +73,16 @@ export async function getReports(): Promise<ModResult<ReportView[]>> {
   const { data, error } = await supabase
     .from('reports')
     .select(
-      'id, reporter_id, need_id, comment_id, reported_user_id, reason, details, status, moderated_by, created_at, resolved_at, need:needs(title), comment:need_comments(body)',
+      'id, reporter_id, need_id, comment_id, reported_user_id, reason, details, status, moderated_by, created_at, resolved_at, need:needs(title), comment:need_comments(body, is_hidden)',
     )
     .order('created_at', { ascending: false })
     .limit(ADMIN_LIST_LIMIT)
   if (error) return { ok: false, data: null, error: 'No pudimos cargar los reportes.' }
 
-  const rows = (data ?? []) as (Omit<ReportView, 'reporter_name' | 'target_label'> & {
-    need: { title: string }[] | null
-    comment: { body: string }[] | null
-  })[]
+  // postgrest-js infiere arreglos para los embeds al no haber tipos generados
+  // de la base, pero en tiempo de ejecución una relación a-uno llega como
+  // objeto: de ahí el doble casteo (verificado por API contra el stack local).
+  const rows = (data ?? []) as unknown as Omit<ReportView, 'reporter_name' | 'target_label'>[]
   const ids = rows.flatMap((row) =>
     [row.reporter_id, row.reported_user_id].filter((id): id is string => Boolean(id)),
   )
@@ -93,8 +94,8 @@ export async function getReports(): Promise<ModResult<ReportView[]>> {
       ...row,
       reporter_name: names.get(row.reporter_id) ?? 'Desconocido',
       target_label:
-        row.need?.[0]?.title ??
-        row.comment?.[0]?.body.slice(0, 80) ??
+        row.need?.title ??
+        row.comment?.body.slice(0, 80) ??
         names.get(row.reported_user_id ?? '') ??
         '—',
     })),
@@ -170,6 +171,58 @@ export async function moderateNeed(
       ok: false,
       data: null,
       error: mapModerationError(error, 'No pudimos moderar el pedido de ayuda.'),
+    }
+  return { ok: true, data: null, error: null }
+}
+
+// ---------- Panel admin: comentarios ----------
+
+/**
+ * Comentarios del hilo para moderar (MVP §25). `onlyHidden` deja ver lo ya
+ * ocultado, que por RLS solo alcanzan a ver su autor y los administradores.
+ */
+export async function getAdminComments(onlyHidden = false): Promise<ModResult<AdminComment[]>> {
+  let query = supabase
+    .from('need_comments')
+    .select('id, need_id, body, is_hidden, hidden_at, created_at, user_id, need:needs(title)')
+    .order('created_at', { ascending: false })
+    .limit(ADMIN_LIST_LIMIT)
+  if (onlyHidden) query = query.eq('is_hidden', true)
+
+  const { data, error } = await query
+  if (error) return { ok: false, data: null, error: 'No pudimos cargar los comentarios.' }
+
+  const rows = (data ?? []) as unknown as (Omit<AdminComment, 'author_name' | 'need_title'> & {
+    user_id: string
+    need: { title: string } | null
+  })[]
+  const names = await displayNameOf(rows.map((row) => row.user_id))
+
+  return {
+    ok: true,
+    data: rows.map(({ user_id, need, ...row }) => ({
+      ...row,
+      author_name: names.get(user_id) ?? 'Desconocido',
+      need_title: need?.title ?? null,
+    })),
+    error: null,
+  }
+}
+
+/** Oculta o restaura un comentario (RLS: solo admin puede ocultar ajenos). */
+export async function moderateComment(
+  commentId: string,
+  hidden: boolean,
+): Promise<ModResult<null>> {
+  const { error } = await supabase
+    .from('need_comments')
+    .update({ is_hidden: hidden, hidden_at: hidden ? new Date().toISOString() : null })
+    .eq('id', commentId)
+  if (error)
+    return {
+      ok: false,
+      data: null,
+      error: mapModerationError(error, 'No pudimos moderar el comentario.'),
     }
   return { ok: true, data: null, error: null }
 }

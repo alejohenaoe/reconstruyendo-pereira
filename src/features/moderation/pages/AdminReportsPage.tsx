@@ -11,9 +11,15 @@ export function AdminReportsPage() {
     <>
       <div>
         <h1 className="text-brand-900 text-xl font-semibold">Reportes</h1>
-        <p className="text-closed-500 mt-1 text-sm">Revisa, atiende o descarta los reportes de la comunidad.</p>
+        <p className="text-closed-500 mt-1 text-sm">
+          Revisa, atiende o descarta los reportes de la comunidad.
+        </p>
       </div>
-      {error ? <p className="text-danger-600 text-sm">{error}</p> : <ReportsTable reports={reports} onChanged={() => void reload()} />}
+      {error ? (
+        <p className="text-danger-600 text-sm">{error}</p>
+      ) : (
+        <ReportsTable reports={reports} onChanged={() => void reload()} />
+      )}
     </>
   )
 }

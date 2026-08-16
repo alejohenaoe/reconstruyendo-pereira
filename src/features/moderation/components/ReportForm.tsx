@@ -50,7 +50,9 @@ export function ReportForm({ target, onDone }: ReportFormProps) {
   if (sent) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <Alert variant="success">Gracias. Tu reporte quedó registrado y un moderador lo revisará.</Alert>
+        <Alert variant="success">
+          Gracias. Tu reporte quedó registrado y un moderador lo revisará.
+        </Alert>
         <button type="button" onClick={onDone} className={buttonStyles({ variant: 'secondary' })}>
           Volver
         </button>
@@ -80,7 +82,7 @@ export function ReportForm({ target, onDone }: ReportFormProps) {
               value={option}
               checked={reason === option}
               onChange={() => setReason(option)}
-              className="mt-0.5 accent-brand-600"
+              className="accent-brand-600 mt-0.5"
             />
             <span>{REPORT_REASON_LABELS[option]}</span>
           </label>
@@ -98,7 +100,7 @@ export function ReportForm({ target, onDone }: ReportFormProps) {
           value={details}
           onChange={(event) => setDetails(event.target.value)}
         />
-        <span className="text-closed-400 text-xs text-right">{details.length}/1000</span>
+        <span className="text-closed-400 text-right text-xs">{details.length}/1000</span>
       </label>
 
       {error ? <Alert>{error}</Alert> : null}

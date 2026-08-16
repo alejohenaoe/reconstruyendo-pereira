@@ -56,8 +56,9 @@ export interface Report {
   moderated_by: string | null
   created_at: string
   resolved_at: string | null
+  /** Embeds a-uno de PostgREST: llegan como objeto, no como arreglo. */
   need: { title: string } | null
-  comment: { body: string } | null
+  comment: { body: string; is_hidden: boolean } | null
 }
 
 /** Reporte enriquecido para el panel admin (target + autor). */
@@ -86,6 +87,18 @@ export interface AdminNeed {
   hidden_at: string | null
   created_at: string
   owner_name: string | null
+}
+
+/** Comentario del hilo, visto desde el panel de moderación (MVP §25). */
+export interface AdminComment {
+  id: string
+  need_id: string
+  body: string
+  is_hidden: boolean
+  hidden_at: string | null
+  created_at: string
+  author_name: string | null
+  need_title: string | null
 }
 
 export interface AdminStats {

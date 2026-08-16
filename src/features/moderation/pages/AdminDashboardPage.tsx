@@ -15,7 +15,11 @@ export function AdminDashboardPage() {
         <h1 className="text-brand-900 text-xl font-semibold">Resumen</h1>
         <p className="text-closed-500 mt-1 text-sm">Estado general de la comunidad.</p>
       </div>
-      {error ? <p className="text-danger-600 text-sm">{error}</p> : <AdminStatsCards stats={stats} />}
+      {error ? (
+        <p className="text-danger-600 text-sm">{error}</p>
+      ) : (
+        <AdminStatsCards stats={stats} />
+      )}
       <div>
         <Link to="/admin/reports" className="text-brand-700 text-sm font-medium hover:underline">
           Ver reportes pendientes →

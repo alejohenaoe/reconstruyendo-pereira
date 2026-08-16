@@ -27,7 +27,9 @@ export function AdminUsersPage() {
     <>
       <div>
         <h1 className="text-brand-900 text-xl font-semibold">Usuarios</h1>
-        <p className="text-closed-500 mt-1 text-sm">Busca, filtra y suspende usuarios según lo resuelva la moderación.</p>
+        <p className="text-closed-500 mt-1 text-sm">
+          Busca, filtra y suspende usuarios según lo resuelva la moderación.
+        </p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
         <TextField
@@ -43,7 +45,9 @@ export function AdminUsersPage() {
             name="municipality"
             className={selectClass}
             value={municipalityId ?? ''}
-            onChange={(event) => setMunicipalityId(event.target.value ? Number(event.target.value) : null)}
+            onChange={(event) =>
+              setMunicipalityId(event.target.value ? Number(event.target.value) : null)
+            }
           >
             <option value="">Todos</option>
             {municipalities.map((municipality) => (
@@ -54,7 +58,11 @@ export function AdminUsersPage() {
           </select>
         </label>
       </div>
-      {error ? <p className="text-danger-600 text-sm">{error}</p> : <UsersTable users={users} onChanged={() => void reload()} />}
+      {error ? (
+        <p className="text-danger-600 text-sm">{error}</p>
+      ) : (
+        <UsersTable users={users} onChanged={() => void reload()} />
+      )}
     </>
   )
 }

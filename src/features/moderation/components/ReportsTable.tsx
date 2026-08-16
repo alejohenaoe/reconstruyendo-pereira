@@ -2,11 +2,16 @@ import { useState } from 'react'
 
 import { ReportReasonBadge } from '@/features/moderation/components/ReportReasonBadge'
 import { ReportStatusBadge } from '@/features/moderation/components/ReportStatusBadge'
-import { deleteReport, updateReportStatus } from '@/features/moderation/services/moderationService'
+import {
+  deleteReport,
+  moderateComment,
+  updateReportStatus,
+} from '@/features/moderation/services/moderationService'
 import type { ReportStatus, ReportView } from '@/features/moderation/types'
 import { REPORT_STATUSES, REPORT_STATUS_LABELS } from '@/features/moderation/types'
 import { Button } from '@/shared/components/Button'
 import { timeAgo } from '@/shared/utils/timeAgo'
+import { Link } from 'react-router-dom'
 
 interface ReportsTableProps {
   reports: ReportView[]
@@ -22,6 +27,18 @@ export function ReportsTable({ reports, onChanged }: ReportsTableProps) {
     setBusyId(id)
     setError(null)
     const result = await updateReportStatus(id, status)
+    setBusyId(null)
+    if (!result.ok) setError(result.error)
+    else onChanged()
+  }
+
+  // Moderar el comentario reportado sin salir de la lista de reportes: es la
+  // acción que cierra el circuito reporte → decisión (MVP §25, §26).
+  async function toggleComment(reportId: string, commentId: string, hidden: boolean) {
+    if (!hidden && !window.confirm('¿Ocultar este comentario? Dejará de verse en el hilo.')) return
+    setBusyId(reportId)
+    setError(null)
+    const result = await moderateComment(commentId, !hidden)
     setBusyId(null)
     if (!result.ok) setError(result.error)
     else onChanged()
@@ -46,7 +63,10 @@ export function ReportsTable({ reports, onChanged }: ReportsTableProps) {
       {error ? <p className="text-danger-600 text-sm">{error}</p> : null}
       <ul className="flex flex-col gap-3">
         {reports.map((report) => (
-          <li key={report.id} className="border-arena-200 flex flex-col gap-2 rounded-lg border bg-white p-4 shadow-sm">
+          <li
+            key={report.id}
+            className="border-arena-200 flex flex-col gap-2 rounded-lg border bg-white p-4 shadow-sm"
+          >
             <div className="flex flex-wrap items-center gap-2">
               <ReportStatusBadge status={report.status} />
               <ReportReasonBadge reason={report.reason} />
@@ -60,6 +80,30 @@ export function ReportsTable({ reports, onChanged }: ReportsTableProps) {
             </p>
 
             <div className="flex flex-wrap items-center gap-2">
+              {report.comment_id ? (
+                <Button
+                  size="sm"
+                  variant={report.comment?.is_hidden ? 'secondary' : 'danger'}
+                  loading={busyId === report.id}
+                  onClick={() =>
+                    void toggleComment(
+                      report.id,
+                      report.comment_id as string,
+                      report.comment?.is_hidden ?? false,
+                    )
+                  }
+                >
+                  {report.comment?.is_hidden ? 'Restaurar comentario' : 'Ocultar comentario'}
+                </Button>
+              ) : null}
+              {report.need_id ? (
+                <Link
+                  to={`/needs/${report.need_id}`}
+                  className="text-brand-700 text-xs font-medium hover:underline"
+                >
+                  Ver pedido de ayuda
+                </Link>
+              ) : null}
               {REPORT_STATUSES.filter((status) => status !== report.status).map((status) => (
                 <Button
                   key={status}
