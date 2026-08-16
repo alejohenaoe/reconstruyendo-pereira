@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { HandHeart, MapPin } from 'lucide-react'
+import { EyeOff, HandHeart, MapPin } from 'lucide-react'
 
 import { NeedImage } from '@/features/needs/components/NeedImage'
 import { NeedStatus } from '@/features/needs/components/NeedStatus'
@@ -35,6 +35,14 @@ export function NeedCard({ need, offerCount, image }: NeedCardProps) {
           </h2>
           <NeedStatus status={need.status} />
         </div>
+        {/* Solo su autor (y los administradores) llegan a ver esta tarjeta: RLS
+            no devuelve los pedidos ocultos a nadie más. */}
+        {need.is_hidden ? (
+          <p className="text-danger-600 mt-1 flex items-center gap-1 text-xs font-medium">
+            <EyeOff className="size-3.5 shrink-0" aria-hidden="true" />
+            Oculto por moderación
+          </p>
+        ) : null}
         <p className="text-closed-500 mt-0.5 flex items-center gap-1 truncate text-sm">
           <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
           {location || 'Ubicación no especificada'}

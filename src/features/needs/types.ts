@@ -29,6 +29,8 @@ export interface Need {
   neighborhood: string | null
   status: NeedStatus
   needs_assessment: boolean
+  /** Ocultado por moderación: por RLS solo lo ven su autor y los administradores. */
+  is_hidden: boolean
   /** Actualización pública del cierre, escrita por el autor (MVP §23). */
   resolution_note: string | null
   created_at: string

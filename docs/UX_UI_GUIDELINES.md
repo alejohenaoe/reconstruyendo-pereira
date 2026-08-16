@@ -684,6 +684,9 @@ información de §5, y `Mi cuenta` actúa como su punto de entrada junto con el 
 - **`/my-needs` — Mis pedidos de ayuda**: los pedidos propios en todos sus estados, agrupados en
   `Pedido actual` (abierto o en proceso), `Solucionados` y `Cerrados`. Como solo puede haber un
   pedido activo a la vez (MVP §8), cuando no hay ninguno activo la página ofrece publicar uno.
+  Un pedido ocultado por moderación se marca como `Oculto por moderación` en su tarjeta, y su
+  detalle explica que no aparece en el listado público ni acepta ofertas nuevas: RLS solo se lo
+  devuelve a su autor y a los administradores, así que nadie más ve ese distintivo.
 - **`/my-help` — Mis ayudas**: las ofertas propias agrupadas en `Ayudas pendientes`,
   `Ayudas confirmadas` y `Ofertas canceladas`. Una ayuda marcada como realizada sigue contando
   como pendiente hasta que la confirma quien pidió la ayuda (MVP §11, §16): la interfaz no se

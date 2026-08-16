@@ -17,7 +17,7 @@ export interface UploadedNeedImage {
 }
 
 const NEED_PUBLISH_SELECT =
-  'id,user_id,title,description,category_id,municipality_id,neighborhood,status,needs_assessment,resolution_note,created_at'
+  'id,user_id,title,description,category_id,municipality_id,neighborhood,status,needs_assessment,resolution_note,is_hidden,created_at'
 
 /** Traduce errores de publicación a mensajes humanos (UX §25). */
 export function mapPublishError(error: { code?: string | null; message?: string }): string {

@@ -1,4 +1,4 @@
-import { MapPin } from 'lucide-react'
+import { EyeOff, MapPin } from 'lucide-react'
 
 import { NeedStatus } from '@/features/needs/components/NeedStatus'
 import type { Need } from '@/features/needs/types'
@@ -30,6 +30,19 @@ export function NeedHeader({ need, authorName }: NeedHeaderProps) {
       <p className="text-closed-500 text-xs">
         Publicado por {authorName ?? 'un vecino'} · {timeAgo(need.created_at)}
       </p>
+      {need.is_hidden ? (
+        <Alert variant="warning">
+          <p className="flex items-center gap-1.5 font-medium">
+            <EyeOff className="size-4 shrink-0" aria-hidden="true" />
+            Oculto por moderación
+          </p>
+          <p className="mt-1 text-xs leading-relaxed">
+            Este pedido de ayuda no aparece en el listado público ni puede recibir ofertas nuevas.
+            Solo lo ves tú y el equipo de moderación.
+          </p>
+        </Alert>
+      ) : null}
+
       {need.needs_assessment ? (
         <Alert variant="info">
           La persona no está segura de qué necesita exactamente. Una evaluación profesional puede

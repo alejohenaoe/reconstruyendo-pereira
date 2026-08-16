@@ -23,6 +23,7 @@ function need(id: string, status: NeedStatus): Need {
     status,
     needs_assessment: false,
     resolution_note: null,
+    is_hidden: false,
     created_at: `2026-08-1${id}T00:00:00Z`,
     need_categories: null,
     municipalities: null,
