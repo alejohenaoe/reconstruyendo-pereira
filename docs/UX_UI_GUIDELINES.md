@@ -488,6 +488,10 @@ confirmación, como toda acción destructiva (§26).
 Además, un reporte que apunta a un comentario ofrece `Ocultar comentario` directamente desde la
 lista de reportes: el circuito reporte → decisión se cierra sin cambiar de pantalla.
 
+Ocultar el **pedido** entero congela su hilo: no admite comentarios nuevos y los existentes dejan
+de ser públicos. Los siguen viendo su autor, el dueño del pedido y la administración, igual que
+las ofertas, que ya se comportaban así.
+
 ---
 
 # 15. Oferta de ayuda

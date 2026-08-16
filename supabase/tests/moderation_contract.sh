@@ -140,6 +140,20 @@ jq -e '.[0].need.title != null' "$OUT" >/dev/null && ok "el embed del pedido lle
 api PATCH "/need_comments?id=eq.$COMMENT_ID" "$TOK_ADM" '{"is_hidden":false,"hidden_at":null}'
 check2xx "admin restaura el comentario (204)" "$OUT_CODE"
 
+echo "=== 6b. El hilo de un pedido oculto queda congelado (MVP §21, §25) ==="
+api PATCH "/needs?id=eq.$NID" "$TOK_ADM" '{"is_hidden":true,"hidden_at":"'$(date -u +%FT%TZ)'"}'
+check2xx "admin oculta la necesidad para la prueba del hilo" "$OUT_CODE"
+api POST "/need_comments" "$TOK_B" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_B\",\"body\":\"Intento comentar en un pedido oculto.\"}"
+check "no se puede comentar en un pedido oculto (400)" "$OUT_CODE" 400
+api GET "/need_comments?need_id=eq.$NID&select=id" "" ""
+[ "$(jq length "$OUT")" = "0" ] && ok "anon no lee el hilo de un pedido oculto" || ko "anon lee el hilo oculto ($(jq length "$OUT"))"
+api GET "/need_comments?need_id=eq.$NID&select=id" "$TOK_A" ""
+[ "$(jq length "$OUT")" -ge 1 ] && ok "el autor del comentario lo sigue viendo" || ko "el autor perdió su comentario"
+api PATCH "/needs?id=eq.$NID" "$TOK_ADM" '{"is_hidden":false,"hidden_at":null}'
+check2xx "admin restaura la necesidad" "$OUT_CODE"
+api GET "/need_comments?need_id=eq.$NID&select=id" "" ""
+[ "$(jq length "$OUT")" -ge 1 ] && ok "restaurada: el hilo vuelve a ser público" || ko "el hilo no volvió"
+
 echo "=== 7. Suspender usuario (is_banned) ==="
 api PATCH "/profiles?id=eq.$UID_A" "$TOK_ADM" '{"banned_at":"'$(date -u +%FT%TZ)'"}'
 check2xx "admin suspende a Ana (204)" "$OUT_CODE"
