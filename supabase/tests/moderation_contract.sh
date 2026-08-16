@@ -86,6 +86,10 @@ not2xx "auto-reporte rechazado" "$OUT_CODE"
 api POST "/reports" "$TOK_B" "{\"reporter_id\":\"$UID_B\",\"need_id\":\"$NID\",\"reason\":\"SPAM\"}"
 check "reporte duplicado rechazado (409)" "$OUT_CODE" 409
 
+# El cliente DEBE enviar reporter_id: la RLS lo compara con auth.uid().
+api POST "/reports" "$TOK_B" "{\"need_id\":\"$NID\",\"reason\":\"SPAM\",\"details\":\"Reporte sin reporter_id explícito.\"}"
+check "reportar sin reporter_id se rechaza (403)" "$OUT_CODE" 403
+
 echo "=== 3. Promoción a admin y estadísticas RPC ==="
 docker exec "$DB" psql -U postgres -d postgres -c "update public.profiles set app_role = 'ADMIN' where id = '$UID_ADM';" >/dev/null
 api POST "/rpc/admin_stats" "$TOK_ADM" '{}'

@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 
 import { ShieldAlert } from 'lucide-react'
 
+import { useAuth } from '@/features/auth/hooks/useAuth'
 import { createReport } from '@/features/moderation/services/moderationService'
 import type { ReportReason, ReportTarget } from '@/features/moderation/types'
 import { REPORT_REASONS, REPORT_REASON_LABELS } from '@/features/moderation/types'
@@ -24,6 +25,7 @@ interface ReportFormProps {
 
 /** Formulario de reporte (MVP §26). Solo verificado y no suspendido puede reportar (RLS). */
 export function ReportForm({ target, onDone }: ReportFormProps) {
+  const { user } = useAuth()
   const [reason, setReason] = useState<ReportReason | null>(null)
   const [details, setDetails] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -36,9 +38,13 @@ export function ReportForm({ target, onDone }: ReportFormProps) {
       setError('Elige el motivo del reporte.')
       return
     }
+    if (!user) {
+      setError('Inicia sesión para reportar contenido.')
+      return
+    }
     setSubmitting(true)
     setError(null)
-    const result = await createReport(target, reason, details)
+    const result = await createReport(target, user.id, reason, details)
     setSubmitting(false)
     if (!result.ok) {
       setError(result.error)

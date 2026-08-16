@@ -10,6 +10,9 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // `supabase/tests/client_writes.test.ts` necesita el stack local: va aparte,
+    // en `npm run test:client`.
+    exclude: ['**/node_modules/**', '**/dist/**', 'supabase/**'],
     // El módulo @/shared/lib/supabase exige VITE_* al inicializar el cliente.
     // Valores ficticios: los tests unitarios solo ejercitan funciones puras.
     env: {

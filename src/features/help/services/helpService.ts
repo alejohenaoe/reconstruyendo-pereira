@@ -67,13 +67,20 @@ export async function getOfferers(needId: string): Promise<HelpResult<Offerer[]>
   return { ok: true, data: (data ?? []) as Offerer[], error: null, code: null }
 }
 
+/**
+ * Registra la oferta de ayuda. El `user_id` explícito lo exige la RLS
+ * (`user_id = auth.uid()`): la columna no tiene valor por defecto y sin él el
+ * insert se rechaza con 403.
+ */
 export async function createHelpOffer(
   needId: string,
+  userId: string,
   capabilityId: number,
   message: string,
 ): Promise<HelpResult<null>> {
   const { error } = await supabase.from('help_offers').insert({
     need_id: needId,
+    user_id: userId,
     capability_id: capabilityId,
     message,
     status: 'OFFERED',

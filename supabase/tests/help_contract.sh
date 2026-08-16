@@ -87,6 +87,10 @@ api POST "/help_offers" "$TOK_A" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_A\",\
 check "auto-oferta rechazada (400)" "$OUT_CODE" 400
 grep -q "No puedes ofrecer ayuda en tu propia necesidad" "$OUT" && ok "mensaje de auto-oferta" || ko "mensaje de auto-oferta"
 
+# El cliente DEBE enviar user_id también aquí: la RLS lo compara con auth.uid().
+api POST "/help_offers" "$TOK_C" "{\"need_id\":\"$NID\",\"capability_id\":2,\"message\":\"Oferta sin user_id explícito.\"}"
+check "ofrecer ayuda sin user_id se rechaza (403)" "$OUT_CODE" 403
+
 echo "=== 3. Hilo de comentarios ==="
 api POST "/need_comments" "$TOK_B" "{\"need_id\":\"$NID\",\"user_id\":\"$UID_B\",\"body\":\"Hola, yo puedo acercarme el sábado en la mañana.\"}"
 check2xx "Juan comenta (201)" "$OUT_CODE"

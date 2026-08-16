@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 
+import { useAuth } from '@/features/auth/hooks/useAuth'
 import type { Capability } from '@/features/help/types'
 import { createHelpOffer } from '@/features/help/services/helpService'
 import { Alert } from '@/shared/components/Alert'
@@ -18,6 +19,7 @@ interface HelpOfferFormProps {
 
 /** Formulario de oferta de ayuda (tipo de capacidad + mensaje breve). */
 export function HelpOfferForm({ needId, capabilities, onOffered }: HelpOfferFormProps) {
+  const { user } = useAuth()
   const [capabilityId, setCapabilityId] = useState<number | null>(null)
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -35,9 +37,14 @@ export function HelpOfferForm({ needId, capabilities, onOffered }: HelpOfferForm
       return
     }
 
+    if (!user) {
+      setError('Inicia sesión para ofrecer tu ayuda.')
+      return
+    }
+
     setSubmitting(true)
     setError(null)
-    const result = await createHelpOffer(needId, capabilityId, trimmed)
+    const result = await createHelpOffer(needId, user.id, capabilityId, trimmed)
     setSubmitting(false)
 
     if (!result.ok) {

@@ -45,12 +45,21 @@ async function displayNameOf(userIds: string[]): Promise<Map<string, string>> {
 
 // ---------- Reportes (cualquier verificado) ----------
 
+/**
+ * Registra un reporte. El `reporter_id` explícito lo exige la RLS
+ * (`reporter_id = auth.uid()`): sin él el insert se rechaza con 403.
+ */
 export async function createReport(
   target: ReportTarget,
+  reporterId: string,
   reason: ReportReason,
   details: string,
 ): Promise<ModResult<null>> {
-  const payload: Record<string, unknown> = { reason, details: details.trim() || null }
+  const payload: Record<string, unknown> = {
+    reporter_id: reporterId,
+    reason,
+    details: details.trim() || null,
+  }
   if (target.type === 'need') payload.need_id = target.id
   else if (target.type === 'comment') payload.comment_id = target.id
   else payload.reported_user_id = target.id

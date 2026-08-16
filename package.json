@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "typecheck": "tsc -b",
     "test": "vitest run",
+    "test:client": "vitest run --config vitest.client.config.ts",
     "test:contracts": "bash supabase/tests/run_all.sh",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
