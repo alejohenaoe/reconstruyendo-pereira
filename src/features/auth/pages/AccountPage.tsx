@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useCapabilities } from '@/features/help/hooks/useCapabilities'
 import { getOwnPhone, saveOwnPhone } from '@/features/help/services/helpService'
 import { CapabilityPicker } from '@/features/profile/components/CapabilityPicker'
+import { useMyBlocks } from '@/features/profile/hooks/useMyBlocks'
 import { getMyCapabilities, saveMyCapabilities } from '@/features/profile/services/profileService'
 import { Alert } from '@/shared/components/Alert'
 import { Card } from '@/shared/components/Card'
@@ -28,6 +29,7 @@ export function AccountPage() {
   const [phoneError, setPhoneError] = useState<string | null>(null)
   const [phoneSaved, setPhoneSaved] = useState(false)
   const { capabilities } = useCapabilities()
+  const { blocks, loading: blocksLoading, unblock } = useMyBlocks(user?.id ?? null)
   const [capabilityIds, setCapabilityIds] = useState<number[]>([])
   const [savedCapabilityIds, setSavedCapabilityIds] = useState<number[]>([])
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false)
@@ -210,6 +212,43 @@ export function AccountPage() {
               </>
             ) : (
               <p className="text-closed-500 text-sm">Cargando…</p>
+            )}
+          </Card>
+
+          {/* Personas bloqueadas (MVP §21): se gestionan solo desde aquí. */}
+          <Card className="flex flex-col gap-3">
+            <div>
+              <p className="text-closed-800 text-base font-medium">Personas bloqueadas</p>
+              <p className="text-closed-500 mt-1 text-sm">
+                No se ven contigo en los pedidos de ayuda ni pueden contactarte. La otra persona no
+                sabe que la bloqueaste.
+              </p>
+            </div>
+            {blocksLoading ? (
+              <p className="text-closed-500 text-sm">Cargando…</p>
+            ) : blocks.length === 0 ? (
+              <p className="text-closed-500 text-sm">No has bloqueado a nadie.</p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {blocks.map((person) => (
+                  <li
+                    key={person.user_id}
+                    className="border-arena-200 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+                  >
+                    <span className="text-closed-700 text-sm font-medium">
+                      {person.display_name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => void unblock(person.user_id)}
+                    >
+                      Desbloquear
+                    </Button>
+                  </li>
+                ))}
+              </ul>
             )}
           </Card>
 

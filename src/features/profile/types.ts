@@ -29,6 +29,13 @@ export interface MyOffersPage {
   nextCursor: MyOffersCursor | null
 }
 
+/** Persona que bloqueé (MVP §21). */
+export interface BlockedPerson {
+  user_id: string
+  display_name: string
+  created_at: string
+}
+
 export type ProfileResult<T> =
   { ok: true; data: T; error: null } | { ok: false; data: null; error: string }
 

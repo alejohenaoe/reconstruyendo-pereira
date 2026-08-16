@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import { HandHeart, Phone, UserX } from 'lucide-react'
@@ -30,6 +31,8 @@ interface OfferersSectionProps {
   onChanged: () => void
   /** Si se provee, muestra el enlace "Reportar" junto a cada oferente. */
   reportUrlFor?: (offerer: Offerer) => string
+  /** Acción de bloqueo por persona; la arma la página (MVP §21). */
+  blockActionFor?: (userId: string, displayName: string) => ReactNode
 }
 
 /** Lista de personas que se ofrecieron con acciones según la relación (UX §16/§18). */
@@ -40,6 +43,7 @@ export function OfferersSection({
   isOwner,
   onChanged,
   reportUrlFor,
+  blockActionFor,
 }: OfferersSectionProps) {
   const [contact, setContact] = useState<NeedContact | null>(null)
   const [contactFor, setContactFor] = useState<string | null>(null)
@@ -114,6 +118,7 @@ export function OfferersSection({
                     Reportar
                   </Link>
                 ) : null}
+                {blockActionFor ? blockActionFor(offer.user_id, offer.display_name) : null}
               </div>
 
               <p className="text-closed-500 mt-1 text-xs">

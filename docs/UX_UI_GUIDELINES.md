@@ -482,7 +482,26 @@ es un tipo de mensaje**: vive en `help_offers` con su ciclo de estados, y duplic
 confundiría "se ofreció" con "ayudó" (§16). El aviso al dueño distingue `ofreció materiales` de
 `comentó` (MVP §27).
 
-## 14.1 Moderación de comentarios
+## 14.1 Bloquear a una persona
+
+Bloquear (MVP §21) es distinto de reportar y de suspender: lo decide cada persona, surte efecto de
+inmediato y solo afecta a esas dos. Se ofrece donde ocurre el roce —junto a `Reportar`, en el autor
+del pedido, en cada oferta y en cada mensaje del hilo— y pide confirmación explicando el efecto.
+
+El efecto es **simétrico**: da igual quién bloqueó a quién, los dos dejan de verse en el hilo y en
+las ofertas, no pueden ofrecerse ayuda ni comentar en el pedido del otro, y el contacto deja de
+revelarse. Un bloqueo que dejara al otro seguir escribiendo sería peor que no tenerlo.
+
+Es **discreto**: la persona bloqueada no recibe aviso ni puede consultar quién la bloqueó. Y no
+borra nada: los mensajes y ofertas anteriores siguen existiendo para el resto de la comunidad y
+para su autor.
+
+Los bloqueos se gestionan en un solo lugar, `Mi cuenta` → `Personas bloqueadas`, con la acción de
+desbloquear, que devuelve la visibilidad en ambos sentidos.
+
+---
+
+## 14.2 Moderación de comentarios
 
 Un comentario nunca se borra al moderarlo: se **oculta** (`need_comments.is_hidden`). Deja de
 verse en el hilo para la comunidad, pero su autor lo sigue viendo y el registro se conserva, que
