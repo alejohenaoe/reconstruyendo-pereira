@@ -61,7 +61,11 @@ export function useNotifications() {
     const result = await markNotificationRead(id)
     if (!result.ok) return false
     setNotifications((current) =>
-      current.map((notification) => (notification.id === id ? { ...notification, read_at: new Date().toISOString() } : notification)),
+      current.map((notification) =>
+        notification.id === id
+          ? { ...notification, read_at: new Date().toISOString() }
+          : notification,
+      ),
     )
     setUnread((count) => Math.max(0, count - 1))
     return true
@@ -70,7 +74,12 @@ export function useNotifications() {
   const markAllRead = useCallback(async () => {
     const result = await markAllNotificationsRead()
     if (!result.ok) return false
-    setNotifications((current) => current.map((notification) => ({ ...notification, read_at: notification.read_at ?? new Date().toISOString() })))
+    setNotifications((current) =>
+      current.map((notification) => ({
+        ...notification,
+        read_at: notification.read_at ?? new Date().toISOString(),
+      })),
+    )
     setUnread(0)
     return true
   }, [])
@@ -82,7 +91,19 @@ export function useNotifications() {
     return true
   }, [])
 
-  return { notifications, unread, loading, loadingMore, hasMore, error, reload, loadMore, markRead, markAllRead, remove }
+  return {
+    notifications,
+    unread,
+    loading,
+    loadingMore,
+    hasMore,
+    error,
+    reload,
+    loadMore,
+    markRead,
+    markAllRead,
+    remove,
+  }
 }
 
 /** Contador de no leídas para la cabecera (se refresca a petición). */

@@ -45,10 +45,10 @@ api(){ # method path token body
 
 echo "=== 1. Usuarios, teléfonos, necesidad y dirección ==="
 EM_A="help_a${TS}@test.local"; EM_B="help_b${TS}@test.local"; EM_C="help_c${TS}@test.local"; EM_D="help_d${TS}@test.local"
-UID_A=$(signup "$EM_A" "María Autora" | jq -r .id)
-UID_B=$(signup "$EM_B" "Juan Ayudante" | jq -r .id)
-UID_C=$(signup "$EM_C" "Carlos Extraño" | jq -r .id)
-UID_D=$(signup "$EM_D" "Diana Oferta" | jq -r .id)
+UID_A=$(signup "$EM_A" "María Autora" | jq -r '(.user // .).id')
+UID_B=$(signup "$EM_B" "Juan Ayudante" | jq -r '(.user // .).id')
+UID_C=$(signup "$EM_C" "Carlos Extraño" | jq -r '(.user // .).id')
+UID_D=$(signup "$EM_D" "Diana Oferta" | jq -r '(.user // .).id')
 confirm "$UID_A"; confirm "$UID_B"; confirm "$UID_C"; confirm "$UID_D"
 TOK_A=$(login "$EM_A" | jq -r .access_token)
 TOK_B=$(login "$EM_B" | jq -r .access_token)

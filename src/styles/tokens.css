@@ -2,7 +2,19 @@
  * Design tokens centralizados (UX_UI_GUIDELINES.md §31).
  * Fuente única de verdad para colores, tipografía, radios, sombras y breakpoints.
  * Compatibles con Tailwind CSS v4 mediante @theme.
- * Dirección visual: "Cantera cálida" — comunidad, esperanza y oficio de la reconstrucción.
+ *
+ * Dirección visual: superficies claras y neutras con azul de marca.
+ *   Primary #2563eb · Help #16a34a · Warning #f59e0b · Danger #dc2626
+ *   Texto #172033 · Secundario #64748b · Fondo #f8fafc · Superficie #ffffff
+ *
+ * Los nombres de las escalas (`brand`, `arena`, `closed`) se conservan por historia:
+ * describen el ROL, no el color. `arena` son las superficies y bordes neutros;
+ * `closed` es la escala de grises de texto (y el estado "Cerrada").
+ *
+ * Contraste (WCAG AA): los tonos 500/600 son RELLENO; para TEXTO se usa el 700.
+ * `success-600` (3.3:1) y `warning-500` (2.2:1) no cumplen AA sobre blanco, por eso
+ * los botones sólidos verdes usan `success-700` y ningún texto usa ámbar por debajo
+ * del 700. Ver los pares fondo-100/texto-700 de badges y alertas.
  */
 
 @theme {
@@ -14,32 +26,26 @@
     'Sora', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
 
-  /* Marca: teal profundo — comunidad, esperanza, serenidad (UX §32) */
-  --color-brand-50: #effaf6;
-  --color-brand-100: #d7f0e6;
-  --color-brand-200: #b0e0cf;
-  --color-brand-300: #82c9b1;
-  --color-brand-400: #52ad90;
-  --color-brand-500: #359175;
-  --color-brand-600: #26745d;
-  --color-brand-700: #205e4c;
-  --color-brand-800: #1d4b3e;
-  --color-brand-900: #193e34;
-  --color-brand-950: #0b241d;
+  /* Marca (Primary): acciones principales e identidad. 600 y 700 son los tonos
+     de la paleta (#2563eb / #1d4ed8); el resto completa la rampa. */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
 
-  /* Arena — neutros cálidos: fondo, superficies y bordes suaves */
-  --color-arena-50: #faf7f1;
-  --color-arena-100: #f4eee1;
-  --color-arena-200: #e9ddc6;
-  --color-arena-300: #d9c6a3;
-
-  /* Ladrillo — acento de obra (terracota), uso moderado: destacados y CTA secundarios */
-  --color-brick-50: #fdf3ee;
-  --color-brick-100: #f8e0d3;
-  --color-brick-200: #f0c2ab;
-  --color-brick-500: #c96f4a;
-  --color-brick-600: #b85c38;
-  --color-brick-700: #98492c;
+  /* Superficies y bordes neutros. `arena-50` es el fondo general (#f8fafc) y
+     `arena-200` el borde de todas las tarjetas; las tarjetas van en blanco. */
+  --color-arena-50: #f8fafc;
+  --color-arena-100: #f1f5f9;
+  --color-arena-200: #e2e8f0;
+  --color-arena-300: #cbd5e1;
 
   /* Estado OPEN — Necesita ayuda (atención, naranja cálido) */
   --color-need-50: #fff7ed;
@@ -55,15 +61,17 @@
   --color-progress-600: #d97706;
   --color-progress-700: #b45309;
 
-  /* Estado RESOLVED — Solucionada (verde) */
+  /* Help / RESOLVED — ayuda, éxito y "Solucionada" (verde #16a34a).
+     El 600 no cumple AA con texto blanco (3.3:1): los botones sólidos usan el 700. */
   --color-success-50: #f0fdf4;
   --color-success-100: #dcfce7;
   --color-success-500: #22c55e;
   --color-success-600: #16a34a;
   --color-success-700: #15803d;
+  --color-success-800: #166534;
 
   /* Estado CLOSED — Cerrada (neutral). Escala completa: también es el gris de
-     texto de toda la interfaz (títulos en 800, texto secundario en 400/500). */
+     texto de toda la interfaz (texto principal en 800, secundario en 500). */
   --color-closed-100: #f1f5f9;
   --color-closed-200: #e2e8f0;
   --color-closed-300: #cbd5e1;
@@ -71,21 +79,15 @@
   --color-closed-500: #64748b;
   --color-closed-600: #475569;
   --color-closed-700: #334155;
-  --color-closed-800: #1e293b;
+  --color-closed-800: #172033;
 
   /* Semánticos: error/destructivo */
   --color-danger-50: #fef2f2;
   --color-danger-100: #fee2e2;
+  --color-danger-400: #f87171;
   --color-danger-500: #ef4444;
   --color-danger-600: #dc2626;
   --color-danger-700: #b91c1c;
-
-  /* Semánticos: información */
-  --color-info-50: #eff6ff;
-  --color-info-100: #dbeafe;
-  --color-info-500: #3b82f6;
-  --color-info-600: #2563eb;
-  --color-info-700: #1d4ed8;
 
   /* Semánticos: advertencia */
   --color-warning-50: #fffbeb;
@@ -113,13 +115,10 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
 
-  /* Animaciones: flotación, pulso sutil y secuencia "story" del hero (14 s) */
+  /* Animaciones */
   --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-soft: pulse-soft 2.5s ease-in-out infinite;
-  --animate-story-a: story-a 14s ease-in-out infinite;
-  --animate-story-b: story-b 14s ease-in-out infinite;
-  --animate-story-c: story-c 14s ease-in-out infinite;
-  --animate-progress: progress 14s linear infinite;
+  /* Entrada de cada frase del hero: se dispara una vez por frase (key nuevo). */
+  --animate-phrase-in: phrase-in 500ms ease-out;
 
   @keyframes float {
     0%,
@@ -131,102 +130,14 @@
     }
   }
 
-  @keyframes pulse-soft {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  /* Escena 1: llega una oferta (0.6 s → 8.1 s) */
-  @keyframes story-a {
-    0% {
+  @keyframes phrase-in {
+    from {
       opacity: 0;
       transform: translateY(10px);
     }
-    4% {
+    to {
       opacity: 1;
       transform: translateY(0);
-    }
-    56% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    62% {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-  }
-
-  /* Escena 2: otro aporte (3.9 s → 10.4 s, se acumula con la 1) */
-  @keyframes story-b {
-    0% {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    28% {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    32% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    72% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    78% {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-  }
-
-  /* Escena 3: ayuda en camino (8.4 s → 13.2 s) */
-  @keyframes story-c {
-    0% {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    60% {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    64% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    90% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    96% {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-  }
-
-  @keyframes progress {
-    0% {
-      width: 0%;
-    }
-    100% {
-      width: 100%;
     }
   }
 }

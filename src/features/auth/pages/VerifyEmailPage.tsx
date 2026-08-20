@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { AuthLayout } from '@/features/auth/components/AuthLayout'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useRedirectParam } from '@/features/auth/hooks/useRedirectParam'
 import { Alert } from '@/shared/components/Alert'
 import { Button } from '@/shared/components/Button'
+import { buttonStyles } from '@/shared/components/buttonStyles'
 
 /**
  * Pantalla de verificación de correo (UX_UI_GUIDELINES.md §20).
@@ -14,6 +15,7 @@ import { Button } from '@/shared/components/Button'
 export function VerifyEmailPage() {
   const { status, user, resendVerification, refreshSession } = useAuth()
   const redirect = useRedirectParam()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
   const email = searchParams.get('email') ?? user?.email ?? ''
@@ -23,22 +25,18 @@ export function VerifyEmailPage() {
   const [checking, setChecking] = useState(false)
   const [checkComplete, setCheckComplete] = useState(false)
 
-  // Redirige según el estado: ya autenticado continúa; sin sesión vuelve al login.
+  // Con el correo ya verificado se continúa; sin sesión NO se rebota al login:
+  // quien llega aquí tras un intento de entrar rechazado no tiene sesión, y
+  // expulsarlo era justo lo que hacía que el login fallara sin explicación.
   useEffect(() => {
-    if (status === 'AUTHENTICATED') {
-      window.location.replace(redirect ?? '/')
-      return
-    }
-    if (status === 'UNAUTHENTICATED') {
-      window.location.replace(`/login?redirect=${redirect ? encodeURIComponent(redirect) : ''}`)
-    }
-  }, [status, redirect])
+    if (status === 'AUTHENTICATED') navigate(redirect ?? '/', { replace: true })
+  }, [status, redirect, navigate])
 
   // Tras "Ya verifiqué mi correo": reacciona con el estado ya refrescado.
   useEffect(() => {
     if (!checkComplete) return
     if (status === 'AUTHENTICATED') {
-      window.location.replace(redirect ?? '/')
+      navigate(redirect ?? '/', { replace: true })
       return
     }
     if (status === 'EMAIL_UNVERIFIED') {
@@ -48,7 +46,7 @@ export function VerifyEmailPage() {
       })
     }
     setCheckComplete(false)
-  }, [status, checkComplete, redirect])
+  }, [status, checkComplete, redirect, navigate])
 
   async function handleResend() {
     setResending(true)
@@ -81,9 +79,16 @@ export function VerifyEmailPage() {
     }
   }
 
+  const withoutSession = status === 'UNAUTHENTICATED'
+
   return (
     <AuthLayout title="Verifica tu correo">
       <div className="flex flex-col gap-4">
+        {withoutSession ? (
+          <Alert variant="warning">
+            No pudimos iniciar tu sesión porque tu correo todavía no está verificado.
+          </Alert>
+        ) : null}
         {message ? <Alert variant={message.variant}>{message.text}</Alert> : null}
         <p className="text-closed-600 text-sm leading-relaxed">
           {email
@@ -91,8 +96,8 @@ export function VerifyEmailPage() {
             : 'Te enviamos un enlace de verificación a tu correo.'}
         </p>
         <p className="text-closed-500 text-sm leading-relaxed">
-          Revisa tu bandeja de entrada y confirma tu cuenta para poder publicar pedidos de ayuda y
-          ofrecer ayuda.
+          Abre ese enlace para confirmar tu cuenta. Después podrás entrar, publicar pedidos de ayuda
+          y ofrecer ayuda.
         </p>
         <div className="mt-2 flex flex-col gap-3">
           <Button
@@ -105,16 +110,25 @@ export function VerifyEmailPage() {
           >
             Reenviar correo
           </Button>
-          <Button
-            type="button"
-            variant="primary"
-            size="lg"
-            fullWidth
-            loading={checking}
-            onClick={handleCheck}
-          >
-            Ya verifiqué mi correo
-          </Button>
+          {withoutSession ? (
+            <Link
+              to={`/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
+              className={`${buttonStyles({ variant: 'primary', size: 'lg' })} w-full`}
+            >
+              Ya verifiqué: entrar
+            </Link>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={checking}
+              onClick={handleCheck}
+            >
+              Ya verifiqué mi correo
+            </Button>
+          )}
         </div>
       </div>
     </AuthLayout>

@@ -60,8 +60,12 @@ export async function getUnreadCount(): Promise<NotificationsResult<number>> {
 }
 
 export async function markNotificationRead(id: string): Promise<NotificationsResult<null>> {
-  const { error } = await supabase.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', id)
-  if (error) return { ok: false, data: null, error: 'No pudimos marcar la notificación como leída.' }
+  const { error } = await supabase
+    .from('notifications')
+    .update({ read_at: new Date().toISOString() })
+    .eq('id', id)
+  if (error)
+    return { ok: false, data: null, error: 'No pudimos marcar la notificación como leída.' }
   return { ok: true, data: null, error: null }
 }
 
@@ -70,7 +74,8 @@ export async function markAllNotificationsRead(): Promise<NotificationsResult<nu
     .from('notifications')
     .update({ read_at: new Date().toISOString() })
     .is('read_at', null)
-  if (error) return { ok: false, data: null, error: 'No pudimos marcar las notificaciones como leídas.' }
+  if (error)
+    return { ok: false, data: null, error: 'No pudimos marcar las notificaciones como leídas.' }
   return { ok: true, data: null, error: null }
 }
 

@@ -13,9 +13,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean
 }
 
-export function Button({ variant, size, fullWidth, loading = false, disabled, children, ...rest }: ButtonProps) {
+export function Button({
+  variant,
+  size,
+  fullWidth,
+  loading = false,
+  disabled,
+  children,
+  ...rest
+}: ButtonProps) {
   return (
-    <button className={buttonStyles({ variant, size, fullWidth })} disabled={disabled || loading} {...rest}>
+    <button
+      className={buttonStyles({ variant, size, fullWidth })}
+      disabled={disabled || loading}
+      {...rest}
+    >
       {loading ? <Spinner className="size-4" /> : null}
       {children}
     </button>

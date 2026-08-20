@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { FormEvent } from 'react'
+import type { FormEvent, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import { HandHeart, HardHat, MessageCircle } from 'lucide-react'
@@ -16,7 +16,7 @@ import { timeAgo } from '@/shared/utils/timeAgo'
 /** Cada tipo de mensaje tiene icono y color propios (MVP §14, UX §3.6). */
 const KIND_STYLES: Record<CommentKind, { Icon: LucideIcon; badge: string; icon: string }> = {
   COMMENT: { Icon: MessageCircle, badge: 'bg-closed-100 text-closed-600', icon: 'text-closed-400' },
-  MATERIAL: { Icon: HandHeart, badge: 'bg-brick-100 text-brick-700', icon: 'text-brick-600' },
+  MATERIAL: { Icon: HandHeart, badge: 'bg-success-100 text-success-700', icon: 'text-success-700' },
   RECOMMENDATION: { Icon: HardHat, badge: 'bg-brand-100 text-brand-700', icon: 'text-brand-700' },
 }
 
@@ -30,6 +30,8 @@ interface CommentsSectionProps {
   onChanged: () => void
   /** Si se provee, muestra el enlace "Reportar" junto a cada comentario. */
   reportUrlFor?: (comment: NeedComment) => string
+  /** Acción de bloqueo por persona; la arma la página (MVP §21). */
+  blockActionFor?: (userId: string, displayName: string) => ReactNode
 }
 
 function KindIcon({ kind, className }: { kind: CommentKind; className?: string }) {
@@ -44,6 +46,7 @@ export function CommentsSection({
   canComment,
   onChanged,
   reportUrlFor,
+  blockActionFor,
 }: CommentsSectionProps) {
   const { user } = useAuth()
   const [body, setBody] = useState('')
@@ -100,14 +103,17 @@ export function CommentsSection({
                   <span className="text-closed-400">· {timeAgo(comment.created_at)}</span>
                 </p>
                 <p className="text-closed-700 mt-0.5 text-sm whitespace-pre-line">{comment.body}</p>
-                {reportUrlFor ? (
-                  <Link
-                    to={reportUrlFor(comment)}
-                    className="text-closed-400 hover:text-danger-600 mt-1 inline-block text-xs underline"
-                  >
-                    Reportar
-                  </Link>
-                ) : null}
+                <span className="mt-1 flex flex-wrap items-center gap-3">
+                  {reportUrlFor ? (
+                    <Link
+                      to={reportUrlFor(comment)}
+                      className="text-closed-400 hover:text-danger-600 text-xs underline"
+                    >
+                      Reportar
+                    </Link>
+                  ) : null}
+                  {blockActionFor ? blockActionFor(comment.user_id, comment.display_name) : null}
+                </span>
               </div>
             </li>
           ))}

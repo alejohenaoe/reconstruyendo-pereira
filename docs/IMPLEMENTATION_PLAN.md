@@ -25,7 +25,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 
 1. **Estado "Cancelada"**: el `MVP.md` §8 menciona "Cancelada", pero no existe un estado `CANCELLED` de pedido de ayuda. Se mapea a `CLOSED` (cerrada sin resolución). Estados de pedido de ayuda: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`.
 2. **"Tipo de participación"**: se implementa como capacidades multi-selección (`profile_capabilities`), nunca como roles excluyentes (ARCH §11/§12).
-3. **Verificación de email**: requisito para todas las acciones comunitarias, garantizado por RLS con `is_email_verified()` y reforzado en la UI (ARCH §7.2).
+3. **Verificación de email**: requisito para todas las acciones comunitarias, garantizado por RLS con `is_email_verified()` y reforzado en la UI (ARCH §7.2). En el MVP el requisito se satisface en el propio registro, con el alta autoconfirmada (ARCH §7.2.1): el gate sigue intacto, cambia solo cuándo se cumple.
 4. **Regla "un pedido de ayuda activo por usuario"**: garantizada por índice único parcial en PostgreSQL (atómico ante concurrencia), no solo desde React (MVP §8, ARCH §19).
 5. **Datos privados aislados**: `profile_phone` y `need_address` son tablas separadas (RLS es por fila, no por columna). Nunca se devuelven en consultas públicas; el único camino es el RPC `get_need_contact()` (ARCH §30/§31).
 6. **Contacto**: `get_need_contact(need_id)` es un RPC `security definer` que valida autenticación + email verificado + relación con el pedido de ayuda y registra cada revelación en `contact_access_log`.
@@ -41,7 +41,7 @@ Estas decisiones quedan fijadas en la fase de auditoría y deben respetarse dura
 - Proyecto: `rpbpwwwvakpxzdinvojw` (verificado accesible).
 - URL: `https://rpbpwwwvakpxzdinvojw.supabase.co`.
 - Se enlaza en la fase 1 mediante `supabase link`.
-- Verificación de correo habilitada en preview/producción; en desarrollo local con Supabase CLI puede deshabilitarse para facilitar el flujo.
+- Confirmación de correo desactivada en el MVP (`mailer_autoconfirm = true` en el remoto y `enable_confirmations = false` en local): el registro confirma el correo en el acto. El motivo, las contrapartidas y cómo revertirlo están en ARCH §7.2.1.
 
 ## 5. Fases de implementación
 

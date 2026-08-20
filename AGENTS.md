@@ -9,7 +9,7 @@ Aplicación móvil-first (en español) para la reconstrucción del eje cafetero 
 del 10 de agosto de 2026: los damnificados publican **pedidos de ayuda** de reconstrucción (con
 fotos y oficios requeridos), otros usuarios
 ofrecen **ayuda** y gestionan ofertas, y hay un panel de **moderación** + **notificaciones**
-in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI solo guía la experiencia.
+in-app. Auth por correo y contraseña, con el correo autoconfirmado en el registro. RLS es la autoridad de seguridad; la UI solo guía la experiencia.
 
 ## Stack y comandos
 
@@ -20,7 +20,7 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
   - `npm run build` — `tsc -b && vite build` (output `dist/`).
   - `npm run lint` — oxlint. `npm run typecheck` — `tsc -b`.
   - `npm run test` — tests unitarios Vitest (53 tests, co-localizados en `src/**/*.test.ts`).
-  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (45), auth (14), publish (30), help (59), moderation (50), notifications (49).
+  - `npm run test:contracts` — contratos e2e/seguridad (`supabase/tests/run_all.sh`). **Requiere el stack local corriendo** (`supabase status`). Ejecuta en orden: rls_security (53), auth (13), publish (30), help (59), moderation (50), notifications (49).
   - `npm run test:client` — contrato del cliente (`supabase/tests/client_writes.test.ts`, Vitest): ejecuta las funciones reales de `features/*/services` contra el stack local, tal como las llama el navegador. **También requiere el stack local.** Es la red que faltaba: los contratos en bash arman las peticiones a mano y pueden validar llamadas que el cliente no hace.
   - `npm run format` / `format:check` — Prettier (incluye `prettier-plugin-tailwindcss`).
 
@@ -28,7 +28,7 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
 
 - `src/features/{auth,home,needs,help,profile,moderation,notifications}/` — feature slices; cada una con `pages/`, `components/`, `hooks/`, `services/`, `types.ts`.
 - `src/shared/{components,hooks,lib,types,utils}/` — código compartido. El cliente único de Supabase está en `src/shared/lib/supabase.ts` (alias `@` → `./src`, ver `vite.config.ts`).
-- `supabase/migrations/` — 15 migraciones versionadas (la única vía de cambios de esquema; nunca editar el esquema a mano).
+- `supabase/migrations/` — 16 migraciones versionadas (la única vía de cambios de esquema; nunca editar el esquema a mano).
 - `supabase/tests/` — contratos e2e por API (`*.sh`) + `run_all.sh`.
 
 ## Supabase
@@ -61,6 +61,8 @@ in-app. Auth por correo con código OTP. RLS es la autoridad de seguridad; la UI
 
 - Las subconsultas dentro de una política RLS se evalúan **con la RLS del llamador**: para comprobar algo de otra tabla (p. ej. si el pedido está oculto) hay que usar un helper `security definer` (`is_need_hidden`, `is_need_owner`), o la comprobación se vuelve siempre verdadera para quien no ve esa fila.
 - Las tablas comunitarias (`needs`, `need_comments`, `help_offers`) y `reports` **no tienen default en la columna de autor** (`user_id` / `reporter_id`) y su RLS la compara con `auth.uid()`: el cliente debe enviarla siempre o el insert se rechaza con 403. Así estuvieron rotos en producción `addComment`, `createHelpOffer` y `createReport` —comentar, ofrecer ayuda y reportar— con los contratos en verde, porque el bash mandaba el id y el cliente no. Cualquier escritura nueva debe quedar cubierta por `npm run test:client`.
+- Bloqueo entre personas (`user_blocks`): sus efectos son **simétricos** y se aplican en backend —políticas de lectura de `need_comments`/`help_offers`, triggers de inserción y `get_need_contact`— mediante el helper `has_block_between()`. La tabla es privada (solo el bloqueador ve sus filas), así que cualquier comprobación desde otra tabla necesita ese helper `security definer`.
+- **Correo autoconfirmado en el registro** (`mailer_autoconfirm = true` en el remoto, `enable_confirmations = false` en `supabase/config.toml`): entrar y crear cuenta son un solo paso. El gate `is_email_verified()` **no cambió** —lo siguen usando las políticas de INSERT, `can_manage_need_images()`, `get_need_contact()` y el trigger de `user_blocks`—, simplemente se cumple desde el alta. Consecuencia práctica: `POST /auth/v1/signup` devuelve una **sesión**, así que el usuario llega en `.user`, no en la raíz de la respuesta. El estado `EMAIL_UNVERIFIED` y `/verify-email` se conservan inertes por si la confirmación se reactiva (motivo y contrapartidas en `docs/ARCHITECTURE_GUIDELINES.md` §7.2.1).
 - **RLS es la autoridad definitiva**: los contratos verifican por API que un usuario no pueda leer/editar/confirmar datos ajenos ni saltarse restricciones. Si un contrato falla, arreglar RLS en migración, no en la UI.
 - PATCH con 0 filas afectadas devuelve **204** (no hay cuerpo); verificar el resultado con un GET posterior. Con `return=representation` la respuesta es un **array** (acceder con `.[0].id`).
 - Embeds de PostgREST: una relación **a-uno** (FK saliente, p. ej. `need_comments → needs(title)`) llega como **objeto**; una **a-muchos** llega como arreglo. Ojo: `postgrest-js` los infiere como arreglos porque el proyecto no usa tipos generados de la base, así que hace falta `as unknown as ...` — pero leerlos con `[0]` en tiempo de ejecución da `undefined` (fue el bug de `target_label` en el panel de reportes). Comprobado por contrato en `moderation_contract.sh`.

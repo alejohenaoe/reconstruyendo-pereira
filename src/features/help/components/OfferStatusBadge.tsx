@@ -3,7 +3,7 @@ import { HELP_OFFER_STATUS_LABELS } from '@/features/help/types'
 
 const CONFIG: Record<HelpOfferStatus, string> = {
   OFFERED: 'bg-need-100 text-need-700',
-  CONTACTED: 'bg-info-100 text-info-700',
+  CONTACTED: 'bg-brand-100 text-brand-700',
   AGREED: 'bg-progress-100 text-progress-700',
   COMPLETED: 'bg-progress-100 text-progress-700',
   CONFIRMED: 'bg-success-100 text-success-700',

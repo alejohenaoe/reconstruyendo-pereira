@@ -2,13 +2,13 @@ import type { ReactNode } from 'react'
 
 interface BadgeProps {
   children: ReactNode
-  variant?: 'neutral' | 'brand' | 'brick'
+  variant?: 'neutral' | 'brand' | 'help'
 }
 
 const STYLES: Record<NonNullable<BadgeProps['variant']>, string> = {
   neutral: 'bg-closed-100 text-closed-600',
   brand: 'bg-brand-100 text-brand-700',
-  brick: 'bg-brick-100 text-brick-700',
+  help: 'bg-success-100 text-success-700',
 }
 
 /** Píldora de etiquetado (UX §30). Los estados de pedido usan NeedStatus. */

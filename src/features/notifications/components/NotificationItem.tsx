@@ -25,12 +25,18 @@ export function NotificationItem({ notification, onRead, onDelete }: Notificatio
           className={`mt-1.5 size-2 shrink-0 rounded-full ${isUnread ? 'bg-brand-600' : 'bg-closed-300'}`}
         />
         <div className="min-w-0 flex-1">
-          <p className={`text-closed-700 text-sm ${isUnread ? 'font-medium' : ''}`}>{notificationMessage(notification)}</p>
+          <p className={`text-closed-700 text-sm ${isUnread ? 'font-medium' : ''}`}>
+            {notificationMessage(notification)}
+          </p>
           <p className="text-closed-400 mt-0.5 text-xs">{timeAgo(notification.created_at)}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {isUnread ? (
-            <button type="button" onClick={() => void onRead(notification.id)} className="text-brand-700 text-xs font-medium hover:underline">
+            <button
+              type="button"
+              onClick={() => void onRead(notification.id)}
+              className="text-brand-700 text-xs font-medium hover:underline"
+            >
               Marcar leída
             </button>
           ) : null}
@@ -43,7 +49,11 @@ export function NotificationItem({ notification, onRead, onDelete }: Notificatio
               Ver
             </Link>
           ) : null}
-          <button type="button" onClick={() => void onDelete(notification.id)} className="text-closed-400 hover:text-closed-700 text-xs hover:underline">
+          <button
+            type="button"
+            onClick={() => void onDelete(notification.id)}
+            className="text-closed-400 hover:text-closed-700 text-xs hover:underline"
+          >
             Eliminar
           </button>
         </div>

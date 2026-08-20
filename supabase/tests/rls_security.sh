@@ -161,6 +161,27 @@ api GET "/profile_capabilities?select=capability_id&profile_id=eq.$ID_A&capabili
 api DELETE "/profile_capabilities?profile_id=eq.$ID_A&capability_id=eq.2" "$TK_A" ""
 check "A borra su propia capacidad (204)" 204 "$OUT_CODE"
 
+echo "=== 9c. Bloqueo entre personas (MVP §21) ==="
+api POST "/user_blocks" "$TK_A" "{\"blocker_id\":\"$ID_A\",\"blocked_id\":\"$ID_B\"}"
+check "A bloquea a B (201)" 201 "$OUT_CODE"
+api POST "/user_blocks" "$TK_B" "{\"blocker_id\":\"$ID_A\",\"blocked_id\":\"$ID_C\"}"
+check "B NO bloquea a nombre de A (403)" 403 "$OUT_CODE"
+api POST "/user_blocks" "$TK_A" "{\"blocker_id\":\"$ID_A\",\"blocked_id\":\"$ID_A\"}"
+{ [ "$OUT_CODE" = "400" ] || [ "$OUT_CODE" = "409" ]; } && pass "nadie se bloquea a sí mismo ($OUT_CODE)" || fail "auto-bloqueo aceptado ($OUT_CODE)"
+# El bloqueo es discreto: B no puede averiguar quién lo bloqueó.
+api GET "/user_blocks?select=blocker_id,blocked_id" "$TK_B" ""
+[ "$(jq length "$OUT")" = "0" ] && pass "B no ve los bloqueos que le hicieron" || fail "B ve bloqueos ajenos ($(jq -c . "$OUT"))"
+api GET "/user_blocks?select=blocked_id" "$TK_A" ""
+[ "$(jq length "$OUT")" = "1" ] && pass "A ve solo sus propios bloqueos" || fail "A ve $(jq length "$OUT") bloqueos"
+# Anon no toca la tabla.
+api GET "/user_blocks?select=blocker_id" "" ""
+{ [ "$OUT_CODE" = "401" ] || { [ "$OUT_CODE" = "200" ] && [ "$(jq length "$OUT")" = "0" ]; }; } && pass "anon no lee bloqueos ($OUT_CODE)" || fail "anon lee bloqueos ($OUT_CODE)"
+api DELETE "/user_blocks?blocker_id=eq.$ID_A&blocked_id=eq.$ID_B" "$TK_B" ""
+api GET "/user_blocks?select=blocked_id" "$TK_A" ""
+[ "$(jq length "$OUT")" = "1" ] && pass "B no puede deshacer el bloqueo de A" || fail "B borró el bloqueo de A"
+api DELETE "/user_blocks?blocker_id=eq.$ID_A&blocked_id=eq.$ID_B" "$TK_A" ""
+check "A desbloquea a B (204)" 204 "$OUT_CODE"
+
 echo "=== 10. Borrado en cascada ==="
 api DELETE "/needs?id=eq.$NEED_ID" "$TK_A" ""
 check2xx "Alice elimina su necesidad" "$OUT_CODE"

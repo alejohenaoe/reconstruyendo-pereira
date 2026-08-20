@@ -14,6 +14,7 @@ import { NeedGallery } from '@/features/needs/components/NeedGallery'
 import { NeedHeader } from '@/features/needs/components/NeedHeader'
 import { StructuralWarning } from '@/features/needs/components/StructuralWarning'
 import { usePublicNeed } from '@/features/needs/hooks/usePublicNeed'
+import { BlockUserButton } from '@/features/profile/components/BlockUserButton'
 import { hasStructuralRisk } from '@/features/needs/types'
 import { Alert } from '@/shared/components/Alert'
 import { AppHeader } from '@/shared/components/AppHeader'
@@ -90,6 +91,21 @@ export function NeedDetailPage() {
   const reportAuthorUrl = `/report?type=user&id=${need.user_id}&label=${encodeURIComponent(`El usuario ${authorName ?? 'del autor'}`)}&needId=${need.id}`
   const reportCommentUrl = (comment: NeedComment) =>
     `/report?type=comment&id=${comment.id}&label=${encodeURIComponent(`El comentario de ${comment.display_name}`)}&needId=${need.id}`
+  // El bloqueo surte efecto de inmediato: al recargar, lo de esa persona
+  // desaparece del hilo y de las ofertas (MVP §21).
+  const blockActionFor = isAuthenticated
+    ? (userId: string, displayName: string) => (
+        <BlockUserButton
+          userId={userId}
+          displayName={displayName}
+          onBlocked={() => {
+            void reloadCommunity()
+            void reloadNeed()
+          }}
+        />
+      )
+    : undefined
+
   const reportOffererUrl = (offerer: Offerer) =>
     `/report?type=user&id=${offerer.user_id}&label=${encodeURIComponent(`El usuario ${offerer.display_name}`)}&needId=${need.id}`
 
@@ -126,9 +142,19 @@ export function NeedDetailPage() {
               Reportar este pedido de ayuda
             </Link>
             {!isOwner ? (
-              <Link to={reportAuthorUrl} className="hover:text-danger-600 underline">
-                Reportar al autor
-              </Link>
+              <>
+                <Link to={reportAuthorUrl} className="hover:text-danger-600 underline">
+                  Reportar al autor
+                </Link>
+                <BlockUserButton
+                  userId={need.user_id}
+                  displayName={authorName ?? 'esta persona'}
+                  onBlocked={() => {
+                    void reloadCommunity()
+                    void reloadNeed()
+                  }}
+                />
+              </>
             ) : null}
           </div>
         ) : null}
@@ -191,6 +217,7 @@ export function NeedDetailPage() {
               isOwner={isOwner}
               onChanged={() => void reloadCommunity()}
               reportUrlFor={isAuthenticated ? reportOffererUrl : undefined}
+              blockActionFor={blockActionFor}
             />
           </Card>
 
@@ -241,6 +268,7 @@ export function NeedDetailPage() {
               canComment={isAuthenticated}
               onChanged={() => void reloadCommunity()}
               reportUrlFor={isAuthenticated ? reportCommentUrl : undefined}
+              blockActionFor={blockActionFor}
             />
           </Card>
         </section>

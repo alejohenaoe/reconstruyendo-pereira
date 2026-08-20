@@ -13,7 +13,13 @@ import {
   signUp as serviceSignUp,
   updatePassword as serviceUpdatePassword,
 } from '@/features/auth/services/authService'
-import type { AuthContextValue, AuthResult, AuthSignUpResult, AuthStatus, SignUpInput } from '@/features/auth/types'
+import type {
+  AuthContextValue,
+  AuthResult,
+  AuthSignUpResult,
+  AuthStatus,
+  SignUpInput,
+} from '@/features/auth/types'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -23,6 +29,10 @@ interface AuthProviderProps {
  * Proveedor único de sesión (ARCHITECTURE_GUIDELINES.md §7.4).
  * Deriva el estado visible a partir de la sesión y email_confirmed_at (§8):
  * AUTH_LOADING → UNAUTHENTICATED → EMAIL_UNVERIFIED → AUTHENTICATED.
+ *
+ * En el MVP el registro autoconfirma el correo (§7.2.1), así que EMAIL_UNVERIFIED no se alcanza:
+ * se conserva porque el gate `is_email_verified()` sigue vigente en la base de datos y reactivar
+ * la confirmación es solo un cambio de configuración.
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null)
@@ -70,14 +80,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const handleSignOut = useCallback((): Promise<void> => serviceSignOut(), [])
 
-  const handleResetPassword = useCallback((email: string): Promise<AuthResult> => resetPassword(email), [])
-
-  const handleResendVerification = useCallback(
-    (email: string, redirectPath?: string | null): Promise<AuthResult> => resendVerification(email, redirectPath),
+  const handleResetPassword = useCallback(
+    (email: string): Promise<AuthResult> => resetPassword(email),
     [],
   )
 
-  const handleUpdatePassword = useCallback((newPassword: string): Promise<AuthResult> => serviceUpdatePassword(newPassword), [])
+  const handleResendVerification = useCallback(
+    (email: string, redirectPath?: string | null): Promise<AuthResult> =>
+      resendVerification(email, redirectPath),
+    [],
+  )
+
+  const handleUpdatePassword = useCallback(
+    (newPassword: string): Promise<AuthResult> => serviceUpdatePassword(newPassword),
+    [],
+  )
 
   const handleRefreshSession = useCallback(async () => {
     const { session: nextSession } = await getSession()

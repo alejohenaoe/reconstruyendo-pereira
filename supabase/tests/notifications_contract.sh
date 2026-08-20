@@ -61,9 +61,9 @@ nlist(){ # token user_id
 
 echo "=== 1. Usuarios y necesidad ==="
 EM_A="notif_a${TS}@test.local"; EM_B="notif_b${TS}@test.local"; EM_C="notif_c${TS}@test.local"
-UID_A=$(signup "$EM_A" "Nora Autora" | jq -r .id)
-UID_B=$(signup "$EM_B" "Nico Ayudante" | jq -r .id)
-UID_C=$(signup "$EM_C" "Carla Extraña" | jq -r .id)
+UID_A=$(signup "$EM_A" "Nora Autora" | jq -r '(.user // .).id')
+UID_B=$(signup "$EM_B" "Nico Ayudante" | jq -r '(.user // .).id')
+UID_C=$(signup "$EM_C" "Carla Extraña" | jq -r '(.user // .).id')
 confirm "$UID_A"; confirm "$UID_B"; confirm "$UID_C"
 TOK_A=$(login "$EM_A" | jq -r .access_token)
 TOK_B=$(login "$EM_B" | jq -r .access_token)

@@ -9,5 +9,9 @@ export function timeAgo(iso: string): string {
   const days = Math.floor(hours / 24)
   if (days === 1) return 'Ayer'
   if (days < 7) return `Hace ${days} días`
-  return new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(iso).toLocaleDateString('es-CO', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }

@@ -68,6 +68,10 @@ por llamadas directas a la API; fallan si la protección RLS está ausente.
 > (ref `rpbpwwwvakpxzdinvojw`), el bucket de Storage `need-images` existe, el repo
 > está conectado de forma nativa a Netlify (push a `main` → build + deploy), y el
 > auth remoto ya tiene `site_url` y redirects de producción + localhost.
+>
+> El sitio sólo construye desde `main`: las ramas no generan branch deploys y los
+> PRs no generan deploy previews. Se trabaja en ramas y se integra a `main`
+> cuando se quiere publicar una versión.
 
 ### 1. Base de datos (Supabase remoto)
 
@@ -91,10 +95,11 @@ Configura en el dashboard remoto (Authentication → URL Configuration):
 SPA para el router y el callback de auth. Pasos:
 
 1. Conecta el repo en Netlify (build command `npm run build`, publish `dist`).
-2. Variables por entorno (ARCH §45), en Site settings → Environment variables:
-   - Producción: `VITE_SUPABASE_URL=https://<ref>.supabase.co` y
-     `VITE_SUPABASE_PUBLISHABLE_KEY=<anon key del proyecto remoto>`.
-   - Deploy-preview: apunta a un proyecto de staging si quieres aislar datos de
-     pruebas; si no, usa el mismo proyecto remoto.
+2. Variables (ARCH §45), en Site settings → Environment variables:
+   - `VITE_SUPABASE_URL=https://<ref>.supabase.co` y
+     `VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key del proyecto remoto>`,
+     en el contexto "same value for all deploy contexts".
+   - **No marcarlas como "secret"**: Vite las inyecta en texto plano en el bundle
+     y el secrets scanning de Netlify aborta el build. Son públicas por diseño.
 3. Tras el primer deploy, vuelve a Authentication → URL Configuration y agrega
    la URL de producción como Redirect URL (paso 1).

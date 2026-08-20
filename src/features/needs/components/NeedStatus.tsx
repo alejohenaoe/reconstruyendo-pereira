@@ -20,7 +20,9 @@ export function NeedStatus({ status, size = 'md' }: NeedStatusProps) {
   const { classes, Icon } = CONFIG[status]
   const padding = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs'
   return (
-    <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full font-medium ${padding} ${classes}`}>
+    <span
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full font-medium ${padding} ${classes}`}
+    >
       <Icon className="size-3.5" aria-hidden="true" />
       {NEED_STATUS_LABELS[status]}
     </span>
