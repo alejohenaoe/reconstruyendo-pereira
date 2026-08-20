@@ -1,4 +1,4 @@
-export type ButtonVariant = 'primary' | 'secondary' | 'brick' | 'danger' | 'subtle'
+export type ButtonVariant = 'primary' | 'secondary' | 'help' | 'danger' | 'subtle'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonStyleOptions {
@@ -19,7 +19,9 @@ export function buttonStyles({
     primary: 'bg-brand-600 text-white shadow-sm hover:bg-brand-700 focus-visible:ring-brand-600',
     secondary:
       'border-brand-200 bg-white text-brand-800 hover:bg-brand-50 focus-visible:ring-brand-600 border',
-    brick: 'bg-brick-600 text-white shadow-sm hover:bg-brick-700 focus-visible:ring-brick-600',
+    // Verde de ayuda. Usa el 700 y no el 600: con texto blanco, `success-600`
+    // se queda en 3.3:1 y no cumple AA (UX §27).
+    help: 'bg-success-700 text-white shadow-sm hover:bg-success-800 focus-visible:ring-success-700',
     danger: 'bg-danger-600 text-white shadow-sm hover:bg-danger-700 focus-visible:ring-danger-600',
     subtle: 'text-closed-600 hover:bg-arena-100 focus-visible:ring-closed-500',
   }

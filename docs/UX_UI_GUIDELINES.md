@@ -240,13 +240,38 @@ No crear una experiencia completamente diferente en desktop.
 
 La página inicial debe explicar inmediatamente la propuesta de valor.
 
-Concepto recomendado:
+Concepto:
 
 > **Ayudemos entre todos**
+
+En el hero, ese concepto no se muestra como un titular fijo sino como una serie de frases que
+van rotando, una por transición:
+
+> Nadie debería reconstruir solo. · Lo que tú sabes puede ayudar a alguien. · Cada ayuda cuenta. ·
+> Juntos podemos reparar más que paredes. · Encuentra quién puede ayudarte. ·
+> Encuentra dónde puedes ayudar.
+
+El `h1` conserva un nombre accesible fijo (`sr-only`) y la frase visible va en un elemento
+`aria-hidden`: un encabezado cuyo texto cambia solo desorienta a los lectores de pantalla. Con
+`prefers-reduced-motion: reduce` no rota y se queda en la primera frase (§27).
 
 Contexto (siempre visible en el hero):
 
 > Terremoto del 10 de agosto de 2026
+
+El contexto se escribe como una frase breve con sentido, no como una etiqueta de metadatos en
+mayúsculas: la fecha sola resulta fría para quien está viviendo la situación. Debe dejar claro
+**a quién le habla la plataforma**, que es su razón de ser: la ayuda de emergencia se concentra
+en quienes lo perdieron todo, y esta página existe para quienes perdieron una parte —un techo,
+una pared— y quedan fuera de ese foco. Por ejemplo:
+
+> Tras el terremoto, la ayuda se concentra en quienes lo perdieron todo. Aquí nos damos una mano
+> los que perdimos una parte: un techo, una pared.
+
+La frase **no debe dar por terminada la emergencia** ni situar a quien ayuda como un tercero no
+afectado: quien ofrece ayuda aquí normalmente también perdió algo. Escribir en pasado ("desde el
+terremoto, la región se reconstruye") suena a balance institucional y deja fuera a la gente que
+sigue en medio de la situación.
 
 Subtexto:
 
@@ -254,8 +279,8 @@ Subtexto:
 
 Acciones principales:
 
-- `Pedir ayuda` (botón primario teal, hacia `publicar pedido`).
-- `Ayudar` (botón terracota/brick, hacia los pedidos de ayuda).
+- `Pedir ayuda` (botón primario azul, hacia `publicar pedido`).
+- `Ayudar` (botón verde de ayuda, hacia los pedidos de ayuda).
 
 Bajo las acciones, una franja de chips con los oficios de reconstrucción (p. ej. `Reconstrucción de viviendas · Paredes · Techos · Retiro de escombros`) para dejar claro el contexto de construcción.
 
@@ -955,56 +980,53 @@ Los tokens deben ser compatibles con Tailwind y mantener una única fuente de ve
 
 No introducir una segunda librería de componentes visuales si no existe un pedido de ayuda clara.
 
-## 31.1 Dirección visual: "Cantera cálida"
+## 31.1 Dirección visual: superficies claras y azul de marca
 
-El sistema visual se construye alrededor de una cantera cálida: superficies en tonos arena
-cálidos y texturizados, acentos teal de confianza (la marca) y terracota ("brick") para las
-acciones de ayuda y reconstrucción. Transmite calidez de comunidad, construcción y esperanza,
-sin caer en tonos fríos o institucionales.
+El sistema visual se construye sobre superficies claras y neutras, con un azul de marca para
+las acciones y un verde para la ayuda. Transmite claridad y confianza sin recurrir a la alarma
+ni al lenguaje visual de una emergencia.
 
-Definido en `src/styles/tokens.css` (única fuente de verdad, compatible con Tailwind):
+La paleta se define en `src/styles/tokens.css` (única fuente de verdad, compatible con
+Tailwind):
 
-- **Neutros arena**: `arena-50 #faf7f1` (fondo general), `arena-100 #f4eee1` (secciones
-  alternas), `arena-200 #e9ddc6` (bordes y acentos), `arena-300 #d9c6a3`.
-- **Marca (teal)**: escala `brand` existente, invariable (confianza y comunidad).
-- **Terracota**: `brick-500 #c96f4a`, `brick-600 #b85c38`, `brick-700 #98492c` para la acción
-  `Ayudar` y elementos de reconstrucción.
-- **Tipografía**: `Sora` para títulos (`--font-display`) e `Inter` para texto (`--font-sans`),
-  cargadas desde Google Fonts en `index.html`. Títulos `h1`–`h3` usan `font-display`.
-- **Radios y sombras**: radios mayores (`rounded-lg` 1rem, `rounded-xl` 1.25rem) y sombras
-  suaves y amplias.
-- **Superficies**: el fondo por defecto es `arena-50`; las tarjetas usan `Card` (fondo blanco,
-  borde `arena-200`, `rounded-xl`).
+| Rol          | Color     | Token                          | Uso                            |
+| ------------ | --------- | ------------------------------ | ------------------------------ |
+| Primary      | `#2563eb` | `brand-600`                    | Acciones principales, marca    |
+| Primary dark | `#1d4ed8` | `brand-700`                    | Hover/active                   |
+| Help         | `#16a34a` | `success-600`                  | Ayuda, éxito, solucionado      |
+| Warning      | `#f59e0b` | `warning-500` / `progress-500` | Necesita atención / en proceso |
+| Danger       | `#dc2626` | `danger-600`                   | Error / peligro                |
+| Texto        | `#172033` | `closed-800`                   | Texto principal                |
+| Secundario   | `#64748b` | `closed-500`                   | Texto secundario               |
+| Fondo        | `#f8fafc` | `arena-50`                     | Fondo general                  |
+| Superficie   | `#ffffff` | —                              | Tarjetas, formularios          |
 
-Los botones se definen en `src/shared/components/buttonStyles.ts` con variantes `primary`
-(teal), `secondary` (blanco con borde brand), `brick` (ayudar/reconstrucción), `danger` y
-`subtle`. El hero de la página de inicio usa una textura de ladrillos decorativa y un mockup
-del producto construido en CSS puro (sin imágenes externas): la tarjeta de un pedido de ayuda
-cuenta en bucle la historia de una publicación → una oferta (Juan, albañilería) → otro aporte
-(Jorge, cemento) → "Ayuda en camino", con una barra de progreso del ciclo (14 s). La
-secuencia usa keyframes definidos en `tokens.css` (`animate-story-a/b/c`, `animate-float`,
-`animate-pulse-soft`, `animate-progress`) y respeta `prefers-reduced-motion`:
-`motion-reduce:animate-none` deja visible la historia completa en estado estático.
+Los nombres de las escalas describen el **rol, no el color**, y se conservan por historia del
+proyecto: `arena` son las superficies y bordes neutros (`arena-200 #e2e8f0` es el borde de todas
+las tarjetas) y `closed` es a la vez la escala de grises de texto y el estado "Cerrada".
 
-La escala neutra `closed` es también el gris de texto de toda la interfaz y está completa
-(100–800): los títulos de página usan `text-brand-900`, el texto principal `closed-700`/`800`, el
-secundario `closed-500` y el terciario `closed-400`. Antes faltaban `closed-200/300/400/800` en
-los tokens, de modo que utilidades como `text-closed-800` no generaban CSS y los títulos caían al
-color heredado; al añadir cualquier tono nuevo hay que definirlo en `tokens.css`, nunca darlo por
-supuesto por parecerse a una escala de Tailwind.
+**Contraste (UX §27).** Los tonos 500/600 son de **relleno**; para **texto** se usa el 700.
+`success-600` se queda en 3.3:1 sobre blanco y `warning-500` en 2.2:1, así que ninguno de los dos
+puede llevar texto blanco encima ni usarse como color de texto: el botón sólido de ayuda usa
+`success-700` (5.0:1) y los badges usan siempre el par fondo-100 / texto-700, que deja todos los
+estados por encima de 4.5:1. Al añadir un tono nuevo hay que definirlo en `tokens.css`; una
+utilidad como `text-danger-400` no genera CSS si el tono no existe y el elemento cae al color
+heredado.
 
-Aplicación del patrón (Fase 3): autenticación, `Mi cuenta`, notificaciones, reporte, 404 y panel
-de administración. Las páginas de auth usan fondo `arena-50` y `Card` (antes `bg-brand-50` con
-una tarjeta blanca suelta); `Mi cuenta` pasa a `Card`; las filas de notificaciones, reportes,
-usuarios y pedidos del panel usan borde `arena-200`, `rounded-lg` y sombra suave; los controles
-de formulario mantienen `rounded-md` con borde arena. La navegación del panel y el menú del
-header comparten el mismo `hover:bg-arena-100`.
+**Estados de un pedido.** Los cuatro estados de `NeedStatus` conservan colores distintos, porque
+UX §11 y §3.6 exigen distinguirlos de un vistazo: `Necesita ayuda` en naranja (`need`),
+`En proceso` en ámbar (`progress`), `Solucionada` en verde (`success`) y `Cerrada` en neutro
+(`closed`).
 
-Aplicación del patrón (Fase 2): el listado, el detalle y la publicación de pedidos de ayuda
-se construyen con superficies `Card` (blanco, borde `arena-200`, `rounded-xl`) sobre fondo
-`arena-50`; los selects y textareas usan bordes arena; los estados vacíos usan `EmptyState`;
-los hilos, ofertas y el formulario de oferta mantienen los acentos brand/brick. Los estados
-de los pedidos (`NeedStatus`) y de las ofertas conservan sus colores semánticos.
+**Tipografía.** `Sora` para títulos (`--font-display`) e `Inter` para texto (`--font-sans`),
+cargadas desde Google Fonts en `index.html`. Los títulos `h1`–`h3` usan `font-display`.
+
+**Radios y sombras.** Radios amplios (`rounded-lg` 1rem, `rounded-xl` 1.25rem) y sombras suaves.
+El fondo por defecto es `arena-50` y las tarjetas usan `Card` (fondo blanco, borde `arena-200`,
+`rounded-xl`).
+
+**Botones.** Se definen en `src/shared/components/buttonStyles.ts` con las variantes `primary`
+(azul), `secondary` (blanco con borde brand), `help` (verde, para `Ayudar`), `danger` y `subtle`.
 
 ---
 

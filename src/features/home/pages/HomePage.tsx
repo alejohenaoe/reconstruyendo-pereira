@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import {
@@ -62,6 +62,37 @@ const helpSteps = [
 
 const tradeChips = ['Reconstrucción de viviendas', 'Paredes', 'Techos', 'Retiro de escombros']
 
+/** Frases del hero: rotan una a una, con una transición por frase. */
+const heroPhrases = [
+  'Nadie debería reconstruir solo.',
+  'Lo que tú sabes puede ayudar a alguien.',
+  'Cada ayuda cuenta.',
+  'Juntos podemos más.',
+  'Encuentra quién puede ayudarte.',
+  'Encuentra dónde puedes ayudar.',
+]
+
+const PHRASE_INTERVAL_MS = 4500
+
+/**
+ * Índice de la frase visible. Con `prefers-reduced-motion` no rota: se queda en
+ * la primera, porque un titular que cambia solo es justo lo que esa preferencia
+ * pide evitar (UX §27).
+ */
+function useRotatingPhrase(count: number) {
+  const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = window.setInterval(() => {
+      setIndex((current) => (current + 1) % count)
+    }, PHRASE_INTERVAL_MS)
+    return () => window.clearInterval(id)
+  }, [count])
+
+  return index
+}
+
 /**
  * Las dos puertas de entrada del hero (UX §7): en vez de vender la plataforma,
  * el inicio explica qué puede hacer aquí cada persona y la lleva a hacerlo.
@@ -81,7 +112,7 @@ const doors = [
     title: 'Quiero ayudar',
     text: 'Mira los pedidos de tu municipio y ofrece lo que tengas: trabajo, materiales, herramientas o conocimiento del oficio.',
     action: 'Ayudar',
-    variant: 'brick',
+    variant: 'help',
     target: 'browse',
   },
 ] as const
@@ -93,6 +124,7 @@ export function HomePage() {
   const filters = useMemo(() => EMPTY_FILTERS, [])
   const { needs, images, offerCounts, loading, error } = usePublicNeeds(filters)
   const recentNeeds = needs.slice(0, 4)
+  const phraseIndex = useRotatingPhrase(heroPhrases.length)
 
   const askForHelpHref = unauthenticated ? '/register?redirect=/needs/new' : '/needs/new'
 
@@ -102,17 +134,18 @@ export function HomePage() {
       <main>
         <section className="border-arena-200 bg-arena-50 border-b">
           <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-14">
-            <p className="text-closed-500 text-xs font-medium tracking-wide uppercase">
-              Terremoto del 10 de agosto de 2026 · Eje cafetero
-            </p>
-            <h1 className="text-brand-900 mt-3 text-3xl font-semibold sm:text-4xl">
-              Ayudemos entre todos
+            {/* El titular rota, pero el nombre accesible del h1 es fijo: un
+                encabezado que cambia solo confunde a los lectores de pantalla. */}
+            <h1 className="text-brand-900 text-3xl font-semibold sm:text-4xl">
+              <span className="sr-only">Ayudemos entre todos a reconstruir</span>
+              <span
+                key={phraseIndex}
+                aria-hidden="true"
+                className="animate-phrase-in block min-h-[2.4em] motion-reduce:animate-none sm:min-h-[1.3em]"
+              >
+                {heroPhrases[phraseIndex]}
+              </span>
             </h1>
-            <p className="text-closed-600 mt-3 max-w-2xl text-base leading-relaxed sm:text-lg">
-              Si el terremoto dañó tu casa, aquí puedes pedir ayuda para repararla —paredes, techos,
-              escombros—. Y si tienes manos, materiales o experiencia en obra, aquí está la gente de
-              tu región que las necesita.
-            </p>
 
             {/* Las dos puertas: qué puede hacer cada persona, y el camino para hacerlo. */}
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -146,7 +179,7 @@ export function HomePage() {
               {tradeChips.map((chip) => (
                 <li
                   key={chip}
-                  className="border-brick-200 text-brick-700 rounded-full border bg-white px-3 py-1"
+                  className="border-arena-200 text-closed-600 rounded-full border bg-white px-3 py-1"
                 >
                   {chip}
                 </li>
@@ -277,19 +310,14 @@ export function HomePage() {
         </section>
 
         {/* Aquí no circula dinero: dejarlo explícito protege a la gente de que
-            alguien use los pedidos de ayuda para pedir plata (UX §36). */}
-        <section className="mx-auto w-full max-w-3xl px-4 py-12">
-          <div className="border-arena-200 flex gap-3 rounded-xl border bg-white p-5">
-            <ShieldCheck className="text-brand-600 mt-0.5 size-5 shrink-0" aria-hidden="true" />
-            <div>
-              <h2 className="text-closed-800 text-sm font-semibold">Aquí no se maneja dinero</h2>
-              <p className="text-closed-500 mt-1 text-sm leading-relaxed">
-                En Reconstruyendo no se pide ni se entrega dinero a nadie. Lo que se coordina es
-                ayuda: trabajo, materiales, herramientas y conocimiento. Si alguien te pide plata o
-                te ofrece pagarte, repórtalo desde el pedido o el comentario donde pasó.
-              </p>
-            </div>
-          </div>
+            alguien use los pedidos de ayuda para pedir plata (UX §36). Ancho
+            completo y sin tarjeta: es un aviso de la casa, no contenido. */}
+        <section className="border-arena-200 bg-arena-100 border-t px-4 py-6">
+          <p className="text-closed-500 mx-auto flex w-full max-w-5xl items-start gap-2 text-sm leading-relaxed">
+            <ShieldCheck className="text-closed-400 mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            En esta página no se solicita ni se gestiona dinero. Aquí conectamos necesidades con
+            personas que pueden ayudar con trabajo, materiales, herramientas o conocimiento.
+          </p>
         </section>
       </main>
     </div>

@@ -7,7 +7,7 @@
   }
 
   body {
-    @apply text-closed-700 bg-arena-50 font-sans antialiased;
+    @apply text-closed-800 bg-arena-50 font-sans antialiased;
   }
 
   h1,

@@ -276,12 +276,12 @@ export function NeedForm({
         />
       </div>
 
-      <div className="border-info-100 bg-info-50 rounded-lg border p-4">
-        <p className="text-info-700 flex items-center gap-1.5 text-sm font-medium">
+      <div className="border-brand-100 bg-brand-50 rounded-lg border p-4">
+        <p className="text-brand-700 flex items-center gap-1.5 text-sm font-medium">
           <Lock className="size-4 shrink-0" aria-hidden="true" />
           Dirección exacta (opcional)
         </p>
-        <p className="text-info-700 mt-1 text-xs leading-relaxed">
+        <p className="text-brand-700 mt-1 text-xs leading-relaxed">
           Es privada: solo la verás tú y, cuando haya ofertas, las personas que se ofrezcan a
           ayudarte. Nunca aparece en el listado público.
         </p>

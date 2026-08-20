@@ -3,7 +3,7 @@ import { REPORT_STATUS_LABELS } from '@/features/moderation/types'
 
 const CONFIG: Record<ReportStatus, string> = {
   PENDING: 'bg-warning-100 text-warning-700',
-  REVIEWED: 'bg-info-100 text-info-700',
+  REVIEWED: 'bg-brand-100 text-brand-700',
   ACTIONED: 'bg-success-100 text-success-700',
   DISMISSED: 'bg-closed-100 text-closed-600',
 }

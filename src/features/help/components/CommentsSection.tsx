@@ -16,7 +16,7 @@ import { timeAgo } from '@/shared/utils/timeAgo'
 /** Cada tipo de mensaje tiene icono y color propios (MVP §14, UX §3.6). */
 const KIND_STYLES: Record<CommentKind, { Icon: LucideIcon; badge: string; icon: string }> = {
   COMMENT: { Icon: MessageCircle, badge: 'bg-closed-100 text-closed-600', icon: 'text-closed-400' },
-  MATERIAL: { Icon: HandHeart, badge: 'bg-brick-100 text-brick-700', icon: 'text-brick-600' },
+  MATERIAL: { Icon: HandHeart, badge: 'bg-success-100 text-success-700', icon: 'text-success-700' },
   RECOMMENDATION: { Icon: HardHat, badge: 'bg-brand-100 text-brand-700', icon: 'text-brand-700' },
 }
 

@@ -176,7 +176,7 @@ export function OfferersSection({
               </div>
 
               {revealed ? (
-                <div className="border-info-100 bg-info-50 text-info-700 mt-2 rounded-lg border px-3 py-2 text-sm">
+                <div className="border-brand-100 bg-brand-50 text-brand-700 mt-2 rounded-lg border px-3 py-2 text-sm">
                   {isOwner ? (
                     <p>
                       Teléfono de {offer.display_name}:{' '}
