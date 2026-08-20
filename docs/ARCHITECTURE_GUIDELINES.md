@@ -190,9 +190,9 @@ Supabase Auth debe manejar:
 
 ## 7.2. Email verificado como requisito de acciones comunitarias
 
-La configuración de producción debe utilizar la verificación de correo de Supabase.
-
-Un usuario puede existir y autenticarse, pero no debe poder realizar acciones comunitarias sensibles mientras no haya confirmado su correo.
+El requisito se expresa en un único lugar, la función `is_email_verified()`, que lee
+`auth.users.email_confirmed_at`. Un usuario puede existir y autenticarse, pero no puede realizar
+acciones comunitarias sensibles mientras esa función no devuelva verdadero.
 
 Acciones que requieren correo verificado:
 
@@ -204,6 +204,27 @@ Acciones que requieren correo verificado:
 - Otras acciones comunitarias que impliquen interacción entre usuarios.
 
 Los pedidos de ayuda públicas pueden consultarse sin iniciar sesión.
+
+### 7.2.1. Cómo se satisface el requisito en el MVP
+
+En el MVP el correo se confirma **en el propio registro**: Supabase Auth está configurado con
+`mailer_autoconfirm = true` (remoto) y `enable_confirmations = false` (`supabase/config.toml`), así
+que el alta deja `email_confirmed_at` puesto y devuelve sesión inmediatamente. Crear cuenta y entrar
+vuelven a ser un solo paso.
+
+Se decidió así porque el enlace por correo era una barrera real, no solo un paso extra: el SMTP
+integrado de Supabase admite **2 correos por hora en todo el proyecto**, de modo que en una jornada
+de registros la mayoría de las personas nunca recibía el enlace y quedaba sin poder entrar.
+
+Lo importante es que **nada de la autorización cambia**: las políticas RLS, `can_manage_need_images()`,
+`get_need_contact()` y los triggers siguen llamando a `is_email_verified()` igual que antes; lo único
+distinto es cuándo se cumple la condición. Volver a exigir la confirmación por correo es cambiar esos
+dos flags, sin migraciones ni cambios de código.
+
+Contrapartida asumida: no hay prueba de propiedad del correo, así que una dirección mal escrita deja
+a esa persona sin recuperación de contraseña y las cuentas falsas cuestan menos. La contención queda
+en moderación, reportes, bloqueo y baneo. Con un SMTP propio configurado, reactivar la confirmación
+(o añadir un aviso no bloqueante) es el siguiente paso natural.
 
 ## 7.3. No duplicar el estado de verificación
 
@@ -287,6 +308,10 @@ Verificado -> contenido solicitado
 ```
 
 La lógica de autorización debe seguir validándose en Supabase.
+
+El estado intermedio se conserva en el código aunque en el MVP no se alcance (§7.2.1): con el alta
+autoconfirmada nadie llega a `EMAIL_UNVERIFIED`, pero el guard sigue siendo correcto si la
+confirmación se reactiva.
 
 ---
 

@@ -303,18 +303,33 @@ describe('Bloqueo entre personas (MVP §21)', () => {
   })
 })
 
-describe('Entrar sin el correo verificado (UX §20, §25)', () => {
-  it('devuelve un motivo entendible y su código, no un fallo mudo', async () => {
+describe('Registro y entrada en un solo paso (ARCH §7.2.1)', () => {
+  it('el registro deja sesión abierta, sin pasar por el correo', async () => {
+    const email = `audit_direct_${stamp}@test.local`
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password: PASSWORD,
+      options: { data: { display_name: 'Audit Directa', municipality: 'pereira' } },
+    })
+    expect(error).toBeNull()
+    expect(data.session).not.toBeNull()
+    expect(data.user?.email_confirmed_at).toBeTruthy()
+  })
+
+  it('una cuenta sin confirmar recibe un motivo entendible al entrar (UX §20, §25)', async () => {
+    // La autoconfirmación no llega a las cuentas creadas antes del cambio, y Supabase
+    // sigue rechazando su login: por eso /verify-email y este código se conservan.
     const email = `audit_unverified_${stamp}@test.local`
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password: PASSWORD,
       options: { data: { display_name: 'Audit Sin Verificar', municipality: 'pereira' } },
     })
     expect(signUpError).toBeNull()
+    sql(`update auth.users set email_confirmed_at = null where id = '${data.user?.id}';`)
 
-    // Sin confirmar el correo, el login se rechaza: la interfaz necesita el
-    // código para ofrecer "reenviar el enlace" en lugar de un error genérico.
+    // La interfaz necesita el código para ofrecer "reenviar el enlace" en lugar
+    // de un error genérico.
     const result = await signIn(email, PASSWORD)
     expect(result.ok).toBe(false)
     expect(result.code).toBe('email_not_confirmed')

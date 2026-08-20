@@ -29,6 +29,10 @@ interface AuthProviderProps {
  * Proveedor único de sesión (ARCHITECTURE_GUIDELINES.md §7.4).
  * Deriva el estado visible a partir de la sesión y email_confirmed_at (§8):
  * AUTH_LOADING → UNAUTHENTICATED → EMAIL_UNVERIFIED → AUTHENTICATED.
+ *
+ * En el MVP el registro autoconfirma el correo (§7.2.1), así que EMAIL_UNVERIFIED no se alcanza:
+ * se conserva porque el gate `is_email_verified()` sigue vigente en la base de datos y reactivar
+ * la confirmación es solo un cambio de configuración.
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null)

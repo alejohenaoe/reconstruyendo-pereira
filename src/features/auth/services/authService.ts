@@ -115,7 +115,8 @@ export async function signUp(
     const mapped = mapAuthError(error)
     return { ok: false, data: null, error: mapped.message, code: mapped.code }
   }
-  // Con confirmación habilitada, signUp no devuelve sesión: el usuario debe verificar.
+  // Con el alta autoconfirmada (ARCHITECTURE_GUIDELINES.md §7.2.1) signUp devuelve sesión y esto
+  // es false: se entra directo. Si la confirmación se reactiva, no hay sesión y hay que verificar.
   return {
     ok: true,
     data: { needsEmailConfirmation: data.session === null },

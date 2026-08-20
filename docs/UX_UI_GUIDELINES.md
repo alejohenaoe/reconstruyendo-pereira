@@ -640,7 +640,14 @@ componente, guardando solo la diferencia.
 
 # 20. Verificación de correo
 
-Con `Confirm email` de Supabase habilitado, un usuario que aún no ha verificado su correo no puede realizar acciones comunitarias sensibles.
+**En el MVP el correo se confirma en el propio registro** (ARCHITECTURE_GUIDELINES.md §7.2.1): quien
+crea una cuenta entra en el acto y puede publicar, comentar y ofrecer ayuda sin pasar por la bandeja
+de entrada. Pedir un clic en un correo era, en la práctica, quedarse fuera: el envío está limitado a
+dos correos por hora en todo el proyecto.
+
+Lo que sigue describe la pantalla que se mantiene por si la confirmación vuelve a activarse. Con
+`Confirm email` habilitado, un usuario que aún no ha verificado su correo no puede realizar acciones
+comunitarias sensibles.
 
 Debe existir una pantalla específica:
 
@@ -670,6 +677,10 @@ La pantalla `/verify-email` **no expulsa a quien llega sin sesión**: explica qu
 sesión porque falta verificar, deja reenviar el enlace y ofrece volver a entrar. Antes rebotaba al
 login con una recarga completa, así que el intento fallido terminaba en el formulario vacío y sin
 ningún mensaje: la persona no tenía forma de saber qué había pasado.
+
+Este camino queda inactivo mientras el registro autoconfirme el correo (§20): ninguna cuenta nueva
+puede quedar sin verificar. Se conserva porque sigue siendo la respuesta correcta si la confirmación
+se reactiva, y porque cuentas antiguas sin confirmar seguirían llegando aquí.
 
 ---
 
@@ -1091,6 +1102,10 @@ Un correo verificado debe mostrarse como:
 No como:
 
 > `Usuario confiable`
+
+Mientras el registro autoconfirme el correo (§20), ese distintivo **no se muestra**: lo tendrían
+todas las cuentas sin que nadie haya demostrado nada, que es justo el badge vacío que esta sección
+prohíbe. Se retiró de `Mi cuenta`. Vuelve a tener sentido el día que la confirmación se reactive.
 
 ---
 

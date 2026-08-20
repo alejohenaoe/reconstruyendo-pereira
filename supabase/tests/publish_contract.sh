@@ -43,8 +43,8 @@ confirm() {
 echo "=== 1. Usuarios verificado (dueño) y tercero ==="
 EM_O="pub_owner${TS}@test.local"
 EM_T="pub_third${TS}@test.local"
-UID_O=$(signup "$EM_O" "Publicador Dueño" | jq -r .id)
-UID_T=$(signup "$EM_T" "Publicador Tercero" | jq -r .id)
+UID_O=$(signup "$EM_O" "Publicador Dueño" | jq -r '(.user // .).id')
+UID_T=$(signup "$EM_T" "Publicador Tercero" | jq -r '(.user // .).id')
 confirm "$UID_O"
 confirm "$UID_T"
 TOK_O=$(login "$EM_O" | jq -r .access_token)
